@@ -1,4 +1,4 @@
-# gre - QASM2 execution requester.
+# gre - QASM2 remote execution.
 
 
 
