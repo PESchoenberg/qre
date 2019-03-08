@@ -164,7 +164,6 @@ Output:
 
  */
 string qpost(string p_base_data,
-	     string p_base_token,
 	     string p_content_type,
 	     string p_base_results_storage,
 	     string p_uri)
@@ -174,7 +173,6 @@ string qpost(string p_base_data,
   string res = " ";
   string read_buffer;
   static const char *data = p_base_data.c_str();
-  static const char *token = p_base_token.c_str();
   static const char *content_type = p_content_type.c_str();
   static const char *uri = p_uri.c_str();
   

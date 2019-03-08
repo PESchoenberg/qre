@@ -167,7 +167,7 @@ int main(int argc, char** argv)
 	  if(base_method == "post")
 	    {
 	      // Login.	      
-	      res = qpost(login_data, base_token, post_content_type, base_results_storage, login_uri);
+	      res = qpost(login_data, post_content_type, base_results_storage, login_uri);
 	      cout << "Login: \n" << res << "\n" << line << endl;
 
 	      // Get login id if login was correct.
@@ -178,19 +178,35 @@ int main(int argc, char** argv)
 	      // https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
 	      // ./qre example1.qreg post y simulator 100 example1_1
 
+	      //post_content_type = "Content-Type: application/json, x-qx-client-application";
+	      //post_content_type = "Content-Type: application/json";
+	      
 	      if (login_id != "na")
 		{
 		  show_string(line);
 		  post_data = "qasm="+base_data+"&codeType="+"QASM2"+"&name="+base_name;
-		  post_uri = base_uri+"codes/execute?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+login_id;
-		  //post_data = "qasm=\""+base_data+"\"&codeType=\"QASM2\"&name=\""+base_name+"\"";
-		  //post_uri = base_uri+"codes/execute?shots="+base_shots+"&seed="+base_seed+"\"&deviceRunType=\""+base_device+"\"&access_token=\""+login_id+"\"";		  
+		  //post_data = "{\"qasm\":\""+base_data+"\",\"codeType\":\"QASM2\",\"name\":\""+base_name+"\"}";
+		  post_content_type = post_content_type + "; X-Access-Token: "+login_id;
+		  //post_content_type = "X-Access-Token "+login_id;
+		  
+		  /*
+		  https://github.com/Qiskit/qiskit-api-py/blob/master/IBMQuantumExperience/IBMQuantumExperience.py p 273
+		  headers = {'Content-Type': 'application/json','x-qx-client-application': self.client_application}
+		  url = str(self.credential.config['url'] + path + '?access_token=' + self.credential.get_token() + params)
+		  
+		  https://stackoverflow.com/questions/14551194/how-are-parameters-sent-in-an-http-post-request
+
+		  */
+		  	  
+		  //post_uri = base_uri+"Jobs?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+base_token;
+		  post_uri = base_uri+"codes/execute?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+base_token;
+		  
 		  cout << "\n post_data = " << post_data << endl;
 		  cout << "\n post_content_type = " << post_content_type << endl;
 		  cout << "\n base_results_storage = " << base_results_storage << endl;
 		  cout << "\n post_uri = " << post_uri << endl;
 		  
-		  res = qpost(post_data, base_token, post_content_type, base_results_storage, post_uri);
+		  res = qpost(post_data, post_content_type, base_results_storage, post_uri);
 		  cout << "Post: \n" << res << "\n" << line << endl;
 		}
 	      

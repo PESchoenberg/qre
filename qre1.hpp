@@ -43,7 +43,6 @@ void show_string(string p_t);
 static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, void *p_userp);
 
 string qpost(string p_base_data,
-	     string p_base_token,
 	     string p_post_content_type,
 	     string p_base_results_storage,
 	     string p_uri);
