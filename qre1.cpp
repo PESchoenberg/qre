@@ -133,7 +133,8 @@ Sources:
 - Based on an example at https://stackoverflow.com/questions/51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it
 
  */
-static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, void *p_userp)
+
+size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, void *p_userp)
 {
     ((std::string*)p_userp)->append((char*)p_contents, p_size * p_nmemb);
     
@@ -141,8 +142,29 @@ static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, vo
 }
 
 
+/* url_encode - url encodes a string.
+
+Arguments:
+- p_s: string to url encode.
+
+ */
+string url_encode(string p_s)
+{
+  CURL *curl;
+  string res = p_s;
+  
+  curl = curl_easy_init();
+  if(curl)
+    {
+      res = curl_easy_escape(curl , res.c_str(), 0);
+    }
+  
+  return res;
+}
+
+
 /* qpost- performs a post on q-series quantum computers. This function is 
-based on an example shown on the link listed below/
+adapted from an example shown on the links listed as sources.
 
 Arguments:
 - p_base_date: base_data.
@@ -172,23 +194,46 @@ string qpost(string p_base_data,
   CURLcode res1 = CURLE_OK;
   string res = " ";
   string read_buffer;
-  static const char *data = p_base_data.c_str();
-  static const char *content_type = p_content_type.c_str();
-  static const char *uri = p_uri.c_str();
+  string pdata = p_base_data;
+  string pcontenttype = p_content_type;
+  string puri = p_uri;
+  const char *data = pdata.c_str();
+  const char *contenttype = pcontenttype.c_str();
+  const char *uri = puri.c_str();
+
+  char cdata[pdata.length()];
+  char ccontenttype[pcontenttype.length()];
+  char curi[puri.length()];
+
+  strcpy(cdata, data);
+  strcpy(ccontenttype, contenttype) ; 
+  strcpy(curi, uri);
   
+  curl_global_init(CURL_GLOBAL_ALL); 
   curl = curl_easy_init();
   if(curl)
-    {
-      curl_easy_setopt(curl, CURLOPT_URL, uri);
-      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
-      curl_easy_setopt(curl, CURLOPT_HEADER, content_type); // Mine: add header content-type
+    { 
+      curl_easy_setopt(curl, CURLOPT_URL, curi);
+
+      #ifdef SKIP_PEER_VERIFICATION
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+      #endif
+ 
+      #ifdef SKIP_HOSTNAME_VERIFICATION
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+      #endif
+     
+      curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, cdata);
+      curl_easy_setopt(curl, CURLOPT_HEADER, ccontenttype); // Mine: add header content-type
       
       /* if we don't provide POSTFIELDSIZE, libcurl will strlen() by itself */
       curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(data));
-
+      
       /* Required to receive string data. */
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
+      curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
       
       /* Perform the request, res will get the return code */ 
       res1 = curl_easy_perform(curl);
@@ -206,9 +251,11 @@ string qpost(string p_base_data,
       /* Clean up */ 
       curl_easy_cleanup(curl);
     }
+
+  curl_global_cleanup();
+  
   return res;
 }
-
 
 
 

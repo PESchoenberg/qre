@@ -77,43 +77,56 @@ int main(int argc, char** argv)
   string post_data = "";
   string post_content_type = "";
   string post_uri = "";
-  string get_content_type = "";
+  string get_content_type = "Content-Type:";
   string get_uri = "";
-  string delete_content_type = "";
+  string delete_content_type = "Content-Type:";
   string delete_uri = "";
   string request_log = "";
   
   //Check number of arguments program_file, comm_file, 
   if (argc == 7)
     {
+      // Name of the qreg file to use.
       base_file = argv[1];
+
+      // http method to use (get, post, etc.)
       base_method = argv[2];
+
+      // y: show request data, m: show nothing.
       base_verbosity = argv[3];
+
+      // Backend to use. Write test if you want to just see the contents of the qreg file, simulator for a simulator
+      // bacjkend, or the name of the quantum processor to use in case of a real run.
       base_device = argv[4];
+
+      // Random seed number to use, int >= 1.
       base_seed = argv[5];
+
+      // Name of the experiment to run (choose your own).
       base_name = argv[6];
       
-      //Some checks on input parameters.
-
-      //Check verbosity parameter.
-      if(base_verbosity == "y")
+      //Verbosity parameter.
+      if((base_verbosity == "y")||(base_verbosity == "Y"))
 	{
 	  base_verbosity = "yes";
 	}
       
-      if(base_verbosity != "yes")
+      if((base_verbosity != "yes")||(base_verbosity == "N"))
 	{
 	  base_verbosity = "no";
 	}
-      
-      show_string(line);
-      show_string("Argumens entered from the command line:");
-      show_var("File", base_file);
-      show_var("Method", base_method);
-      show_var("Verbosity", base_verbosity);
-      show_var("Device", base_device);
-      show_var("Seed", base_seed);
-      show_var("Name", base_name);
+
+      if (base_verbosity == "y")
+	{
+	  show_string(line);
+	  show_string("Arguments entered from the command line:");
+	  show_var("File", base_file);
+	  show_var("Method", base_method);
+	  show_var("Verbosity", base_verbosity);
+	  show_var("Device", base_device);
+	  show_var("Seed", base_seed);
+	  show_var("Name", base_name);
+	}
       
       //Read parameters from file.      
       base_data = seek_in_file(base_file, "base-data");
@@ -125,13 +138,18 @@ int main(int argc, char** argv)
       login_data = seek_in_file(base_file, "login-data");
       login_uri = seek_in_file(base_file, "login-uri");
       login_id = seek_in_file(base_file, "login-id");
-      post_content_type = seek_in_file(base_file, "post-content-type");
+      post_content_type = post_content_type+seek_in_file(base_file, "post-content-type");
       post_uri = seek_in_file(base_file, "post-uri");
-      get_content_type = seek_in_file(base_file, "get-content-type");
+      get_content_type = get_content_type+seek_in_file(base_file, "get-content-type");
       get_uri = seek_in_file(base_file, "get-uri");
-      delete_content_type = seek_in_file(base_file, "delete-content-type");
+      delete_content_type = delete_content_type+seek_in_file(base_file, "delete-content-type");
       delete_uri = seek_in_file(base_file, "delete-uri");
-           
+
+      // If method is "test", then override verbosity parameter in order to show data.
+      if((base_method == "test")&&(base_verbosity != "y"))
+	{
+	  base_verbosity = "y";
+	}
       // Show parameters if verbosity is set to yes.
       if(base_verbosity == "yes")
 	{
@@ -172,40 +190,32 @@ int main(int argc, char** argv)
 
 	      // Get login id if login was correct.
 	      login_id = seek_in_json(res, "\"userId\"");
-	      cout << "\n login_id = " << login_id << endl;
-
+	      cout << "\n Received login_id = " << login_id << endl;
+	      show_string(line);
+	      if(login_id != "na")
+		{
+		  show_string("LOGIN OK");
+		}
+	      else
+		{
+		  show_string("LOGIN FAILED");
+		}
+	      
 	      // If we get a correct id, then proceed.
 	      // https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
 	      // ./qre example1.qreg post y simulator 100 example1_1
-
-	      //post_content_type = "Content-Type: application/json, x-qx-client-application";
-	      //post_content_type = "Content-Type: application/json";
 	      
 	      if (login_id != "na")
 		{
 		  show_string(line);
 		  post_data = "qasm="+base_data+"&codeType="+"QASM2"+"&name="+base_name;
-		  //post_data = "{\"qasm\":\""+base_data+"\",\"codeType\":\"QASM2\",\"name\":\""+base_name+"\"}";
-		  post_content_type = post_content_type + "; X-Access-Token: "+login_id;
-		  //post_content_type = "X-Access-Token "+login_id;
-		  
-		  /*
-		  https://github.com/Qiskit/qiskit-api-py/blob/master/IBMQuantumExperience/IBMQuantumExperience.py p 273
-		  headers = {'Content-Type': 'application/json','x-qx-client-application': self.client_application}
-		  url = str(self.credential.config['url'] + path + '?access_token=' + self.credential.get_token() + params)
-		  
-		  https://stackoverflow.com/questions/14551194/how-are-parameters-sent-in-an-http-post-request
-
-		  */
-		  	  
-		  //post_uri = base_uri+"Jobs?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+base_token;
-		  post_uri = base_uri+"codes/execute?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+base_token;
-		  
+		  //post_uri = post_uri+"?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+login_id;
+		  post_uri = post_uri+"?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+base_token;		  		  
 		  cout << "\n post_data = " << post_data << endl;
 		  cout << "\n post_content_type = " << post_content_type << endl;
 		  cout << "\n base_results_storage = " << base_results_storage << endl;
 		  cout << "\n post_uri = " << post_uri << endl;
-		  
+		  cout << "\n " << post_data << "\n\n " << post_content_type << "\n\n" << post_uri << "\n";
 		  res = qpost(post_data, post_content_type, base_results_storage, post_uri);
 		  cout << "Post: \n" << res << "\n" << line << endl;
 		}
@@ -218,7 +228,7 @@ int main(int argc, char** argv)
 	    }
 	  if(base_method == "delete")
 	    {
-	      
+	      // https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
 	    }
 	  
 	}
