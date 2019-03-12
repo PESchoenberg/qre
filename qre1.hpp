@@ -27,7 +27,9 @@ qre1.hpp
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string.h>
+#include <cstring>
 #include <curl/curl.h>
 
 using namespace std;
@@ -40,13 +42,13 @@ void show_var(string p_t, string p_v);
 
 void show_string(string p_t);
 
-static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, void *p_userp);
+//static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, void *p_userp);
+
+string url_encode(string p_s);
 
 string qpost(string p_base_data,
 	     string p_post_content_type,
 	     string p_base_results_storage,
 	     string p_uri);
-
-
 
 #endif // !__QRE1_H
