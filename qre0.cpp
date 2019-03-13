@@ -32,18 +32,8 @@ Sources:
 - g++ -std=c++17 -Wall -O3 qre0.o qre1.o -o qre -lcurl
 
 * Testing:
-- You should update the api token on the provided example1.qreg file and use your own:
-  - Open examples/example1.qreg
-  - Replace the string "your-token-goes-here" wherever it appears on the file
-  with your new token.
-  - Save the file as it is, without changin anything else.
-  - See the included README.md file for further instructions on how
-  to get a token on the IBM QX website.
-- On your console, type: 
-  - ./qre examples/example1.qreg test y simulator 1 example1.1 <ENT>
-- The example file provided is precompiled using g2q. If you want to test run
-your own programs, you will have to get a copy of g2q and write your programs
-in Scheme (Lisp) or get  or develop your own compatible compiler.
+- See README.md
+
 ============================================================================= */
 
 
