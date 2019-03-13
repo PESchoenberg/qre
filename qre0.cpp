@@ -24,6 +24,7 @@ qre0.cpp
 Sources:
 - https://developer.ibm.com/tutorials/os-quantum-computing-shell-game/
 - https://stackoverflow.com/questions/51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it
+- // https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
 
 * Compilation (using the gcc compiler family) on Linux:
 
@@ -31,16 +32,15 @@ Sources:
 - g++ -std=c++17 -Wall -O3 qre0.o qre1.o -o qre -lcurl
 
 * Testing:
-- You should update the api token on the provided example1.qreg file and
-use your own:
+- You should update the api token on the provided example1.qreg file and use your own:
   - Open examples/example1.qreg
   - Replace the string "your-token-goes-here" wherever it appears on the file
   with your new token.
   - Save the file as it is, without changin anything else.
   - See the included README.md file for further instructions on how
   to get a token on the IBM QX website.
-- On your console, type 
-  ./qre examples/example1.qreg test y simulator 1 example1.1 <ENT>
+- On your console, type: 
+  - ./qre examples/example1.qreg test y simulator 1 example1.1 <ENT>
 - The example file provided is precompiled using g2q. If you want to test run
 your own programs, you will have to get a copy of g2q and write your programs
 in Scheme (Lisp) or get  or develop your own compatible compiler.
@@ -59,6 +59,7 @@ int main(int argc, char** argv)
   string res2 = "na";
   string data = "";
   string line = "---------------------------------------------------------------\n";
+  string cfg_file = "qre.cfg";
   string base_file = "";
   string base_data = "";
   string base_token = "";
@@ -86,7 +87,7 @@ int main(int argc, char** argv)
   //Check number of arguments program_file, comm_file, 
   if (argc == 7)
     {
-      // Name of the qreg file to use.
+      // Name of the qasm file to run.
       base_file = argv[1];
 
       // http method to use (get, post, etc.)
@@ -96,7 +97,7 @@ int main(int argc, char** argv)
       base_verbosity = argv[3];
 
       // Backend to use. Write test if you want to just see the contents of the qreg file, simulator for a simulator
-      // bacjkend, or the name of the quantum processor to use in case of a real run.
+      // backend, or the name of the quantum processor to use in case of a real run.
       base_device = argv[4];
 
       // Random seed number to use, int >= 1.
@@ -110,13 +111,38 @@ int main(int argc, char** argv)
 	{
 	  base_verbosity = "yes";
 	}
-      
-      if((base_verbosity != "yes")||(base_verbosity == "N"))
+      else if((base_verbosity != "yes")||(base_verbosity == "N"))
 	{
 	  base_verbosity = "no";
 	}
+      else if(base_method == "test")
+	{
+	  base_verbosity = "yes";
+	}
+      else
+	{
+	  base_verbosity = "no";
+	}
+      
+      //Read parameters from file.      
+      base_data = read_qasm_file(base_file);      
+      base_token = seek_in_file(cfg_file, "base-token");
+      base_uri = seek_in_file(cfg_file, "base-uri");
+      base_results_storage = seek_in_file(cfg_file, "base-results-storage");
+      base_shots = seek_in_file(cfg_file, "base-shots");
+      base_max_credits = seek_in_file(cfg_file, "base-max-credits");
+      login_data = seek_in_file(cfg_file, "login-data");
+      login_uri = seek_in_file(cfg_file, "login-uri");
+      login_id = seek_in_file(cfg_file, "login-id");
+      post_content_type = post_content_type+seek_in_file(cfg_file, "post-content-type");
+      post_uri = seek_in_file(cfg_file, "post-uri");
+      get_content_type = get_content_type+seek_in_file(cfg_file, "get-content-type");
+      get_uri = seek_in_file(cfg_file, "get-uri");
+      delete_content_type = delete_content_type+seek_in_file(cfg_file, "delete-content-type");
+      delete_uri = seek_in_file(cfg_file, "delete-uri");
 
-      if (base_verbosity == "y")
+      // Show parameters if verbosity is set to yes.
+      if(base_verbosity == "yes")
 	{
 	  show_string(line);
 	  show_string("Arguments entered from the command line:");
@@ -125,36 +151,9 @@ int main(int argc, char** argv)
 	  show_var("Verbosity", base_verbosity);
 	  show_var("Device", base_device);
 	  show_var("Seed", base_seed);
-	  show_var("Name", base_name);
-	}
-      
-      //Read parameters from file.      
-      base_data = seek_in_file(base_file, "base-data");
-      base_token = seek_in_file(base_file, "base-token");
-      base_uri = seek_in_file(base_file, "base-uri");
-      base_results_storage = seek_in_file(base_file, "base-results-storage");
-      base_shots = seek_in_file(base_file, "base-shots");
-      base_max_credits = seek_in_file(base_file, "base-max-credits");
-      login_data = seek_in_file(base_file, "login-data");
-      login_uri = seek_in_file(base_file, "login-uri");
-      login_id = seek_in_file(base_file, "login-id");
-      post_content_type = post_content_type+seek_in_file(base_file, "post-content-type");
-      post_uri = seek_in_file(base_file, "post-uri");
-      get_content_type = get_content_type+seek_in_file(base_file, "get-content-type");
-      get_uri = seek_in_file(base_file, "get-uri");
-      delete_content_type = delete_content_type+seek_in_file(base_file, "delete-content-type");
-      delete_uri = seek_in_file(base_file, "delete-uri");
-
-      // If method is "test", then override verbosity parameter in order to show data.
-      if((base_method == "test")&&(base_verbosity != "y"))
-	{
-	  base_verbosity = "y";
-	}
-      // Show parameters if verbosity is set to yes.
-      if(base_verbosity == "yes")
-	{
+	  show_var("Name", base_name);	  
 	  show_string(line);
-	  show_string("Values from .qreg file:");	  
+	  show_string("Configuration values:");	  
 	  show_var("base-file", base_file);
 	  show_var("base-data", base_data);
 	  show_var("base-token", base_token);
@@ -176,7 +175,8 @@ int main(int argc, char** argv)
       if(base_method == "test")
 	{
 	  //Nothing more to do.
-	  cout << "\n Test finished.";
+	  show_string("\n");
+	  show_string("Test finished.");
 	}
       else
 	{
@@ -184,40 +184,41 @@ int main(int argc, char** argv)
 	  show_string("Requesting, stand by...");
 	  if(base_method == "post")
 	    {
-	      // Login.	      
-	      res = qpost(login_data, post_content_type, base_results_storage, login_uri);
-	      cout << "Login: \n" << res << "\n" << line << endl;
+	      // Login.
+	      show_string("Sending log in data...");
+	      res = qpost(base_verbosity, login_data, post_content_type, base_results_storage, login_uri);
+	      show_string("\n");
+	      show_string("Login result\n\n");
+	      show_string(res);	      
 
-	      // Get login id if login was correct.
+	      // Parse the userId value from the received json data.	      
 	      login_id = seek_in_json(res, "\"userId\"");
-	      cout << "\n Received login_id = " << login_id << endl;
-	      show_string(line);
-	      if(login_id != "na")
-		{
-		  show_string("LOGIN OK");
-		}
-	      else
+	      show_var("login_id", login_id);
+
+	      //If login was incorrect, stop. If it was correct, proeced posting.
+	      if(login_id == "na")
 		{
 		  show_string("LOGIN FAILED");
 		}
-	      
-	      // If we get a correct id, then proceed.
-	      // https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
-	      // ./qre example1.qreg post y simulator 100 example1_1
-	      
-	      if (login_id != "na")
+	      else
 		{
-		  show_string(line);
+		  show_string("LOGIN OK");
 		  post_data = "qasm="+base_data+"&codeType="+"QASM2"+"&name="+base_name;
-		  //post_uri = post_uri+"?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+login_id;
-		  post_uri = post_uri+"?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+base_token;		  		  
-		  cout << "\n post_data = " << post_data << endl;
-		  cout << "\n post_content_type = " << post_content_type << endl;
-		  cout << "\n base_results_storage = " << base_results_storage << endl;
-		  cout << "\n post_uri = " << post_uri << endl;
-		  cout << "\n " << post_data << "\n\n " << post_content_type << "\n\n" << post_uri << "\n";
-		  res = qpost(post_data, post_content_type, base_results_storage, post_uri);
-		  cout << "Post: \n" << res << "\n" << line << endl;
+		  post_uri = post_uri+"?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+login_id;
+		  show_string("\n");
+		  show_string(line);
+		  show_string("Data to be posted: ");
+		  show_var("post_data", post_data);
+		  show_var("post_content_type", post_content_type);
+		  show_var("base_results_storage", base_results_storage);
+		  show_var("post_uri", post_uri);
+		  show_string("\n");
+		  show_string(line);
+		  show_string("Posting...");
+		  res = qpost(base_verbosity, post_data, post_content_type, base_results_storage, post_uri);
+		  show_string("\n");
+		  show_string("Post result\n\n");
+		  show_string(res);
 		}
 	      
 	      
@@ -236,9 +237,11 @@ int main(int argc, char** argv)
   else
     {
       res1 = 1;
-      cout << "Incorrect input.";
+      show_string("Incorrect input.");
     }
-  cout << "\n\n";
+  show_string("\n");
+  show_string(line);
+  show_string("\n");
   
   return res1;
 }
