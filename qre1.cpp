@@ -98,7 +98,7 @@ string seek_in_json(string p_j, string p_v)
 }
 
 
-/* show_var - shows the name and value if a variable contained in a .qreg file.
+/* show_var - shows the name and value of a variable.
 
 Aruments:
 - p_t: text to show (name of the variable).
@@ -167,6 +167,7 @@ string url_encode(string p_s)
 adapted from an example shown on the links listed as sources.
 
 Arguments:
+- p_base_verbosity: base verbosity as set on qre0.cpp.
 - p_base_date: base_data.
 - p_base_token: base token.
 - p_post_content_type: post-content-type.
@@ -185,7 +186,8 @@ Output:
 - Updated value for request log.
 
  */
-string qpost(string p_base_data,
+string qpost(string p_base_verbosity,
+	     string p_base_data,
 	     string p_content_type,
 	     string p_base_results_storage,
 	     string p_uri)
@@ -233,7 +235,16 @@ string qpost(string p_base_data,
       /* Required to receive string data. */
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
-      curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
+
+      /* If verbosity value is yes, some more of info concerning the connection will be shown.*/
+      if (p_base_verbosity == "yes")
+	{
+	  curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
+	}
+      else
+	{
+	  curl_easy_setopt(curl, CURLOPT_VERBOSE, false);
+	}
       
       /* Perform the request, res will get the return code */ 
       res1 = curl_easy_perform(curl);
@@ -258,7 +269,29 @@ string qpost(string p_base_data,
 }
 
 
+/* read_qasm_file - reads a qasm file.
 
+Arguments:
+- p_f: qasm file to read.
+
+ */
+string read_qasm_file(string p_f)
+{
+
+  string res = "";
+  string file_line = "";
+  string file_name = p_f;
+  
+  std::ifstream file;
+  file.open(file_name.c_str());
+  while ( getline (file,file_line))
+    {
+      res = res + file_line;
+    }
+  file.close();
+  
+  return res;
+}
 
 
 

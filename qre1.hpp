@@ -46,9 +46,12 @@ void show_string(string p_t);
 
 string url_encode(string p_s);
 
-string qpost(string p_base_data,
+string qpost(string p_base_verbosity,
+	     string p_base_data,
 	     string p_post_content_type,
 	     string p_base_results_storage,
 	     string p_uri);
+
+string read_qasm_file(string p_f);
 
 #endif // !__QRE1_H

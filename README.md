@@ -7,13 +7,17 @@
 
 This project seeks to produce a program capable of requesting the execution
 of QASM2 programs produced by means of any programming language on a IBM QX
-quantum computer as long as the program in question is compiled following
-the parameters set on project g2q, which is a Scheme to QASM compiler that
-produces a .qasm file containing the QASM2 code and a .qreg file that
-provides instructions to build the requests to the QX server.
+quantum computer.
 
-You can create your own compiler in order to produce the qasm and qreg
-files, or you can try g2q, which already does that; qre is language-independent.
+You can create the required QASM2 files in various ways:
+
+* Create a compiler.
+
+* Use an existing compiler that produces QASM2 code like g2q (see below).
+
+* Write on your own your QASM2 source code.
+
+For qre any option is fine as long as you feed it standard QASM2 files.
 
 The program is still unfinished but at this point it can successfully log
 into the QX machine. I am still working on the execution request uri.
@@ -33,12 +37,13 @@ into the QX machine. I am still working on the execution request uri.
 
 ## Installation:
 
-* Just copy the contents of the compressed file in any folder you like.
+* Just copy the contents of the compressed file in any folder you like and
+compile it (see usage section).
 
 
 ## Uninstall:
 
-* Just delete the folder where you placed qre.
+* Just delete the folder where you placed qre and its contents.
 
 
 ## Usage:
@@ -49,19 +54,33 @@ into the QX machine. I am still working on the execution request uri.
 - g++ -std=c++17 -Wall -O3 qre0.o qre1.o -o qre -lcurl
 
 * Testing:
-- You should update the api token on the provided example1.qreg file and
-use your own:
-  - Open examples/example1.qreg
+- You should update the api token on the provided qre.cfg file and use your
+own:
+  - Open qre.cfg
   - Replace the string "your-token-goes-here" wherever it appears on the file
   with your new token.
   - Save the file as it is, without changin anything else.
   - See the included README.md file for further instructions on how
   to get a token on the IBM QX website.
-- On your console, type 
-  ./qre examples/example1.qreg test y simulator 1 example1.1 <ENT>
+- On your console, type:
+
+  ./qre examples/example1.qasm test y simulator 1 example1.1 <ENT> to perform
+  a simple test and make sure about the contents of qre.cfg
+
+  or
+
+  ./qre examples/example1.qasm post y simulator 1 example1.1 <ENT> to run it
+  on a QX simulator.
+
+  or
+
+  ./qre examples/example1.qasm post y [q processor name] [max credits]
+  example1.1 <ENT> to run it on a QX real quantum processor.
+  
 - The example file provided is precompiled using g2q. If you want to test run
 your own programs, you will have to get a copy of g2q and write your programs
-in Scheme (Lisp) or get  or develop your own compatible compiler.
+in Scheme (Lisp) or write your own QASM2 source code, or get or develop your
+own compatible compiler.
 
 
 ## Credits and Sources:
