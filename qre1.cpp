@@ -134,7 +134,7 @@ Sources:
 
  */
 
-size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, void *p_userp)
+static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, void *p_userp)
 {
     ((std::string*)p_userp)->append((char*)p_contents, p_size * p_nmemb);
     
@@ -168,11 +168,13 @@ adapted from an example shown on the links listed as sources.
 
 Arguments:
 - p_base_verbosity: base verbosity as set on qre0.cpp.
+- p_base_method: request method (post, get or delete).
 - p_base_date: base_data.
 - p_base_token: base token.
 - p_post_content_type: post-content-type.
 - p_base_results_storage: base-results-storage.
-- p_post_uri: post-uri
+- p_post_uri: post-uri.
+- p_login_id: login_id.
 
 
 Note:
@@ -181,16 +183,20 @@ Note:
 Sources:
 - https://curl.haxx.se/libcurl/c/simplepost.html
 - https://developer.ibm.com/tutorials/os-quantum-computing-shell-game/
+- https://stackoverflow.com/questions/22457601/http-post-header-fields-with-libcurl
+- https://stackoverflow.com/questions/328281/why-content-length-0-in-post-requests
 
 Output:
 - Updated value for request log.
 
  */
 string qpost(string p_base_verbosity,
+	     string p_base_method,
 	     string p_base_data,
 	     string p_content_type,
 	     string p_base_results_storage,
-	     string p_uri)
+	     string p_uri,
+	     string p_login_id)
 {
   CURL *curl;
   CURLcode res1 = CURLE_OK;
@@ -199,38 +205,83 @@ string qpost(string p_base_verbosity,
   string pdata = p_base_data;
   string pcontenttype = p_content_type;
   string puri = p_uri;
+  string pcontenttype2 = "X-Access-Token: "+p_login_id;
+  //string pcontenttype2 = "Authorization: Basic userid: "+p_login_id;
+  string pcontentlength = "Content-Length: "+to_string(pdata.length());
+  
   const char *data = pdata.c_str();
   const char *contenttype = pcontenttype.c_str();
+  const char *contenttype2 = pcontenttype2.c_str();
   const char *uri = puri.c_str();
+  const char *contentlength = pcontentlength.c_str();
 
   char cdata[pdata.length()];
   char ccontenttype[pcontenttype.length()];
+  char ccontenttype2[pcontenttype2.length()];
   char curi[puri.length()];
+  char ccontentlength[pcontentlength.length()];
 
   strcpy(cdata, data);
-  strcpy(ccontenttype, contenttype) ; 
+  strcpy(ccontenttype, contenttype);
+  strcpy(ccontenttype2, contenttype2);
   strcpy(curi, uri);
+  strcpy(ccontentlength, contentlength);
+
+  //Defining headers.
+  struct curl_slist *headerlist=NULL;
+  //static const char buf[] = "a"; // ?
+  //headerlist = curl_slist_append(headerlist, buf);
+  headerlist = curl_slist_append(headerlist, ccontenttype);
+  headerlist = curl_slist_append(headerlist, "Transfer-Encoding: chunked");
   
-  curl_global_init(CURL_GLOBAL_ALL); 
+  //Final check of data.
+  if (p_base_verbosity == "yes")
+    {
+      show_string("Data as is just before the making request:");
+      show_var("Method: ", p_base_method);
+      show_var("Data: ", cdata);
+      show_var("Uri: ", curi);
+      show_var("Content length: ", ccontentlength);
+      show_var("Headers (init): ", ccontenttype);
+    }
+
+  res1 = curl_global_init(CURL_GLOBAL_DEFAULT);
+  //res1 = curl_global_init(CURL_GLOBAL_ALL);
+ 
   curl = curl_easy_init();
   if(curl)
-    { 
+    {
       curl_easy_setopt(curl, CURLOPT_URL, curi);
+      curl_easy_setopt(curl, CURLOPT_HEADER, true);
 
-      #ifdef SKIP_PEER_VERIFICATION
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-      #endif
- 
-      #ifdef SKIP_HOSTNAME_VERIFICATION
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-      #endif
-     
-      curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, cdata);
-      curl_easy_setopt(curl, CURLOPT_HEADER, ccontenttype); // Mine: add header content-type
-      
-      /* if we don't provide POSTFIELDSIZE, libcurl will strlen() by itself */
-      curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(data));
+      //Depending of request.
+      if (p_base_method == "post")
+	{
+	  if (p_login_id != "na")
+	    {
+	      headerlist = curl_slist_append(headerlist, ccontenttype2);
+	      headerlist = curl_slist_append(headerlist, ccontentlength);
+	    }
+	  curl_easy_setopt(curl,CURLOPT_POST, 1L);
+	  curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+	  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, cdata);
+	  
+	  /* if we don't provide POSTFIELDSIZE, libcurl will strlen() by itself */
+	  //curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(data));
+	  curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE_LARGE, (long)strlen(data));
+	  
+	}
+      else if (p_base_method == "get")
+	{
+	  curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+	}
+      else if (p_base_method == "delete")
+	{
+	  curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+	}
+            
+      // Send the list with all headers.
+      curl_easy_setopt(curl, CURLOPT_HEADER, headerlist);
       
       /* Required to receive string data. */
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
@@ -258,11 +309,15 @@ string qpost(string p_base_verbosity,
 	{
 	  res = read_buffer;
 	}
- 
-      /* Clean up */ 
-      curl_easy_cleanup(curl);
+      if (p_base_verbosity == "yes")
+	{
+	  //show_var("Curl status message: ", res1);
+	  cout << "\nCurl status message: " << res1 << endl;
+	}      
     }
 
+  curl_slist_free_all(headerlist);
+  curl_easy_cleanup(curl);
   curl_global_cleanup();
   
   return res;
@@ -294,10 +349,211 @@ string read_qasm_file(string p_f)
 }
 
 
+/* store_results - stores results from remote execution in the selected format and file.
+
+Arguments:
+- p_base_results_storage: base_results_storage.
+- p_db: selected database.
+- p_file: file contained in p_db that will hold the contents to be stored.
+- p_contents_to_store.
+
+ */
+void store_results(string p_base_results_storage, string p_file, string p_contents_to_store)
+{
+  string pathj = "data/json/";
+  string paths = "data/sqlite3";
+  string db = "qre.db";
+  string file = p_file;
+
+  if (p_base_results_storage == "json")
+    {
+      file = file + ".json";
+      pathj = pathj + file;     
+      ofstream json_file;
+      json_file.open(pathj, std::ios::app);
+      json_file << p_contents_to_store << "\n";
+      json_file.close();    
+    }
+  else if (p_base_results_storage == "sqlite3")
+    {;
+      //Here we will put all routines to store stuff on a sqlite3 database.
+    }
+}
+
+/* qx_login - attempts to log in into the IBM QX server.
+
+Arguments
+- p_base_verbosity.
+- p_base_method.
+- p_login_data.
+- p_post_content_type.
+- p_base_results_storage.
+- p_login_uri.
+- p_login_name: login_name.
+
+Output:
+- login_id as res.
+
+ */
+string qx_login(string p_base_verbosity,
+		string p_base_method,
+		string p_login_data,
+		string p_post_content_type,
+		string p_base_results_storage,
+		string p_login_uri,
+		string p_login_name)
+{
+  string res = "na";
+
+  show_string("Sending log in data...");
+  res = qpost(p_base_verbosity, p_base_method, p_login_data, p_post_content_type, p_base_results_storage, p_login_uri, "na");
+  show_string("\n");
+  show_string("Login result\n\n");
+  show_string(res);	      
+
+  store_results(p_base_results_storage, p_login_name, res);
+  
+  // Parse the userId value from the received json data.	      
+  res = seek_in_json(res, "\"userId\"");
+  show_var("login_id", res);  
+    
+  if (res == "")
+    {
+      res = "na";
+    }
+  
+  return res;
+}
 
 
+/* qx_delete_experiment - deletes an experiment.
+
+Arguments:
+- p_base_verbosity: base_verbosity.
+- p_base_method: base_method.
+- p_delete_data: delete data.
+- p_delete_content_type: delete_content_type.
+- p_base_results_storage: base_results_storage.
+- p_delete_uri: delete_uri.
+- p_delete_name: delete_name.
+- p_login_id: login_id.
+- p_base_name: nase_name.
+
+Output:
+-  Result of the operation.
+
+Sources:
+- https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
+
+ */
+string qx_delete_experiment(string p_base_verbosity,
+			    string p_base_method,
+			    string p_delete_data,
+			    string p_delete_content_type,
+			    string p_base_results_storage,			    
+			    string p_delete_uri,
+			    string p_delete_name,
+			    string p_login_id,
+			    string p_base_name)
+{
+  string res = "";
+  string delete_uri = p_delete_uri; 
+    
+  delete_uri = delete_uri + "/users/"+p_login_id+"/codes/"+p_base_name;
+  if(p_base_verbosity == "yes")
+    {
+      show_string("Deletion data: ");
+      show_var("delete_data", p_delete_data);
+      show_var("delete_content_type", p_delete_content_type);
+      show_var("base_results_storage", p_base_results_storage);
+      show_var("delete_uri", delete_uri);
+      show_string("\n\n");
+      show_string("Deleting...");
+    }
+  
+  res = qpost(p_base_verbosity,
+	      p_base_method,
+	      p_delete_data,
+	      p_delete_content_type,
+	      p_base_results_storage,
+	      p_delete_uri,
+	      p_login_id);
+  
+  store_results(p_base_results_storage, p_delete_name, res);
+  
+  return res;
+}
 
 
+/* qx_post_experiment - posts an experiment.
+
+Arguments:
+- p_base_verbosity: base_verbosity.
+- p_base_method: base_method.
+- p_post_data: post data.
+- p_post_content_type: post_content_type.
+- p_post_results_storage: post_results_storage.
+- p_post_uri: post_uri.
+- p_post_name: post_name.
+- p_login_id: login_id.
+- p_base_name: nase_name.
+- p_base_data: base_data.
+- p_base_shots: base_shots.
+- p_base_seedL base_seed.
+- p_base_deviceL base_device.
+
+
+Output:
+-  Result of the operation.
+
+ */
+string qx_post_experiment(string p_base_verbosity,
+			  string p_base_method,
+			  string p_post_data,
+			  string p_post_content_type,
+			  string p_base_results_storage,			    
+			  string p_post_uri,
+			  string p_post_name,
+			  string p_login_id,
+			  string p_base_name,
+			  string p_base_data,
+			  string p_base_shots,
+			  string p_base_seed,
+			  string p_base_device)			  
+{
+  string res = "";
+  string post_data = "";
+  string post_uri = p_post_uri;
+  string header2 = "";
+  string post_content_type = "";
+  
+  post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name;
+  post_uri = post_uri+"?shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device+"&access_token="+p_login_id;
+  
+  if(p_base_verbosity == "yes")
+    {
+      show_string("\n\n");
+      show_string("Data to be posted: ");
+      show_var("post_data", post_data);
+      show_var("post_content_type", p_post_content_type);
+      show_var("base_results_storage", p_base_results_storage);
+      show_var("post_uri", post_uri);
+      show_string("\n\n");
+      show_string("Posting...");
+    }
+  
+  res = qpost(p_base_verbosity,
+	      p_base_method,
+	      post_data,
+	      p_post_content_type,
+	      p_base_results_storage,
+	      post_uri,
+	      p_login_id);
+  
+  store_results(p_base_results_storage, p_post_name, res);
+  
+  return res;
+}
 
 
 

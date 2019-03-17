@@ -34,24 +34,71 @@ qre1.hpp
 
 using namespace std;
 
+
 string seek_in_file(string p_f, string p_v);
+
 
 string seek_in_json(string p_j, string p_v);
 
+
 void show_var(string p_t, string p_v);
+
 
 void show_string(string p_t);
 
 //static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, void *p_userp);
 
+
 string url_encode(string p_s);
 
+
 string qpost(string p_base_verbosity,
+	     string p_base_method,
 	     string p_base_data,
 	     string p_post_content_type,
 	     string p_base_results_storage,
-	     string p_uri);
+	     string p_uri,
+	     string p_login_id);
+
 
 string read_qasm_file(string p_f);
+
+
+void store_results(string p_base_results_storage, string p_file, string p_contents_to_store);
+
+
+string qx_login(string p_base_verbosity,
+		string p_base_method,
+		string p_login_data,
+		string p_post_content_type,
+		string p_base_results_storage,
+		string p_login_uri,
+		string p_login_name);
+
+
+string qx_delete_experiment(string p_base_verbosity,
+			    string p_base_method,
+			    string p_delete_data,
+			    string p_delete_content_type,
+			    string p_base_results_storage,			    
+			    string p_delete_uri,
+			    string p_delete_name,
+			    string p_login_id,
+			    string p_base_name);
+
+
+string qx_post_experiment(string p_base_verbosity,
+			  string p_base_method,
+			  string p_post_data,
+			  string p_post_content_type,
+			  string p_base_results_storage,			    
+			  string p_post_uri,
+			  string p_post_name,
+			  string p_login_id,
+			  string p_base_name,
+			  string p_base_data,
+			  string p_base_shots,
+			  string p_base_seed,
+			  string p_base_device);
 
 #endif // !__QRE1_H
