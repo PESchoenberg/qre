@@ -1,4 +1,4 @@
-# gre - QASM2 remote execution.
+# qre - QASM2 remote execution.
 
 
 
@@ -69,13 +69,13 @@ own:
 
   or
 
-  ./qre examples/example1.qasm post y simulator 1 example1.1 <ENT> to run it
+  ./qre examples/example1.qasm post y simulator 1 example1_1 <ENT> to run it
   on a QX simulator.
 
   or
 
   ./qre examples/example1.qasm post y [q processor name] [max credits]
-  example1.1 <ENT> to run it on a QX real quantum processor.
+  example_1_1 <ENT> to run it on a QX real quantum processor.
   
 - The example file provided is precompiled using g2q. If you want to test run
 your own programs, you will have to get a copy of g2q and write your programs
@@ -87,6 +87,9 @@ own compatible compiler.
 
 * IBM Quantum Experience - ( https://quantumexperience.ng.bluemix.net/qx/experience )
 
+* g2q Scheme to QASM2 compiler - - https://github.com/PESchoenberg/g2q
+
+* URL of this project - https://github.com/PESchoenberg/qre
 
 ## License:
 

@@ -24,7 +24,8 @@ qre0.cpp
 Sources:
 - https://developer.ibm.com/tutorials/os-quantum-computing-shell-game/
 - https://stackoverflow.com/questions/51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it
-- // https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
+- https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
+- https://curl.haxx.se/libcurl/c/libcurl-tutorial.html
 
 * Compilation (using the gcc compiler family) on Linux:
 
@@ -65,13 +66,19 @@ int main(int argc, char** argv)
   string login_data = "";
   string login_uri = "";
   string login_id = "";
+  string login_name = "";
   string post_data = "";
   string post_content_type = "";
   string post_uri = "";
-  string get_content_type = "Content-Type:";
+  string post_name = "";
+  string get_content_type = "";
   string get_uri = "";
-  string delete_content_type = "Content-Type:";
+  string get_data = "";
+  string get_name = "";
+  string delete_content_type = "";
   string delete_uri = "";
+  string delete_data = "";
+  string delete_name = "";
   string request_log = "";
   
   //Check number of arguments program_file, comm_file, 
@@ -121,16 +128,21 @@ int main(int argc, char** argv)
       base_results_storage = seek_in_file(cfg_file, "base-results-storage");
       base_shots = seek_in_file(cfg_file, "base-shots");
       base_max_credits = seek_in_file(cfg_file, "base-max-credits");
-      login_data = seek_in_file(cfg_file, "login-data");
-      login_uri = seek_in_file(cfg_file, "login-uri");
-      login_id = seek_in_file(cfg_file, "login-id");
+      login_data = seek_in_file(cfg_file, "login-data")+base_token;
+      login_uri = base_uri + seek_in_file(cfg_file, "login-uri");
       post_content_type = post_content_type+seek_in_file(cfg_file, "post-content-type");
-      post_uri = seek_in_file(cfg_file, "post-uri");
+      post_uri = base_uri + seek_in_file(cfg_file, "post-uri");
       get_content_type = get_content_type+seek_in_file(cfg_file, "get-content-type");
-      get_uri = seek_in_file(cfg_file, "get-uri");
+      get_uri = base_uri + seek_in_file(cfg_file, "get-uri");
       delete_content_type = delete_content_type+seek_in_file(cfg_file, "delete-content-type");
-      delete_uri = seek_in_file(cfg_file, "delete-uri");
+      delete_uri = base_uri + seek_in_file(cfg_file, "delete-uri");
 
+      //Define some names.
+      login_name = base_name + "_login";
+      post_name = base_name + "_post";
+      get_name = base_name + "_get";
+      delete_name = base_name + "_delete";
+      
       // Show parameters if verbosity is set to yes.
       if(base_verbosity == "yes")
 	{
@@ -153,7 +165,6 @@ int main(int argc, char** argv)
 	  show_var("base-max-credits", base_max_credits);
 	  show_var("login-data", login_data);
 	  show_var("login-uri", login_uri);
-	  show_var("login-id", login_id);
 	  show_var("post-content-type", post_content_type);
 	  show_var("post-uri", post_uri);
 	  show_var("get-content-type", get_content_type);
@@ -171,57 +182,64 @@ int main(int argc, char** argv)
       else
 	{
 	  show_string(line);
-	  show_string("Requesting, stand by...");
-	  if(base_method == "post")
+	  login_id=qx_login(base_verbosity,
+			    base_method,
+			    login_data,
+			    post_content_type,
+			    base_results_storage,
+			    login_uri,
+			    login_name);
+
+	  //store_results(base_results_storage, login_name, login_id);
+	  if(login_id == "na")
 	    {
-	      // Login.
-	      show_string("Sending log in data...");
-	      res = qpost(base_verbosity, login_data, post_content_type, base_results_storage, login_uri);
-	      show_string("\n");
-	      show_string("Login result\n\n");
-	      show_string(res);	      
-
-	      // Parse the userId value from the received json data.	      
-	      login_id = seek_in_json(res, "\"userId\"");
-	      show_var("login_id", login_id);
-
-	      //If login was incorrect, stop. If it was correct, proeced posting.
-	      if(login_id == "na")
+	      show_string("LOGIN FAILED");
+	    }
+	  else
+	    {
+	      show_string("LOGIN OK");	  
+	      if(base_method == "post")
 		{
-		  show_string("LOGIN FAILED");
-		}
-	      else
-		{
-		  show_string("LOGIN OK");
-		  post_data = "qasm="+base_data+"&codeType="+"QASM2"+"&name="+base_name;
-		  post_uri = post_uri+"?shots="+base_shots+"&seed="+base_seed+"&deviceRunType="+base_device+"&access_token="+login_id;
-		  show_string("\n");
-		  show_string(line);
-		  show_string("Data to be posted: ");
-		  show_var("post_data", post_data);
-		  show_var("post_content_type", post_content_type);
-		  show_var("base_results_storage", base_results_storage);
-		  show_var("post_uri", post_uri);
-		  show_string("\n");
-		  show_string(line);
-		  show_string("Posting...");
-		  res = qpost(base_verbosity, post_data, post_content_type, base_results_storage, post_uri);
+		  res = qx_post_experiment(base_verbosity,
+					   base_method,
+					   post_data,
+					   post_content_type,
+					   base_results_storage,
+					   post_uri,
+					   post_name,
+					   login_id,
+					   base_name,
+					   base_data,
+					   base_shots,
+					   base_seed,
+					   base_device);
+
 		  show_string("\n");
 		  show_string("Post result\n\n");
 		  show_string(res);
 		}
+	      if(base_method == "get")
+		{
 	      
+		}
+	      if(base_method == "delete")
+		{
+		  res = qx_delete_experiment(base_verbosity,
+					     base_method,
+					     delete_data,
+					     delete_content_type,
+					     base_results_storage,
+					     delete_uri,
+					     delete_name,
+					     login_id,
+					     base_name);
+
+		  show_string("\n");
+		  show_string("Deletion result\n\n");
+		  show_string(res);	      
 	      
-	    }
-	  if(base_method == "get")
-	    {
-	      
-	    }
-	  if(base_method == "delete")
-	    {
-	      // https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
-	    }
-	  
+		}
+	    }	  
 	}
     }
   else
