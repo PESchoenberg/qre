@@ -64,7 +64,7 @@ own:
   to get a token on the IBM QX website.
 - On your console, type:
 
-  ./qre examples/example1.qasm test y simulator 1 example1.1 <ENT> to perform
+  ./qre examples/example1.qasm test y simulator 1 example1_1 <ENT> to perform
   a simple test and make sure about the contents of qre.cfg
 
   or

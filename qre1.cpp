@@ -58,7 +58,7 @@ string seek_in_file(string p_f, string p_v)
 }
 
 
-/* seek_in_json - Seeks the value of p_v in json string p_j.
+/* seek_in_json - seeks the value of p_v in json string p_j.
 
 Arguments:
 - p_j: jason string passed as a std:string.
@@ -86,11 +86,23 @@ string seek_in_json(string p_j, string p_v)
       // Now find the limit of the substring that corresponds to the value of p_v.
       if (res1.find(e) != std::string::npos)
 	{
-	  pos2 = res1.find(e);
+	  /*pos2 = res1.find(e);
 	  res1 = res1.substr(0,pos2-1);
 	  pos1 = res1.find(":");
 	  res1 = res1.substr(pos1+2);
-	  res = res1;
+	  res = res1;*/
+	  if (res1.find("\",") != std::string::npos)
+	    {	  
+	      pos2 = res1.find("\",");
+	    }
+	  else
+	    {
+	      pos2 = res1.find("\"}");
+	    }
+	  res1 = res1.substr(0,pos2);
+	  pos1 = res1.find(":");
+	  res1 = res1.substr(pos1+2);
+	  res = res1;	  
 	}
     }
 
@@ -163,6 +175,25 @@ string url_encode(string p_s)
 }
 
 
+/* create_heeader - creates a header as a c string.
+
+Arguments:
+- p_data: text that will be converted to a header.
+
+Output:
+- Header cast as a pure c string.
+
+ */
+char *create_header(string p_s)
+{
+  string ps = p_s;
+  const char *s = ps.c_str();
+  char cs[ps.length()];
+
+  return strcpy(cs, s);
+}
+
+
 /* qpost- performs a post on q-series quantum computers. This function is 
 adapted from an example shown on the links listed as sources.
 
@@ -202,35 +233,47 @@ string qpost(string p_base_verbosity,
   CURLcode res1 = CURLE_OK;
   string res = " ";
   string read_buffer;
+  string file_cookies = "data/cookies/qre_cookies.txt";
   string pdata = p_base_data;
   string pcontenttype = p_content_type;
   string puri = p_uri;
-  string pcontenttype2 = "X-Access-Token: "+p_login_id;
-  //string pcontenttype2 = "Authorization: Basic userid: "+p_login_id;
+  string ploginid = p_login_id;
+  string pcontenttype2 = "X-Access-Token: "+p_login_id+";charset=utf-8";
   string pcontentlength = "Content-Length: "+to_string(pdata.length());
-  
+  string pclientapp = "x-qx-client-application: qiskit-api-py";
+
+  const char *cfile_cookies = file_cookies.c_str();
   const char *data = pdata.c_str();
   const char *contenttype = pcontenttype.c_str();
   const char *contenttype2 = pcontenttype2.c_str();
   const char *uri = puri.c_str();
   const char *contentlength = pcontentlength.c_str();
+  const char *loginid = ploginid.c_str();
+  const char *clientapp = pclientapp.c_str();
 
+  char ccfile_cookies[file_cookies.length()];
   char cdata[pdata.length()];
   char ccontenttype[pcontenttype.length()];
   char ccontenttype2[pcontenttype2.length()];
   char curi[puri.length()];
   char ccontentlength[pcontentlength.length()];
+  char ccloginid[ploginid.length()];
+  char cclientapp[pclientapp.length()];
 
+  strcpy(ccfile_cookies, cfile_cookies);
   strcpy(cdata, data);
   strcpy(ccontenttype, contenttype);
   strcpy(ccontenttype2, contenttype2);
   strcpy(curi, uri);
   strcpy(ccontentlength, contentlength);
+  strcpy(ccloginid, loginid);
+  strcpy(cclientapp, clientapp);
 
+  //char *create_header(string p_s);
+  // x-qx-client-application: qiskit-api-py
+  
   //Defining headers.
   struct curl_slist *headerlist=NULL;
-  //static const char buf[] = "a"; // ?
-  //headerlist = curl_slist_append(headerlist, buf);
   headerlist = curl_slist_append(headerlist, ccontenttype);
   headerlist = curl_slist_append(headerlist, "Transfer-Encoding: chunked");
   
@@ -243,17 +286,22 @@ string qpost(string p_base_verbosity,
       show_var("Uri: ", curi);
       show_var("Content length: ", ccontentlength);
       show_var("Headers (init): ", ccontenttype);
+      show_var("Login id: ", ccloginid);
+      show_var("Client application: ", cclientapp);
     }
 
-  res1 = curl_global_init(CURL_GLOBAL_DEFAULT);
-  //res1 = curl_global_init(CURL_GLOBAL_ALL);
- 
+  res1 = curl_global_init(CURL_GLOBAL_ALL);
   curl = curl_easy_init();
   if(curl)
-    {
+    { 
       curl_easy_setopt(curl, CURLOPT_URL, curi);
+      curl_easy_setopt(curl, CURLOPT_COOKIEFILE, ccfile_cookies);
+      curl_easy_setopt(curl, CURLOPT_COOKIEJAR, ccfile_cookies);
       curl_easy_setopt(curl, CURLOPT_HEADER, true);
-
+      curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY); //
+      curl_easy_setopt(curl, CURLOPT_XOAUTH2_BEARER, ccloginid); //
+      //curl_easy_setopt(curl, CURLOPT_COOKIE, "name1=content1; name2=content2;");
+      
       //Depending of request.
       if (p_base_method == "post")
 	{
@@ -261,6 +309,8 @@ string qpost(string p_base_verbosity,
 	    {
 	      headerlist = curl_slist_append(headerlist, ccontenttype2);
 	      headerlist = curl_slist_append(headerlist, ccontentlength);
+	      headerlist = curl_slist_append(headerlist, cclientapp);
+	       
 	    }
 	  curl_easy_setopt(curl,CURLOPT_POST, 1L);
 	  curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
@@ -311,7 +361,6 @@ string qpost(string p_base_verbosity,
 	}
       if (p_base_verbosity == "yes")
 	{
-	  //show_var("Curl status message: ", res1);
 	  cout << "\nCurl status message: " << res1 << endl;
 	}      
     }
@@ -395,7 +444,7 @@ Output:
 - login_id as res.
 
  */
-string qx_login(string p_base_verbosity,
+std::vector<std::string> qx_login(string p_base_verbosity,
 		string p_base_method,
 		string p_login_data,
 		string p_post_content_type,
@@ -403,25 +452,50 @@ string qx_login(string p_base_verbosity,
 		string p_login_uri,
 		string p_login_name)
 {
-  string res = "na";
-
+  std::vector<std::string> res;
+  
+  string res00 = "na";
+  string res0 = "";
+  string res1 = "";
+  string res2 = "";
+  string res3 = "";
+  
   show_string("Sending log in data...");
-  res = qpost(p_base_verbosity, p_base_method, p_login_data, p_post_content_type, p_base_results_storage, p_login_uri, "na");
+  res00 = qpost(p_base_verbosity, p_base_method, p_login_data, p_post_content_type, p_base_results_storage, p_login_uri, "na");
   show_string("\n");
   show_string("Login result\n\n");
-  show_string(res);	      
+  show_string(res00);	      
 
-  store_results(p_base_results_storage, p_login_name, res);
+  store_results(p_base_results_storage, p_login_name, res00);
   
-  // Parse the userId value from the received json data.	      
-  res = seek_in_json(res, "\"userId\"");
-  show_var("login_id", res);  
-    
-  if (res == "")
+  // Parse the userId value from the received json data.
+  res0 = seek_in_json(res00, "\"id\"");
+  res.push_back(res0);
+
+  //res1 = seek_in_json(res00, "\"ttl\"");
+  //res.push_back(res1);
+  res.push_back("na");
+
+  res2 = seek_in_json(res00, "\"created\"");
+  res.push_back(res2);
+  
+  res3 = seek_in_json(res00, "\"userId\"");      
+  if (res3 == "")
     {
-      res = "na";
+      res.push_back("na");
     }
-  
+  else
+    {
+      res.push_back(res3);
+    }
+  if (p_base_verbosity == "yes")
+    {
+        show_var("id", res[0]);
+	show_var("ttl", res[1]);
+	show_var("created", res[2]);
+	show_var("userId", res[3]);
+    }
+ 
   return res;
 }
 
@@ -528,7 +602,10 @@ string qx_post_experiment(string p_base_verbosity,
   string post_content_type = "";
   
   post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name;
-  post_uri = post_uri+"?shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device+"&access_token="+p_login_id;
+  post_uri = post_uri+"?access_token="+p_login_id+"&shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
+
+  //post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name+"&shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
+  //post_uri = post_uri+"?access_token="+p_login_id;
   
   if(p_base_verbosity == "yes")
     {

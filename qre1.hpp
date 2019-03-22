@@ -30,6 +30,7 @@ qre1.hpp
 #include <sstream>
 #include <string.h>
 #include <cstring>
+#include <vector>
 #include <curl/curl.h>
 
 using namespace std;
@@ -51,6 +52,7 @@ void show_string(string p_t);
 
 string url_encode(string p_s);
 
+char *create_header(string p_s);
 
 string qpost(string p_base_verbosity,
 	     string p_base_method,
@@ -67,7 +69,7 @@ string read_qasm_file(string p_f);
 void store_results(string p_base_results_storage, string p_file, string p_contents_to_store);
 
 
-string qx_login(string p_base_verbosity,
+std::vector<std::string> qx_login(string p_base_verbosity,
 		string p_base_method,
 		string p_login_data,
 		string p_post_content_type,

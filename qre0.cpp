@@ -26,6 +26,7 @@ Sources:
 - https://stackoverflow.com/questions/51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it
 - https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
 - https://curl.haxx.se/libcurl/c/libcurl-tutorial.html
+- https://github.com/XanaduAI/pennylane-pq
 
 * Compilation (using the gcc compiler family) on Linux:
 
@@ -46,6 +47,7 @@ using namespace std;
 int main(int argc, char** argv)
 {
   int res1 = 0;
+  
   string res = "";
   string res2 = "na";
   string data = "";
@@ -67,6 +69,7 @@ int main(int argc, char** argv)
   string login_uri = "";
   string login_id = "";
   string login_name = "";
+  string login_content_type ="";
   string post_data = "";
   string post_content_type = "";
   string post_uri = "";
@@ -80,6 +83,8 @@ int main(int argc, char** argv)
   string delete_data = "";
   string delete_name = "";
   string request_log = "";
+  
+  std::vector<std::string>response_login;
   
   //Check number of arguments program_file, comm_file, 
   if (argc == 7)
@@ -130,6 +135,7 @@ int main(int argc, char** argv)
       base_max_credits = seek_in_file(cfg_file, "base-max-credits");
       login_data = seek_in_file(cfg_file, "login-data")+base_token;
       login_uri = base_uri + seek_in_file(cfg_file, "login-uri");
+      login_content_type = login_content_type+seek_in_file(cfg_file, "login-content-type");
       post_content_type = post_content_type+seek_in_file(cfg_file, "post-content-type");
       post_uri = base_uri + seek_in_file(cfg_file, "post-uri");
       get_content_type = get_content_type+seek_in_file(cfg_file, "get-content-type");
@@ -165,6 +171,7 @@ int main(int argc, char** argv)
 	  show_var("base-max-credits", base_max_credits);
 	  show_var("login-data", login_data);
 	  show_var("login-uri", login_uri);
+	  show_var("login-content-type", login_content_type);
 	  show_var("post-content-type", post_content_type);
 	  show_var("post-uri", post_uri);
 	  show_var("get-content-type", get_content_type);
@@ -182,14 +189,16 @@ int main(int argc, char** argv)
       else
 	{
 	  show_string(line);
-	  login_id=qx_login(base_verbosity,
+	  response_login=qx_login(base_verbosity,
 			    base_method,
 			    login_data,
-			    post_content_type,
+			    login_content_type,
 			    base_results_storage,
 			    login_uri,
 			    login_name);
-
+	  
+	  login_id = response_login[3];
+	  
 	  //store_results(base_results_storage, login_name, login_id);
 	  if(login_id == "na")
 	    {
