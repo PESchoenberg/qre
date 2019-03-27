@@ -86,11 +86,6 @@ string seek_in_json(string p_j, string p_v)
       // Now find the limit of the substring that corresponds to the value of p_v.
       if (res1.find(e) != std::string::npos)
 	{
-	  /*pos2 = res1.find(e);
-	  res1 = res1.substr(0,pos2-1);
-	  pos1 = res1.find(":");
-	  res1 = res1.substr(pos1+2);
-	  res = res1;*/
 	  if (res1.find("\",") != std::string::npos)
 	    {	  
 	      pos2 = res1.find("\",");
@@ -169,7 +164,8 @@ string url_encode(string p_s)
   if(curl)
     {
       res = curl_easy_escape(curl , res.c_str(), 0);
-    }
+    }  
+  curl_easy_cleanup(curl);
   
   return res;
 }
@@ -238,8 +234,8 @@ string qpost(string p_base_verbosity,
   string pcontenttype = p_content_type;
   string puri = p_uri;
   string ploginid = p_login_id;
-  string pcontenttype2 = "X-Access-Token: "+p_login_id+";charset=utf-8";
-  string pcontentlength = "Content-Length: "+to_string(pdata.length());
+  string pcontenttype2 = "x-access-token: "+p_login_id+";charset=utf-8";
+  string pcontentlength = "content-length: "+to_string(pdata.length());
   string pclientapp = "x-qx-client-application: qiskit-api-py";
 
   const char *cfile_cookies = file_cookies.c_str();
@@ -268,9 +264,6 @@ string qpost(string p_base_verbosity,
   strcpy(ccontentlength, contentlength);
   strcpy(ccloginid, loginid);
   strcpy(cclientapp, clientapp);
-
-  //char *create_header(string p_s);
-  // x-qx-client-application: qiskit-api-py
   
   //Defining headers.
   struct curl_slist *headerlist=NULL;
@@ -298,18 +291,22 @@ string qpost(string p_base_verbosity,
       curl_easy_setopt(curl, CURLOPT_COOKIEFILE, ccfile_cookies);
       curl_easy_setopt(curl, CURLOPT_COOKIEJAR, ccfile_cookies);
       curl_easy_setopt(curl, CURLOPT_HEADER, true);
-      curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY); //
-      curl_easy_setopt(curl, CURLOPT_XOAUTH2_BEARER, ccloginid); //
-      //curl_easy_setopt(curl, CURLOPT_COOKIE, "name1=content1; name2=content2;");
       
       //Depending of request.
       if (p_base_method == "post")
 	{
+	  if (p_login_id == "na")
+	    {
+	      curl_easy_setopt(curl, CURLOPT_FRESH_CONNECT, 1L);
+	    }
 	  if (p_login_id != "na")
 	    {
+	      curl_easy_setopt(curl, CURLOPT_FORBID_REUSE, 1L);
+	      
 	      headerlist = curl_slist_append(headerlist, ccontenttype2);
 	      headerlist = curl_slist_append(headerlist, ccontentlength);
 	      headerlist = curl_slist_append(headerlist, cclientapp);
+	      headerlist = curl_slist_append(headerlist, "Accept: application/json");
 	       
 	    }
 	  curl_easy_setopt(curl,CURLOPT_POST, 1L);
