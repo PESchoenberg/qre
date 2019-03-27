@@ -6,8 +6,8 @@
 ## Overview:
 
 This project seeks to produce a program capable of requesting the execution
-of QASM2 programs produced by means of any programming language on a IBM QX
-quantum computer.
+of QASM2 programs produced by means of any programming language on QASM -
+compatible quantum systems and simulators, such as IBM QX computers.
 
 You can create the required QASM2 files in various ways:
 
@@ -32,7 +32,7 @@ into the QX machine. I am still working on the execution request uri.
 * A compiler capable of handling C++ 2017.
 
 * You will need an account and an api token from the IBM Quantum Experience
-(see below).
+(see below) if you want to access IBM QX computers and simulators.
 
 
 ## Installation:
@@ -50,8 +50,8 @@ compile it (see usage section).
 
 * Compilation (using the gcc compiler family) on Linux:
 
-- g++ -std=c++17 -Wall -O3 -c qre0.cpp qre1.cpp 
-- g++ -std=c++17 -Wall -O3 qre0.o qre1.o -o qre -lcurl
+- g++ -std=c++17 -Wall -O3 -c qre0.cpp qre1.cpp qre2.cpp
+- g++ -std=c++17 -Wall -O3 qre0.o qre1.o qre2.o -o qre -lcurl
 
 * Testing:
 - You should update the api token on the provided qre.cfg file and use your
@@ -69,8 +69,13 @@ own:
 
   or
 
+  ./qre examples/example1.qasm lpost y simulator 1 example1_1 <ENT> to run it
+  on a local qre simulator.
+
+  or
+
   ./qre examples/example1.qasm post y simulator 1 example1_1 <ENT> to run it
-  on a QX simulator.
+  on a remote QX simulator.
 
   or
 

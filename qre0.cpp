@@ -41,6 +41,7 @@ Sources:
 
 #include "qre0.hpp"
 #include "qre1.hpp"
+#include "qre2.hpp"
 
 using namespace std;
 
@@ -185,6 +186,20 @@ int main(int argc, char** argv)
 	  //Nothing more to do.
 	  show_string("\n");
 	  show_string("Test finished.");
+	}
+      else if(base_method == "lpost")
+	{
+	  //Quantum local execution.
+	  res = qre_post_experiment(base_verbosity,
+				    base_data,
+				    base_seed,
+				    base_shots,
+				    base_name,
+				    base_device);
+
+	  show_string("\n");
+	  show_string("Lpost result\n\n");
+	  show_string(res);	  
 	}
       else
 	{
