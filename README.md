@@ -1,23 +1,26 @@
-# qre - QASM2 remote execution.
+# qre - local and remote runtime for QASM2 programs.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2612792.svg)](https://doi.org/10.5281/zenodo.2612792)
 
 
 ## Overview:
 
-This project seeks to produce a program capable of requesting the execution
-of QASM2 programs produced by means of any programming language on QASM -
-compatible quantum systems and simulators, such as IBM QX computers.
+This project seeks to produce a program capable of requesting the remote
+execution of QASM2 programs produced by means of any programming language
+on QASM - compatible quantum systems and simulators, such as IBM QX
+computers. You can also run those programs on a local simulator.
 
-You can create the required QASM2 files in various ways:
 
-* Create a compiler.
+Currently you cou can create the required QASM2 files in various ways:
+
+* Create a compiler that produces QASM2 code.
 
 * Use an existing compiler that produces QASM2 code like g2q (see below).
 
-* Write on your own your QASM2 source code.
+* Write on your own QASM2 source code.
 
-For qre any option is fine as long as you feed it standard QASM2 files.
+For qre any one of those options is fine as long as you feed it standard
+QASM2 files.
 
 The program is still unfinished but at this point it can successfully log
 into the QX machine. I am still working on the execution request uri.
@@ -25,11 +28,13 @@ into the QX machine. I am still working on the execution request uri.
 
 ## Dependencies:
 
-* g2q v 1.1.2 or later ( https://github.com/PESchoenberg/g2q )
+* g2q - v1.1.2 or later ( https://github.com/PESchoenberg/g2q )
 
-* libcurl.
+* curl - v7.47.0 or later.
 
-* A compiler capable of handling C++ 2017.
+* g++ - v4:5.3.1 or later.
+
+* Qlib - v1.0.1 or later ( https://github.com/qkmaxware/Qlib ).
 
 * You will need an account and an api token from the IBM Quantum Experience
 (see below) if you want to access IBM QX computers and simulators.
@@ -39,6 +44,14 @@ into the QX machine. I am still working on the execution request uri.
 
 * Just copy the contents of the compressed file in any folder you like and
 compile it (see usage section).
+
+* Once you have installed qre, you will need from the Qlib project its
+core package. So you should:
+- cd to the /Qlib-master/src folder.
+- Copy the /core folder to your clipboard.
+- Now cd to the folder containing qre.
+- Create /lib/qlib if you don’t have it already within qre’s main folder.
+- Paste the clipboard contents into the /lib/qlib folder of your qre folder.
 
 
 ## Uninstall:
@@ -69,7 +82,7 @@ own:
 
   or
 
-  ./qre examples/example1.qasm lpost y simulator 1 example1_1 <ENT> to run it
+  ./qre examples/example1.qasm post y local_simulator 1 example1_1 <ENT> to run it
   on a local qre simulator.
 
   or
@@ -95,6 +108,7 @@ own compatible compiler.
 * g2q Scheme to QASM2 compiler - - https://github.com/PESchoenberg/g2q
 
 * URL of this project - https://github.com/PESchoenberg/qre
+
 
 ## License:
 

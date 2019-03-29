@@ -26,11 +26,15 @@ qre2.hpp
 
 #include "qre1.hpp"
 
-string qre_post_experiment(string p_base_verbosity,
-			   string p_base_data,
-			   string p_base_seed,
-			   string p_base_shots,
-			   string p_base_name,
-			   string p_base_device);
+std::vector<std::string> qre_parse_qinst1(std::strng p_string);
+
+std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std::string p_base_data);
+
+std::string qre_post_experiment(std::string p_base_verbosity,
+				std::string p_base_data,
+				std::string p_base_seed,
+				std::string p_base_shots,
+				std::string p_base_name,
+				std::string p_base_device);
 
 #endif // !__QRE2_H
