@@ -26,6 +26,45 @@ qre1.cpp
 using namespace std;
 
 
+/* qre_recog - recongizes if p_string1 is found in p_string2.
+
+Arguments:
+- p_string1: string to be found as a substring in p_string2.
+- p_string2: string to search for p_string_1.
+
+Output:
+- Voolean true if found. False otherwise.
+
+ */
+bool qre_recog(std::string p_string1, std:: string p_string2)
+{
+  if (p_string2.find(p_string1) != std::string::npos)
+    {
+      return true;
+    }
+  else
+    {
+      return false;
+    }
+}
+
+
+/* qre_show_v - Shows p_string if verbosity is on.
+
+Arguments:
+- p_base_verbosity: base_verbosity.
+- p_string: string to show.
+
+ */
+void qre_show_v(std::string p_base_verbosity, std::string p_string)
+{
+  if(p_base_verbosity == "yes")
+    {
+      cout << p_string << endl;
+    }
+}
+
+
 /* seek_in_file - Seeks the name of a variable in a flat file and returns its 
 associated value.
 
@@ -37,17 +76,18 @@ Output:
 - The value associated to p_v, as a string.
 
  */
-string seek_in_file(string p_f, string p_v)
+std::string seek_in_file(std::string p_f, std::string p_v)
 {
-  string res = " ";
-  string file_line = "";
-  string file_name = p_f;
+  std::string res = " ";
+  std::string file_line = "";
+  std::string file_name = p_f;
   
   std::ifstream file;
   file.open(file_name.c_str());
   while ( getline (file,file_line))
     {
-      if (file_line.find(p_v) != std::string::npos)
+      //if (file_line.find(p_v) != std::string::npos)
+      if (qre_recog(p_v, file_line) == true)
 	{
 	  res = file_line.substr( file_line.find("=") + 1 );
 	}
@@ -68,25 +108,28 @@ Output:
 - The value associated to p_v, as a string; returns "na" if not found.
 
  */
-string seek_in_json(string p_j, string p_v)
+std::string seek_in_json(std::string p_j, std::string p_v)
 {
-  string res = "na";
-  string res1 = "";
-  string j = p_j;
-  string v = p_v + ":\"";
-  string e = "}";
+  std::string res = "na";
+  std::string res1 = "";
+  std::string j = p_j;
+  std::string v = p_v + ":\"";
+  std::string e = "}";
   size_t pos1;
   size_t pos2;
   
   // Find if p_v is in the string.
-  if (j.find(p_v) != std::string::npos)
+  //if (j.find(p_v) != std::string::npos)
+  if (qre_recog(p_v, j) == true)
     {
       res1 = j.substr( j.find(v));
 
       // Now find the limit of the substring that corresponds to the value of p_v.
-      if (res1.find(e) != std::string::npos)
+      //if (res1.find(e) != std::string::npos)
+      if (qre_recog(e, res1) == true)
 	{
-	  if (res1.find("\",") != std::string::npos)
+	  //if (res1.find("\",") != std::string::npos)
+	  if (qre_recog("\",", res1) == true)
 	    {	  
 	      pos2 = res1.find("\",");
 	    }
@@ -112,12 +155,12 @@ Aruments:
 - p_v: variable value.
 
  */
-void show_var(string p_t, string p_v)
+void show_var(std::string p_t, std::string p_v)
 {
-  string j = "\n";
-  string t1 = p_t;
-  string t2 = " = ";
-  string t3 = j + t1 + t2 + p_v + j;
+  std::string j = "\n";
+  std::string t1 = p_t;
+  std::string t2 = " = ";
+  std::string t3 = j + t1 + t2 + p_v + j;
   cout << t3;
 }
 
@@ -128,7 +171,7 @@ Aruments:
 - p_t: string to show.
 
  */
-void show_string(string p_t)
+void show_string(std::string p_t)
 {
   std::cout << p_t << "\n" << std::endl;
 }
@@ -155,10 +198,10 @@ Arguments:
 - p_s: string to url encode.
 
  */
-string url_encode(string p_s)
+std::string url_encode(std::string p_s)
 {
   CURL *curl;
-  string res = p_s;
+  std::string res = p_s;
   
   curl = curl_easy_init();
   if(curl)
@@ -180,9 +223,9 @@ Output:
 - Header cast as a pure c string.
 
  */
-char *create_header(string p_s)
+char *create_header(std::string p_s)
 {
-  string ps = p_s;
+  std::string ps = p_s;
   const char *s = ps.c_str();
   char cs[ps.length()];
 
@@ -217,26 +260,26 @@ Output:
 - Updated value for request log.
 
  */
-string qpost(string p_base_verbosity,
-	     string p_base_method,
-	     string p_base_data,
-	     string p_content_type,
-	     string p_base_results_storage,
-	     string p_uri,
-	     string p_login_id)
+std::string qpost(std::string p_base_verbosity,
+		  std::string p_base_method,
+		  std::string p_base_data,
+		  std::string p_content_type,
+		  std::string p_base_results_storage,
+		  std::string p_uri,
+		  std::string p_login_id)
 {
   CURL *curl;
   CURLcode res1 = CURLE_OK;
-  string res = " ";
-  string read_buffer;
-  string file_cookies = "data/cookies/qre_cookies.txt";
-  string pdata = p_base_data;
-  string pcontenttype = p_content_type;
-  string puri = p_uri;
-  string ploginid = p_login_id;
-  string pcontenttype2 = "x-access-token: "+p_login_id+";charset=utf-8";
-  string pcontentlength = "content-length: "+to_string(pdata.length());
-  string pclientapp = "x-qx-client-application: qiskit-api-py";
+  std::string res = " ";
+  std::string read_buffer;
+  std::string file_cookies = "data/cookies/qre_cookies.txt";
+  std::string pdata = p_base_data;
+  std::string pcontenttype = p_content_type;
+  std::string puri = p_uri;
+  std::string ploginid = p_login_id;
+  std::string pcontenttype2 = "x-access-token: "+p_login_id+";charset=utf-8";
+  std::string pcontentlength = "content-length: "+to_string(pdata.length());
+  std::string pclientapp = "x-qx-client-application: qiskit-api-py";
 
   const char *cfile_cookies = file_cookies.c_str();
   const char *data = pdata.c_str();
@@ -270,10 +313,10 @@ string qpost(string p_base_verbosity,
   headerlist = curl_slist_append(headerlist, ccontenttype);
   headerlist = curl_slist_append(headerlist, "Transfer-Encoding: chunked");
   
-  //Final check of data.
+  //Final check of data. 
   if (p_base_verbosity == "yes")
     {
-      show_string("Data as is just before the making request:");
+      show_string("Data as is just before making the request:");
       show_var("Method: ", p_base_method);
       show_var("Data: ", cdata);
       show_var("Uri: ", curi);
@@ -356,10 +399,7 @@ string qpost(string p_base_verbosity,
 	{
 	  res = read_buffer;
 	}
-      if (p_base_verbosity == "yes")
-	{
-	  cout << "\nCurl status message: " << res1 << endl;
-	}      
+      qre_show_v(p_base_verbosity, ("\nCurl status message: "));    
     }
 
   curl_slist_free_all(headerlist);
@@ -376,12 +416,12 @@ Arguments:
 - p_f: qasm file to read.
 
  */
-string read_qasm_file(string p_f)
+std::string read_qasm_file(std::string p_f)
 {
 
-  string res = "";
-  string file_line = "";
-  string file_name = p_f;
+  std::string res = "";
+  std::string file_line = "";
+  std::string file_name = p_f;
   
   std::ifstream file;
   file.open(file_name.c_str());
@@ -404,12 +444,14 @@ Arguments:
 - p_contents_to_store.
 
  */
-void store_results(string p_base_results_storage, string p_file, string p_contents_to_store)
+void store_results(std::string p_base_results_storage,
+		   std::string p_file,
+		   std::string p_contents_to_store)
 {
-  string pathj = "data/json/";
-  string paths = "data/sqlite3";
-  string db = "qre.db";
-  string file = p_file;
+  std::string pathj = "data/json/";
+  std::string paths = "data/sqlite3";
+  std::string db = "qre.db";
+  std::string file = p_file;
 
   if (p_base_results_storage == "json")
     {
@@ -441,21 +483,21 @@ Output:
 - login_id as res.
 
  */
-std::vector<std::string> qx_login(string p_base_verbosity,
-		string p_base_method,
-		string p_login_data,
-		string p_post_content_type,
-		string p_base_results_storage,
-		string p_login_uri,
-		string p_login_name)
+std::vector<std::string> qx_login(std::string p_base_verbosity,
+				  std::string p_base_method,
+				  std::string p_login_data,
+				  std::string p_post_content_type,
+				  std::string p_base_results_storage,
+				  std::string p_login_uri,
+				  std::string p_login_name)
 {
   std::vector<std::string> res;
   
-  string res00 = "na";
-  string res0 = "";
-  string res1 = "";
-  string res2 = "";
-  string res3 = "";
+  std::string res00 = "na";
+  std::string res0 = "";
+  std::string res1 = "";
+  std::string res2 = "";
+  std::string res3 = "";
   
   show_string("Sending log in data...");
   res00 = qpost(p_base_verbosity, p_base_method, p_login_data, p_post_content_type, p_base_results_storage, p_login_uri, "na");
@@ -517,18 +559,18 @@ Sources:
 - https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
 
  */
-string qx_delete_experiment(string p_base_verbosity,
-			    string p_base_method,
-			    string p_delete_data,
-			    string p_delete_content_type,
-			    string p_base_results_storage,			    
-			    string p_delete_uri,
-			    string p_delete_name,
-			    string p_login_id,
-			    string p_base_name)
+std::string qx_delete_experiment(std::string p_base_verbosity,
+				 std::string p_base_method,
+				 std::string p_delete_data,
+				 std::string p_delete_content_type,
+				 std::string p_base_results_storage,			    
+				 std::string p_delete_uri,
+				 std::string p_delete_name,
+				 std::string p_login_id,
+				 std::string p_base_name)
 {
-  string res = "";
-  string delete_uri = p_delete_uri; 
+  std::string res = "";
+  std::string delete_uri = p_delete_uri; 
     
   delete_uri = delete_uri + "/users/"+p_login_id+"/codes/"+p_base_name;
   if(p_base_verbosity == "yes")
@@ -578,31 +620,28 @@ Output:
 -  Result of the operation.
 
  */
-string qx_post_experiment(string p_base_verbosity,
-			  string p_base_method,
-			  string p_post_data,
-			  string p_post_content_type,
-			  string p_base_results_storage,			    
-			  string p_post_uri,
-			  string p_post_name,
-			  string p_login_id,
-			  string p_base_name,
-			  string p_base_data,
-			  string p_base_shots,
-			  string p_base_seed,
-			  string p_base_device)			  
+std::string qx_post_experiment(std::string p_base_verbosity,
+			       std::string p_base_method,
+			       std::string p_post_data,
+			       std::string p_post_content_type,
+			       std::string p_base_results_storage,			    
+			       std::string p_post_uri,
+			       std::string p_post_name,
+			       std::string p_login_id,
+			       std::string p_base_name,
+			       std::string p_base_data,
+			       std::string p_base_shots,
+			       std::string p_base_seed,
+			       std::string p_base_device)			  
 {
-  string res = "";
-  string post_data = "";
-  string post_uri = p_post_uri;
-  string header2 = "";
-  string post_content_type = "";
+  std::string res = "";
+  std::string post_data = "";
+  std::string post_uri = p_post_uri;
+  std::string header2 = "";
+  std::string post_content_type = "";
   
   post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name;
   post_uri = post_uri+"?access_token="+p_login_id+"&shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
-
-  //post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name+"&shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
-  //post_uri = post_uri+"?access_token="+p_login_id;
   
   if(p_base_verbosity == "yes")
     {

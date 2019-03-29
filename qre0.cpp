@@ -42,6 +42,7 @@ Sources:
 #include "qre0.hpp"
 #include "qre1.hpp"
 #include "qre2.hpp"
+#include "./lib/qlib/core/qlib.h"
 
 using namespace std;
 
@@ -49,41 +50,41 @@ int main(int argc, char** argv)
 {
   int res1 = 0;
   
-  string res = "";
-  string res2 = "na";
-  string data = "";
-  string line = "---------------------------------------------------------------\n";
-  string cfg_file = "qre.cfg";
-  string base_file = "";
-  string base_data = "";
-  string base_token = "";
-  string base_uri = "";
-  string base_results_storage = "";
-  string base_method = "";
-  string base_verbosity = "no";
-  string base_shots = "";
-  string base_max_credits = "";
-  string base_device = "";
-  string base_seed = "1";
-  string base_name = "";
-  string login_data = "";
-  string login_uri = "";
-  string login_id = "";
-  string login_name = "";
-  string login_content_type ="";
-  string post_data = "";
-  string post_content_type = "";
-  string post_uri = "";
-  string post_name = "";
-  string get_content_type = "";
-  string get_uri = "";
-  string get_data = "";
-  string get_name = "";
-  string delete_content_type = "";
-  string delete_uri = "";
-  string delete_data = "";
-  string delete_name = "";
-  string request_log = "";
+  std::string res = "";
+  std::string res2 = "na";
+  std::string data = "";
+  std::string line = "---------------------------------------------------------------\n";
+  std::string cfg_file = "qre.cfg";
+  std::string base_file = "";
+  std::string base_data = "";
+  std::string base_token = "";
+  std::string base_uri = "";
+  std::string base_results_storage = "";
+  std::string base_method = "";
+  std::string base_verbosity = "no";
+  std::string base_shots = "";
+  std::string base_max_credits = "";
+  std::string base_device = "";
+  std::string base_seed = "1";
+  std::string base_name = "";
+  std::string login_data = "";
+  std::string login_uri = "";
+  std::string login_id = "";
+  std::string login_name = "";
+  std::string login_content_type ="";
+  std::string post_data = "";
+  std::string post_content_type = "";
+  std::string post_uri = "";
+  std::string post_name = "";
+  std::string get_content_type = "";
+  std::string get_uri = "";
+  std::string get_data = "";
+  std::string get_name = "";
+  std::string delete_content_type = "";
+  std::string delete_uri = "";
+  std::string delete_data = "";
+  std::string delete_name = "";
+  std::string request_log = "";
   
   std::vector<std::string>response_login;
   
@@ -150,60 +151,70 @@ int main(int argc, char** argv)
       get_name = base_name + "_get";
       delete_name = base_name + "_delete";
       
-      // Show parameters if verbosity is set to yes.
-      if(base_verbosity == "yes")
-	{
-	  show_string(line);
-	  show_string("Arguments entered from the command line:");
-	  show_var("File", base_file);
-	  show_var("Method", base_method);
-	  show_var("Verbosity", base_verbosity);
-	  show_var("Device", base_device);
-	  show_var("Seed", base_seed);
-	  show_var("Name", base_name);	  
-	  show_string(line);
-	  show_string("Configuration values:");	  
-	  show_var("base-file", base_file);
-	  show_var("base-data", base_data);
-	  show_var("base-token", base_token);
-	  show_var("base-uri", base_uri);
-	  show_var("base-results-storage", base_results_storage);
-	  show_var("base-shots", base_shots);
-	  show_var("base-max-credits", base_max_credits);
-	  show_var("login-data", login_data);
-	  show_var("login-uri", login_uri);
-	  show_var("login-content-type", login_content_type);
-	  show_var("post-content-type", post_content_type);
-	  show_var("post-uri", post_uri);
-	  show_var("get-content-type", get_content_type);
-	  show_var("get-uri", get_uri);
-	  show_var("delete-content-type", delete_content_type);
-	  show_var("delete-uri", delete_uri);	  
-	}
-
       if(base_method == "test")
 	{
-	  //Nothing more to do.
+	  // Show parameters if verbosity is set to yes.
+	  if(base_verbosity == "yes")
+	    {
+	      show_string(line);
+	      show_string("Arguments entered from the command line:");
+	      show_var("File", base_file);
+	      show_var("Method", base_method);
+	      show_var("Verbosity", base_verbosity);
+	      show_var("Device", base_device);
+	      show_var("Seed", base_seed);
+	      show_var("Name", base_name);	  
+	      show_string(line);
+	      show_string("Configuration values:");	  
+	      show_var("base-file", base_file);
+	      show_var("base-data", base_data);
+	      show_var("base-token", base_token);
+	      show_var("base-uri", base_uri);
+	      show_var("base-results-storage", base_results_storage);
+	      show_var("base-shots", base_shots);
+	      show_var("base-max-credits", base_max_credits);
+	      show_var("login-data", login_data);
+	      show_var("login-uri", login_uri);
+	      show_var("login-content-type", login_content_type);
+	      show_var("post-content-type", post_content_type);
+	      show_var("post-uri", post_uri);
+	      show_var("get-content-type", get_content_type);
+	      show_var("get-uri", get_uri);
+	      show_var("delete-content-type", delete_content_type);
+	      show_var("delete-uri", delete_uri);	  
+	    }
+	  else
+	    {
+	      show_string("\n");
+	      show_string("Turn verbosity on to see test results.");
+	    }
 	  show_string("\n");
 	  show_string("Test finished.");
 	}
-      else if(base_method == "lpost")
+      else if (base_device == "local_simulator")
 	{
-	  //Quantum local execution.
-	  res = qre_post_experiment(base_verbosity,
-				    base_data,
-				    base_seed,
-				    base_shots,
-				    base_name,
-				    base_device);
+	  if(base_method == "post")
+	    {
+	      //Quantum local execution.
+	      res = qre_post_experiment(base_verbosity, base_data, base_seed, base_shots, base_name, base_device);
+	      show_string("\n");
+	      show_string("Post result\n\n");
+	      show_string(res);
+	    }
+	  if(base_method == "get")
+	    {
 
-	  show_string("\n");
-	  show_string("Lpost result\n\n");
-	  show_string(res);	  
-	}
-      else
+	    }
+	  if(base_method == "delete")
+	    {
+
+	    }	  
+	}    
+      else if (base_device != "local_simulator")
 	{
 	  show_string(line);
+
+	  //Login first.
 	  response_login=qx_login(base_verbosity,
 			    base_method,
 			    login_data,
@@ -214,7 +225,6 @@ int main(int argc, char** argv)
 	  
 	  login_id = response_login[3];
 	  
-	  //store_results(base_results_storage, login_name, login_id);
 	  if(login_id == "na")
 	    {
 	      show_string("LOGIN FAILED");
@@ -264,6 +274,11 @@ int main(int argc, char** argv)
 	      
 		}
 	    }	  
+	}
+      else
+	{
+	  res1 = 1;
+	  show_string("Incorrect method or base device.");
 	}
     }
   else

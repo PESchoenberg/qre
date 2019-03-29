@@ -35,61 +35,66 @@ qre1.hpp
 
 using namespace std;
 
+bool qre_recog(std::string p_string1, std:: string p_string2);
 
-string seek_in_file(string p_f, string p_v);
+void qre_show_v(std::string p_base_verbosity, std::string p_string);
 
-string seek_in_json(string p_j, string p_v);
+std::string seek_in_file(std::string p_f, std::string p_v);
 
-void show_var(string p_t, string p_v);
+std::string seek_in_json(std::string p_j, std::string p_v);
 
-void show_string(string p_t);
+void show_var(std::string p_t, std::string p_v);
 
-string url_encode(string p_s);
+void show_string(std::string p_t);
 
-char *create_header(string p_s);
+std::string url_encode(std::string p_s);
 
-string qpost(string p_base_verbosity,
-	     string p_base_method,
-	     string p_base_data,
-	     string p_post_content_type,
-	     string p_base_results_storage,
-	     string p_uri,
-	     string p_login_id);
+char *create_header(std::string p_s);
 
-string read_qasm_file(string p_f);
+std::string qpost(std::string p_base_verbosity,
+		  std::string p_base_method,
+		  std::string p_base_data,
+		  std::string p_post_content_type,
+		  std::string p_base_results_storage,
+		  std::string p_uri,
+		  std::string p_login_id);
 
-void store_results(string p_base_results_storage, string p_file, string p_contents_to_store);
+std::string read_qasm_file(std::string p_f);
 
-std::vector<std::string> qx_login(string p_base_verbosity,
-		string p_base_method,
-		string p_login_data,
-		string p_post_content_type,
-		string p_base_results_storage,
-		string p_login_uri,
-		string p_login_name);
+void store_results(std::string p_base_results_storage,
+		   std::string p_file,
+		   std::string p_contents_to_store);
 
-string qx_delete_experiment(string p_base_verbosity,
-			    string p_base_method,
-			    string p_delete_data,
-			    string p_delete_content_type,
-			    string p_base_results_storage,			    
-			    string p_delete_uri,
-			    string p_delete_name,
-			    string p_login_id,
-			    string p_base_name);
+std::vector<std::string> qx_login(std::string p_base_verbosity,
+				  std::string p_base_method,
+				  std::string p_login_data,
+				  std::string p_post_content_type,
+				  std::string p_base_results_storage,
+				  std::string p_login_uri,
+				  std::string p_login_name);
 
-string qx_post_experiment(string p_base_verbosity,
-			  string p_base_method,
-			  string p_post_data,
-			  string p_post_content_type,
-			  string p_base_results_storage,			    
-			  string p_post_uri,
-			  string p_post_name,
-			  string p_login_id,
-			  string p_base_name,
-			  string p_base_data,
-			  string p_base_shots,
-			  string p_base_seed,
-			  string p_base_device);
+std::string qx_delete_experiment(std::string p_base_verbosity,
+				 std::string p_base_method,
+				 std::string p_delete_data,
+				 std::string p_delete_content_type,
+				 std::string p_base_results_storage,			    
+				 std::string p_delete_uri,
+				 std::string p_delete_name,
+				 std::string p_login_id,
+				 std::string p_base_name);
+
+std::string qx_post_experiment(std::string p_base_verbosity,
+			       std::string p_base_method,
+			       std::string p_post_data,
+			       std::string p_post_content_type,
+			       std::string p_base_results_storage,			    
+			       std::string p_post_uri,
+			       std::string p_post_name,
+			       std::string p_login_id,
+			       std::string p_base_name,
+			       std::string p_base_data,
+			       std::string p_base_shots,
+			       std::string p_base_seed,
+			       std::string p_base_device);
 
 #endif // !__QRE1_H
