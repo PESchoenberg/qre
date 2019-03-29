@@ -38,7 +38,7 @@ Output:
   - qubit number.
 
  */
-std::vector<std::string> qre_parse_qins1(std::strng p_string)
+std::vector<std::string> qre_parse_qins1(std::string p_string)
 {
 
 }
