@@ -105,7 +105,7 @@ own compatible compiler.
 
 * IBM Quantum Experience - ( https://quantumexperience.ng.bluemix.net/qx/experience )
 
-* g2q Scheme to QASM2 compiler - - https://github.com/PESchoenberg/g2q
+* g2q Scheme to QASM2 compiler - - https://github.com/PESchoenberg/g2q (LGPL-3.0 or later)
 
 * URL of this project - https://github.com/PESchoenberg/qre
 
