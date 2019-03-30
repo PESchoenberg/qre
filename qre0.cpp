@@ -40,9 +40,7 @@ Sources:
 
 
 #include "qre0.hpp"
-#include "qre1.hpp"
-#include "qre2.hpp"
-#include "./lib/qlib/core/qlib.h"
+
 
 using namespace std;
 

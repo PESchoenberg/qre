@@ -26,7 +26,10 @@ qre2.hpp
 
 #include "qre1.hpp"
 
-std::vector<std::string> qre_parse_qinst1(std::string p_string);
+
+int qre_parse_qbitnum(std::string p_string);
+
+std::string qre_parse_reg(std::string p_string, std::string p_type);
 
 std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std::string p_base_data);
 

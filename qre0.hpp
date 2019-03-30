@@ -24,7 +24,8 @@ qre0.hpp
 #ifndef __QRE0_H
 #define __QRE0_H
 
-#include "qre0.hpp"
+#include "qre1.hpp"
+#include "qre2.hpp"
 
 #endif // !__QRE0_H
 

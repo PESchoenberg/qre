@@ -33,6 +33,7 @@ qre1.hpp
 #include <vector>
 #include <curl/curl.h>
 
+
 using namespace std;
 
 bool qre_recog(std::string p_string1, std:: string p_string2);
