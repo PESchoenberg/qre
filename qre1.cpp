@@ -33,7 +33,7 @@ Arguments:
 - p_string2: string to search for p_string_1.
 
 Output:
-- Voolean true if found. False otherwise.
+- Boolean true if found. False otherwise.
 
  */
 bool qre_recog(std::string p_string1, std:: string p_string2)
