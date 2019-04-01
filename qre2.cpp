@@ -135,157 +135,252 @@ std::string qre_post_experiment(std::string p_base_verbosity,
 				std::string p_base_device)
 {
   std::vector<std::string>qasm_instructions;
-  qreg q(1);
+
+  int shots = 0;
+  int vector_size = 0;
+  
   std::vector<double>c;
+  std::vector<double>r;
+  
   std::string res = "";
+  std::string str = "";
   std::string line = "";
   std::string comment = "//";
   std::string space = " ";
-
+  std::string sq = "";
+  
   long unsigned int rn = 0;
+  long unsigned int rm = 0;
+  
+  size_t pos = 0;
   
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
-  int vector_size = qasm_instructions.size();
+  vector_size = qasm_instructions.size();
+  shots = (int)qre_s2d(p_base_shots);
+
+  // We need to define qreg q and creg c before parsing anything else in the QASM file.
   for(int i = 0; i < vector_size; i++)
     {
-      // Find if line will be ingored or not based on the value of delim.
-      if (qre_recog(comment, qasm_instructions[i]) == true)
+      if (qre_recog("qreg", qasm_instructions[i]) == true)
 	{
-	  qre_show_v(p_base_verbosity, ("Ignore, comment -> " + qasm_instructions[i]));
+	  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 	}
-      // Find if line will be ingored if it doesn not have spaces.
-      else if (qre_recog(space, qasm_instructions[i]) == false)
-	{
-	  qre_show_v(p_base_verbosity, ("Ignore, error -> " + qasm_instructions[i]));
-	}
-      else
-	{
-	  qre_show_v(p_base_verbosity, ("Post   -> " + qasm_instructions[i]));
+    }
 
-	  // Process quantum instructions.
-
-	  // ( Instructions that have parenthesis are composites and require secial treatment.
-	  if (qre_recog("(", qasm_instructions[i]) == true)
+  qreg q(rn);
+  cout << " Created qubit register q[" << rn << "]." << endl;
+  rn = 0;
+  
+  for(int i = 0; i < vector_size; i++)
+    {
+      if (qre_recog("creg", qasm_instructions[i]) == true)
+	{
+	  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "c"));
+	  if (c.size() == 0)
 	    {
-
-	    }
-	  // If instructions are atomic...
-	  else
-	    {	  
-	      // OPENQASM
-	      if (qre_recog("OPENQASM", qasm_instructions[i]) == true)
+	      for(int j = 0; j < (int)rn; j++)
 		{
-		  // Do nothing in this case
-		  if (qre_recog("2.", qasm_instructions[i]) == true)
-		    {
-		      cout << " Recognized as OPENQASM 2.*." << endl;
-		    }
-		  else
-		    {
-		      cout << " Undefined OPENQASM version." << endl;
-		    }
+		  c.push_back(0.00);
+		  r.push_back(0.00);
 		}
-
-	      // include
-	      if (qre_recog("include", qasm_instructions[i]) == true)
-		{
-		  cout << " Library." << endl;
-		}	  
-
-	      // qreg
-	      if (qre_recog("qreg", qasm_instructions[i]) == true)
-		{
-		  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		  qreg q(rn);
-		  cout << " Created qubit register q[" << rn << "]." << endl;
-		}
-
-	      // creg
-	      if (qre_recog("creg", qasm_instructions[i]) == true)
-		{
-		  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "c"));	      
-		  for(int j = 0; j < (int)rn; j++)
-		    {
-		      c.push_back(0.00);
-		    }
-		  cout << " Created bit register c[" << rn << "]." << endl;
-		}	  
-
-	      // h gate.
-	      if (qre_recog("h ", qasm_instructions[i]) == true)
-		{
-		  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		  q.apply(gates::H, {rn});
-		  cout << " h gate to " << rn << endl;
-		}
-
-	      // x gate.
-	      if ((qre_recog("x ", qasm_instructions[i]) == true)&&(qre_recog("cx ", qasm_instructions[i]) == false))
-		{		  	     
-		  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		  q.apply(gates::X, {rn});
-		  cout << " x gate to " << rn << endl;
-		}
-	      
-	      // y gate.
-	      if ((qre_recog("y ", qasm_instructions[i]) == true)&&(qre_recog("cy ", qasm_instructions[i]) == false))
-		{
-		  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		  q.apply(gates::Y, {rn});
-		  cout << " y gate to " << rn << endl;
-		}
-
-	      // z gate.
-	      if ((qre_recog("z ", qasm_instructions[i]) == true)&&(qre_recog("cz ", qasm_instructions[i]) == false))
-		{
-		  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		  q.apply(gates::Z, {rn});
-		  cout << " z gate to " << rn << endl;
-		}
-
-	      // s gate.
-	      if (qre_recog("s ", qasm_instructions[i]) == true )
-		{
-		  /*rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		  q.apply(gates::S, {rn});
-		  cout << " s gate to " << rn << endl;*/
-		  cout << " s gate not recognized." << endl;
-		}
-
-	      // t gate.
-	      if (qre_recog("t ", qasm_instructions[i]) == true)
-		{
-		  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		  q.apply(gates::T, {rn});
-		  cout << " t gate to " << rn << endl;
-		}
-
-	      // t gate.
-	      if (qre_recog("id ", qasm_instructions[i]) == true)
-		{
-		  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		  q.apply(gates::I, {rn});
-		  cout << " id gate to " << rn << endl;
-		}
-
-	      // s gate.
-	      if (qre_recog("barrier ", qasm_instructions[i]) == true )
-		{
-		  cout << " barrier not recognized." << endl;
-		}
-	      
 	    }
 	}
     }
 
-  //Format results on c vector.
-  res = "{";
-  cout << "c size " << c.size() << endl;
-  for(int i = 0; i < (int)c.size(); i++)
+  cout << " Created bit register c[" << rn << "]." << endl;
+
+  // Shots iteration.
+  for(int k = 0; k < shots; k++)
     {
-      std::ostringstream stro;
-      stro << c[i];
-      std::string str = stro.str();
+
+      // File parsing iteration.
+      for(int i = 0; i < vector_size; i++)
+	{
+	  // Find if line will be ingored or not based on the value of delim.
+	  if (qre_recog(comment, qasm_instructions[i]) == true)
+	    {
+	      qre_show_v(p_base_verbosity, ("Ignore, comment -> " + qasm_instructions[i]));
+	    }
+	  // Find if line will be ingored if it doesn not have spaces.
+	  else if (qre_recog(space, qasm_instructions[i]) == false)
+	    {
+	      qre_show_v(p_base_verbosity, ("Ignore, error -> " + qasm_instructions[i]));
+	    }
+	  else
+	    {
+	      qre_show_v(p_base_verbosity, ("Post   -> " + qasm_instructions[i]));
+
+	      // Process quantum instructions.		  
+	      
+	      // If instructions are atomic (no parenthesis found).
+	      if (qre_recog("(", qasm_instructions[i]) == false)
+		{	  
+		  // OPENQASM
+		  if (qre_recog("OPENQASM", qasm_instructions[i]) == true)
+		    {
+		      // Do nothing in this case
+		      if (qre_recog("2.", qasm_instructions[i]) == true)
+			{
+			  cout << " Recognized as OPENQASM 2.*." << endl;
+			}
+		      else
+			{
+			  cout << " Undefined OPENQASM version." << endl;
+			}
+		    }
+
+		  // include
+		  if (qre_recog("include", qasm_instructions[i]) == true)
+		    {
+		      cout << " Library." << endl;
+		    }	  
+
+		  // measurement gate.
+		  if (qre_recog("measure", qasm_instructions[i]) == true)
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "q"));
+		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "c"));
+		      cout << q.toString() << endl;
+		      cout << " measure gate from " << rn << " to " << rm << endl;
+		    }
+		  
+		  // cx gate.
+		  if (qre_recog("cx", qasm_instructions[i]) == true)
+		    {
+		      pos = qasm_instructions[i].find(",");
+
+		      //Find the first q in the string
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
+
+		      //Find the second q
+		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
+
+		      q.apply(gates::CX, {rn,rm});
+		      cout << " cx gate from " << rn << " to " << rm << endl;
+		    }
+		  
+		  // h gate.
+		  if (qre_recog("h ", qasm_instructions[i]) == true)
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      q.apply(gates::H, {rn});
+		      cout << " h gate to " << rn << endl;
+		    }
+
+		  // x gate.
+		  if ((qre_recog("x ", qasm_instructions[i]) == true)&&(qre_recog("cx ", qasm_instructions[i]) == false))
+		    {		  	     
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      q.apply(gates::X, {rn});
+		      cout << " x gate to " << rn << endl;
+		    }
+	      
+		  // y gate.
+		  if ((qre_recog("y ", qasm_instructions[i]) == true)&&(qre_recog("cy ", qasm_instructions[i]) == false))
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      q.apply(gates::Y, {rn});
+		      cout << " y gate to " << rn << endl;
+		    }
+
+		  // z gate.
+		  if ((qre_recog("z ", qasm_instructions[i]) == true)&&(qre_recog("cz ", qasm_instructions[i]) == false))
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      q.apply(gates::Z, {rn});
+		      cout << " z gate to " << rn << endl;
+		    }
+
+		  // s gate.
+		  if (qre_recog("s ", qasm_instructions[i]) == true )
+		    {
+		      /*rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+			q.apply(gates::S, {rn});
+			cout << " s gate to " << rn << endl;*/
+		      cout << " s gate not recognized." << endl;
+		    }
+
+		  // sdg gate.
+		  if (qre_recog("sdg", qasm_instructions[i]) == true)
+		    {
+		      cout << " sdg gate not recognized." << endl;
+		    }
+		  
+		  // t gate.
+		  if (qre_recog("t ", qasm_instructions[i]) == true)
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      q.apply(gates::T, {rn});
+		      cout << " t gate to " << rn << endl;
+		    }
+
+		  // tdg gate.
+		  if (qre_recog("tdg", qasm_instructions[i]) == true)
+		    {
+		      cout << " tdg gate not recognized." << endl;
+		    }
+		  
+		  // t gate.
+		  if (qre_recog("id ", qasm_instructions[i]) == true)
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      q.apply(gates::I, {rn});
+		      cout << " id gate to " << rn << endl;
+		    }
+
+		  // s gate.
+		  if (qre_recog("barrier ", qasm_instructions[i]) == true )
+		    {
+		      cout << " barrier not recognized." << endl;
+		    }
+	      
+		}
+
+	      // ( Instructions that have parenthesis are composites and require secial treatment.
+	      if (qre_recog("(", qasm_instructions[i]) == true)
+		{
+		  
+		  // u1 gate.
+		  if (qre_recog("u1", qasm_instructions[i]) == true)
+		    {
+		      cout << " u1 gate not recognized." << endl;
+		    }
+
+		  // u2 gate.
+		  if (qre_recog("u2", qasm_instructions[i]) == true)
+		    {
+		      cout << " u2 gate not recognized." << endl;
+		    }
+
+		  // u3 gate.
+		  if (qre_recog("u3", qasm_instructions[i]) == true)
+		    {
+		      cout << " u3 gate not recognized." << endl;
+		    }
+	       		  
+		}	      
+	    }
+	}
+
+      // Add vales and average shots.
+      for(int j = 0; j < (int)c.size(); j++)
+	{
+	  r[j] = r[j] + c[j];
+	}
+      for(int j = 0; j < (int)r.size(); j++)
+	{
+	  r[j] = r[j] / shots;
+	}
+      
+    } // k
+
+  
+  //Format results on r vector.
+  res = "{";
+  //cout << "c size " << c.size() << endl;
+  for(int i = 0; i < (int)r.size(); i++)
+    {
+      str = qre_d2s(r[i]);    
       if (i > 0)
 	{
 	  res = res + ":";

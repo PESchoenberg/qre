@@ -27,6 +27,10 @@ Sources:
 - https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
 - https://curl.haxx.se/libcurl/c/libcurl-tutorial.html
 - https://github.com/XanaduAI/pennylane-pq
+- https://arxiv.org/pdf/1710.01794.pdf
+- https://arxiv.org/pdf/1805.09607.pdf
+- https://arxiv.org/pdf/1808.02449.pdf
+- ftp://ftp.cs.princeton.edu/techreports/2012/934.pdf
 
 * Compilation (using the gcc compiler family) on Linux:
 

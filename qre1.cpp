@@ -26,6 +26,48 @@ qre1.cpp
 using namespace std;
 
 
+/* qre-d2s - Converts a double to string.
+
+Arguments:
+- p_double: double to convert.
+
+Output:
+- String.
+
+ */
+std::string qre_d2s(double p_double)
+{
+  double dob = 0.00;
+  
+  std::ostringstream stro;
+  stro << dob;
+  std::string res = stro.str();  
+
+  return res;
+}
+
+
+/* qre-s2d - Converts a string to a double.
+
+Arguments:
+- p_string: string to convert.
+
+Output:
+- Double.
+
+ */
+double qre_s2d(std::string p_string)
+{
+  double res = 0.00;
+  std::string str = p_string;
+  
+  stringstream strs(str); 
+  strs >> res;
+ 
+  return res;
+}
+
+
 /* qre_recog - recongizes if p_string1 is found in p_string2.
 
 Arguments:
