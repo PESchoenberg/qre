@@ -36,6 +36,10 @@ qre1.hpp
 
 using namespace std;
 
+std::string qre_d2s(double p_double);
+
+double qre_s2d(std::string p_string);
+
 bool qre_recog(std::string p_string1, std:: string p_string2);
 
 void qre_show_v(std::string p_base_verbosity, std::string p_string);
