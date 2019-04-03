@@ -26,18 +26,51 @@ qre2.hpp
 
 #include "qre1.hpp"
 
+std::string ibmqx_qpost(std::string p_base_verbosity,
+			std::string p_base_method,
+			std::string p_base_data,
+			std::string p_post_content_type,
+			std::string p_base_results_storage,
+			std::string p_uri,
+			std::string p_login_id);
 
-int qre_parse_qbitnum(std::string p_string);
+std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
+				     std::string p_base_method,
+				     std::string p_login_data,
+				     std::string p_post_content_type,
+				     std::string p_base_results_storage,
+				     std::string p_login_uri,
+				     std::string p_login_name);
 
-std::string qre_parse_reg(std::string p_string, std::string p_type);
+std::string ibmqx_post_experiment(std::string p_base_verbosity,
+				  std::string p_base_method,
+				  std::string p_post_data,
+				  std::string p_post_content_type,
+				  std::string p_base_results_storage,			    
+				  std::string p_post_uri,
+				  std::string p_post_name,
+				  std::string p_login_id,
+				  std::string p_base_name,
+				  std::string p_base_data,
+				  std::string p_base_shots,
+				  std::string p_base_seed,
+				  std::string p_base_device);
 
-std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std::string p_base_data);
+std::string ibmqx_delete_experiment(std::string p_base_verbosity,
+				    std::string p_base_method,
+				    std::string p_delete_data,
+				    std::string p_delete_content_type,
+				    std::string p_base_results_storage,			    
+				    std::string p_delete_uri,
+				    std::string p_delete_name,
+				    std::string p_login_id,
+				    std::string p_base_name);
 
-std::string qre_post_experiment(std::string p_base_verbosity,
-				std::string p_base_data,
-				std::string p_base_seed,
-				std::string p_base_shots,
-				std::string p_base_name,
-				std::string p_base_device);
+std::string qlib_post_experiment(std::string p_base_verbosity,
+				 std::string p_base_data,
+				 std::string p_base_seed,
+				 std::string p_base_shots,
+				 std::string p_base_name,
+				 std::string p_base_device);
 
 #endif // !__QRE2_H

@@ -33,7 +33,6 @@ qre1.hpp
 #include <vector>
 #include <curl/curl.h>
 
-
 using namespace std;
 
 std::string qre_d2s(double p_double);
@@ -44,62 +43,28 @@ bool qre_recog(std::string p_string1, std:: string p_string2);
 
 void qre_show_v(std::string p_base_verbosity, std::string p_string);
 
-std::string seek_in_file(std::string p_f, std::string p_v);
+std::string qre_seek_in_file(std::string p_f, std::string p_v);
 
-std::string seek_in_json(std::string p_j, std::string p_v);
+std::string qre_seek_in_json(std::string p_j, std::string p_v);
 
-void show_var(std::string p_t, std::string p_v);
+void qre_show_var(std::string p_t, std::string p_v);
 
-void show_string(std::string p_t);
+void qre_show_string(std::string p_t);
 
-std::string url_encode(std::string p_s);
+std::string qre_url_encode(std::string p_s);
 
-char *create_header(std::string p_s);
+char *qre_create_header(std::string p_s);
 
-std::string qpost(std::string p_base_verbosity,
-		  std::string p_base_method,
-		  std::string p_base_data,
-		  std::string p_post_content_type,
-		  std::string p_base_results_storage,
-		  std::string p_uri,
-		  std::string p_login_id);
+std::string qre_read_qasm_file(std::string p_f);
 
-std::string read_qasm_file(std::string p_f);
+void qre_store_results(std::string p_base_results_storage,
+		       std::string p_file,
+		       std::string p_contents_to_store);
 
-void store_results(std::string p_base_results_storage,
-		   std::string p_file,
-		   std::string p_contents_to_store);
+int qre_parse_bitnum(std::string p_string);
 
-std::vector<std::string> qx_login(std::string p_base_verbosity,
-				  std::string p_base_method,
-				  std::string p_login_data,
-				  std::string p_post_content_type,
-				  std::string p_base_results_storage,
-				  std::string p_login_uri,
-				  std::string p_login_name);
+std::string qre_parse_reg(std::string p_string, std::string p_type);
 
-std::string qx_delete_experiment(std::string p_base_verbosity,
-				 std::string p_base_method,
-				 std::string p_delete_data,
-				 std::string p_delete_content_type,
-				 std::string p_base_results_storage,			    
-				 std::string p_delete_uri,
-				 std::string p_delete_name,
-				 std::string p_login_id,
-				 std::string p_base_name);
-
-std::string qx_post_experiment(std::string p_base_verbosity,
-			       std::string p_base_method,
-			       std::string p_post_data,
-			       std::string p_post_content_type,
-			       std::string p_base_results_storage,			    
-			       std::string p_post_uri,
-			       std::string p_post_name,
-			       std::string p_login_id,
-			       std::string p_base_name,
-			       std::string p_base_data,
-			       std::string p_base_shots,
-			       std::string p_base_seed,
-			       std::string p_base_device);
+std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std::string p_base_data);
 
 #endif // !__QRE1_H

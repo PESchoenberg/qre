@@ -31,6 +31,7 @@ Sources:
 - https://arxiv.org/pdf/1805.09607.pdf
 - https://arxiv.org/pdf/1808.02449.pdf
 - ftp://ftp.cs.princeton.edu/techreports/2012/934.pdf
+- http://docs.rigetti.com/en/stable/basics.html
 
 * Compilation (using the gcc compiler family) on Linux:
 
@@ -131,21 +132,21 @@ int main(int argc, char** argv)
 	}
       
       //Read parameters from file.      
-      base_data = read_qasm_file(base_file);      
-      base_token = seek_in_file(cfg_file, "base-token");
-      base_uri = seek_in_file(cfg_file, "base-uri");
-      base_results_storage = seek_in_file(cfg_file, "base-results-storage");
-      base_shots = seek_in_file(cfg_file, "base-shots");
-      base_max_credits = seek_in_file(cfg_file, "base-max-credits");
-      login_data = seek_in_file(cfg_file, "login-data")+base_token;
-      login_uri = base_uri + seek_in_file(cfg_file, "login-uri");
-      login_content_type = login_content_type+seek_in_file(cfg_file, "login-content-type");
-      post_content_type = post_content_type+seek_in_file(cfg_file, "post-content-type");
-      post_uri = base_uri + seek_in_file(cfg_file, "post-uri");
-      get_content_type = get_content_type+seek_in_file(cfg_file, "get-content-type");
-      get_uri = base_uri + seek_in_file(cfg_file, "get-uri");
-      delete_content_type = delete_content_type+seek_in_file(cfg_file, "delete-content-type");
-      delete_uri = base_uri + seek_in_file(cfg_file, "delete-uri");
+      base_data = qre_read_qasm_file(base_file);      
+      base_token = qre_seek_in_file(cfg_file, "base-token");
+      base_uri = qre_seek_in_file(cfg_file, "base-uri");
+      base_results_storage = qre_seek_in_file(cfg_file, "base-results-storage");
+      base_shots = qre_seek_in_file(cfg_file, "base-shots");
+      base_max_credits = qre_seek_in_file(cfg_file, "base-max-credits");
+      login_data = qre_seek_in_file(cfg_file, "login-data")+base_token;
+      login_uri = base_uri + qre_seek_in_file(cfg_file, "login-uri");
+      login_content_type = login_content_type + qre_seek_in_file(cfg_file, "login-content-type");
+      post_content_type = post_content_type + qre_seek_in_file(cfg_file, "post-content-type");
+      post_uri = base_uri + qre_seek_in_file(cfg_file, "post-uri");
+      get_content_type = get_content_type + qre_seek_in_file(cfg_file, "get-content-type");
+      get_uri = base_uri + qre_seek_in_file(cfg_file, "get-uri");
+      delete_content_type = delete_content_type + qre_seek_in_file(cfg_file, "delete-content-type");
+      delete_uri = base_uri + qre_seek_in_file(cfg_file, "delete-uri");
 
       //Define some names.
       login_name = base_name + "_login";
@@ -158,50 +159,50 @@ int main(int argc, char** argv)
 	  // Show parameters if verbosity is set to yes.
 	  if(base_verbosity == "yes")
 	    {
-	      show_string(line);
-	      show_string("Arguments entered from the command line:");
-	      show_var("File", base_file);
-	      show_var("Method", base_method);
-	      show_var("Verbosity", base_verbosity);
-	      show_var("Device", base_device);
-	      show_var("Seed", base_seed);
-	      show_var("Name", base_name);	  
-	      show_string(line);
-	      show_string("Configuration values:");	  
-	      show_var("base-file", base_file);
-	      show_var("base-data", base_data);
-	      show_var("base-token", base_token);
-	      show_var("base-uri", base_uri);
-	      show_var("base-results-storage", base_results_storage);
-	      show_var("base-shots", base_shots);
-	      show_var("base-max-credits", base_max_credits);
-	      show_var("login-data", login_data);
-	      show_var("login-uri", login_uri);
-	      show_var("login-content-type", login_content_type);
-	      show_var("post-content-type", post_content_type);
-	      show_var("post-uri", post_uri);
-	      show_var("get-content-type", get_content_type);
-	      show_var("get-uri", get_uri);
-	      show_var("delete-content-type", delete_content_type);
-	      show_var("delete-uri", delete_uri);	  
+	      qre_show_string(line);
+	      qre_show_string("Arguments entered from the command line:");
+	      qre_show_var("File", base_file);
+	      qre_show_var("Method", base_method);
+	      qre_show_var("Verbosity", base_verbosity);
+	      qre_show_var("Device", base_device);
+	      qre_show_var("Seed", base_seed);
+	      qre_show_var("Name", base_name);	  
+	      qre_show_string(line);
+	      qre_show_string("Configuration values:");	  
+	      qre_show_var("base-file", base_file);
+	      qre_show_var("base-data", base_data);
+	      qre_show_var("base-token", base_token);
+	      qre_show_var("base-uri", base_uri);
+	      qre_show_var("base-results-storage", base_results_storage);
+	      qre_show_var("base-shots", base_shots);
+	      qre_show_var("base-max-credits", base_max_credits);
+	      qre_show_var("login-data", login_data);
+	      qre_show_var("login-uri", login_uri);
+	      qre_show_var("login-content-type", login_content_type);
+	      qre_show_var("post-content-type", post_content_type);
+	      qre_show_var("post-uri", post_uri);
+	      qre_show_var("get-content-type", get_content_type);
+	      qre_show_var("get-uri", get_uri);
+	      qre_show_var("delete-content-type", delete_content_type);
+	      qre_show_var("delete-uri", delete_uri);	  
 	    }
 	  else
 	    {
-	      show_string("\n");
-	      show_string("Turn verbosity on to see test results.");
+	      qre_show_string("\n");
+	      qre_show_string("Turn verbosity on to see test results.");
 	    }
-	  show_string("\n");
-	  show_string("Test finished.");
+	  qre_show_string("\n");
+	  qre_show_string("Test finished.");
 	}
-      else if (base_device == "local_simulator")
+      else if (base_device == "qlib_simulator")
 	{
 	  if(base_method == "post")
 	    {
 	      //Quantum local execution.
-	      res = qre_post_experiment(base_verbosity, base_data, base_seed, base_shots, base_name, base_device);
-	      show_string("\n");
-	      show_string("Post result\n\n");
-	      show_string(res);
+	      res = qlib_post_experiment(base_verbosity, base_data, base_seed, base_shots, base_name, base_device);
+	      qre_show_string("\n");
+	      qre_show_string("Post result\n\n");
+	      qre_show_string(res);
 	    }
 	  if(base_method == "get")
 	    {
@@ -212,47 +213,47 @@ int main(int argc, char** argv)
 
 	    }	  
 	}    
-      else if (base_device != "local_simulator")
+      else if (base_device != "qlib_simulator")
 	{
-	  show_string(line);
+	  qre_show_string(line);
 
 	  //Login first.
-	  response_login=qx_login(base_verbosity,
-			    base_method,
-			    login_data,
-			    login_content_type,
-			    base_results_storage,
-			    login_uri,
-			    login_name);
+	  response_login=ibmqx_login(base_verbosity,
+				     base_method,
+				     login_data,
+				     login_content_type,
+				     base_results_storage,
+				     login_uri,
+				     login_name);
 	  
 	  login_id = response_login[3];
 	  
 	  if(login_id == "na")
 	    {
-	      show_string("LOGIN FAILED");
+	      qre_show_string("LOGIN FAILED");
 	    }
 	  else
 	    {
-	      show_string("LOGIN OK");	  
+	      qre_show_string("LOGIN OK");	  
 	      if(base_method == "post")
 		{
-		  res = qx_post_experiment(base_verbosity,
-					   base_method,
-					   post_data,
-					   post_content_type,
-					   base_results_storage,
-					   post_uri,
-					   post_name,
-					   login_id,
-					   base_name,
-					   base_data,
-					   base_shots,
-					   base_seed,
-					   base_device);
+		  res = ibmqx_post_experiment(base_verbosity,
+					      base_method,
+					      post_data,
+					      post_content_type,
+					      base_results_storage,
+					      post_uri,
+					      post_name,
+					      login_id,
+					      base_name,
+					      base_data,
+					      base_shots,
+					      base_seed,
+					      base_device);
 
-		  show_string("\n");
-		  show_string("Post result\n\n");
-		  show_string(res);
+		  qre_show_string("\n");
+		  qre_show_string("Post result\n\n");
+		  qre_show_string(res);
 		}
 	      if(base_method == "get")
 		{
@@ -260,19 +261,19 @@ int main(int argc, char** argv)
 		}
 	      if(base_method == "delete")
 		{
-		  res = qx_delete_experiment(base_verbosity,
-					     base_method,
-					     delete_data,
-					     delete_content_type,
-					     base_results_storage,
-					     delete_uri,
-					     delete_name,
-					     login_id,
-					     base_name);
+		  res = ibmqx_delete_experiment(base_verbosity,
+						base_method,
+						delete_data,
+						delete_content_type,
+						base_results_storage,
+						delete_uri,
+						delete_name,
+						login_id,
+						base_name);
 
-		  show_string("\n");
-		  show_string("Deletion result\n\n");
-		  show_string(res);	      
+		  qre_show_string("\n");
+		  qre_show_string("Deletion result\n\n");
+		  qre_show_string(res);	      
 	      
 		}
 	    }	  
@@ -280,17 +281,17 @@ int main(int argc, char** argv)
       else
 	{
 	  res1 = 1;
-	  show_string("Incorrect method or base device.");
+	  qre_show_string("Incorrect method or base device.");
 	}
     }
   else
     {
       res1 = 1;
-      show_string("Incorrect input.");
+      qre_show_string("Incorrect input.");
     }
-  show_string("\n");
-  show_string(line);
-  show_string("\n");
+  qre_show_string("\n");
+  qre_show_string(line);
+  qre_show_string("\n");
   
   return res1;
 }
