@@ -42,8 +42,8 @@ into the QX machine. I am still working on the execution request uri.
 
 ## Installation:
 
-* Just copy the contents of the compressed file in any folder you like and
-compile it (see usage section).
+* Copy the contents of the compressed file in any folder you like and compile
+it (see usage section).
 
 * Once you have installed qre, you will need from the Qlib project its
 core package. So you should:
@@ -52,6 +52,17 @@ core package. So you should:
 - Now cd to the folder containing qre.
 - Create /lib/qlib if you don’t have it already within qre’s main folder.
 - Paste the clipboard contents into the /lib/qlib folder of your qre folder.
+
+* Lastly, you will need to make some updates:
+- You should overwrite:
+  file /lib/qlib/core/quantum/gates/phase.hpp
+
+  with
+
+  file /lib/proviso/phase.hpp
+
+  This is required since the original file does not have gate S specifically
+  defined, while QASM2 does.
 
 
 ## Uninstall:
@@ -82,18 +93,18 @@ own:
 
   or
 
-  ./qre examples/example1.qasm post y local_simulator 1 example1_1 <ENT> to run it
-  on a local qre simulator.
+  ./qre examples/example1.qasm post y qlib_simulator 1 example1_1 <ENT> to run it
+  on a local qlib-based simulator.
 
   or
 
   ./qre examples/example1.qasm post y simulator 1 example1_1 <ENT> to run it
-  on a remote QX simulator.
+  on a remote IBM QX simulator.
 
   or
 
   ./qre examples/example1.qasm post y [q processor name] [max credits]
-  example_1_1 <ENT> to run it on a QX real quantum processor.
+  example_1_1 <ENT> to run it on a real IBM QX quantum processor.
   
 - The example file provided is precompiled using g2q. If you want to test run
 your own programs, you will have to get a copy of g2q and write your programs
