@@ -26,7 +26,9 @@ onequbitgate T = phase(M_PI / 4);
 
 // Added by Pablo Edronkin.
 onequbitgate S = phase(M_PI / 2);
-
+onequbitgate Tdg = phase((-1)*M_PI / 4);
+onequbitgate Sdg = phase((-1)*M_PI / 2);
+  
 }
 }
 }
