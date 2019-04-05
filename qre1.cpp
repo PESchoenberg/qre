@@ -26,7 +26,7 @@ qre1.cpp
 using namespace std;
 
 
-/* qre-d2s - Converts a double to string.
+/* qre_d2s - Converts a double to string.
 
 Arguments:
 - p_double: double to convert.
@@ -37,7 +37,7 @@ Output:
  */
 std::string qre_d2s(double p_double)
 {
-  double dob = 0.00;
+  double dob = p_double;
   
   std::ostringstream stro;
   stro << dob;
@@ -67,6 +67,31 @@ double qre_s2d(std::string p_string)
   return res;
 }
 
+
+/* qre_count_string
+
+Arguments:
+- p_delim: delimiter or substring to be accounted for.
+- p_string: string in which to count the ocurrences of p_delim.
+
+Output:
+- Integer.
+
+ */
+int qre_count_string(std::string p_delim, std::string p_string)
+{
+  size_t pos;
+  int res = 0;
+  std::string str;
+  
+  while ((pos = str.find(p_delim)) != std::string::npos)
+    {
+      res++;
+      str.erase(0, pos + p_delim.length());
+    }
+
+  return res;
+}
 
 /* qre_recog - recongizes if p_string1 is found in p_string2.
 
@@ -218,6 +243,21 @@ void qre_show_string(std::string p_t)
 }
 
 
+/* qre_show_conclusion - Shows two strings on different lines after a blank line.
+
+Arguments:
+- p_t1: first string.
+- p_t2: second string.
+
+ */
+void qre_show_conclusion(std::string p_t1, std::string p_t2)
+{
+  qre_show_string(" ");
+  qre_show_string(p_t1);
+  qre_show_string(p_t2);
+}
+
+
 /* qre_url_encode - url encodes a string.
 
 Arguments:
@@ -339,7 +379,6 @@ int qre_parse_bitnum(std::string p_string)
   
   return res;
 }
-
 
 
 /* qre_parse_reg - extracts quantum register substring.

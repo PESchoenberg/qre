@@ -31,13 +31,19 @@ qre1.hpp
 #include <string.h>
 #include <cstring>
 #include <vector>
+#include <algorithm>
 #include <curl/curl.h>
 
 using namespace std;
 
+
+//std::string qre_i2s(int p_int);
+
 std::string qre_d2s(double p_double);
 
 double qre_s2d(std::string p_string);
+
+int qre_count_string(std::string p_delim, std::string p_string);
 
 bool qre_recog(std::string p_string1, std:: string p_string2);
 
@@ -50,6 +56,8 @@ std::string qre_seek_in_json(std::string p_j, std::string p_v);
 void qre_show_var(std::string p_t, std::string p_v);
 
 void qre_show_string(std::string p_t);
+
+void qre_show_conclusion(std::string p_t, std::string p_r);
 
 std::string qre_url_encode(std::string p_s);
 
