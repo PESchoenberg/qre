@@ -338,7 +338,8 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
   std::string post_uri = p_post_uri;
   std::string header2 = "";
   std::string post_content_type = "";
-  
+
+  qre_show_string("Posting...");
   post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name;
   post_uri = post_uri+"?access_token="+p_login_id+"&shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
   
@@ -455,17 +456,36 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   std::vector<double>r;
   
   std::string res = "";
+  std::string res2 = "";
   std::string str = "";
+  std::string str1 = "";
+  std::string str2 = "";
   std::string line = "";
   std::string comment = "//";
   std::string space = " ";
   std::string sq = "";
+  std::string delim = "";
   
   long unsigned int rn = 0;
   long unsigned int rm = 0;
   
   size_t pos = 0;
+  //size_t pos2 = 0;
+  //size_t pos3 = 0;
+  size_t terms = 0;
+
+  struct res_row
+  {
+    std::string sterm;
+    std::string sket;
+    std::string svec;
+  };
+
+  std::vector<res_row> res_parc;
+  std::vector<complex> res_sum;
+  std::vector<complex> res_final;
   
+  qre_show_string("Posting...");
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
   vector_size = qasm_instructions.size();
   shots = (int)qre_s2d(p_base_shots);
@@ -480,7 +500,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
     }
 
   qreg q(rn);
-  //cout << " Created qubit register q[" << rn << "]." << endl;
   qre_show_v(p_base_verbosity, (" Creating qubit register q."));
   rn = 0;
   
@@ -500,7 +519,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	}
     }
 
-  //cout << " Created bit register c[" << rn << "]." << endl;
   qre_show_v(p_base_verbosity, (" Creating bit register c."));
   
   // Shots iteration.
@@ -532,15 +550,12 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		  // OPENQASM
 		  if (qre_recog("OPENQASM", qasm_instructions[i]) == true)
 		    {
-		      // Do nothing in this case
 		      if (qre_recog("2.", qasm_instructions[i]) == true)
 			{
-			  //cout << " Recognized as OPENQASM 2.*." << endl;
 			  qre_show_v(p_base_verbosity, " Recognized as OPENQASM 2.*.");
 			}
 		      else
 			{
-			  //cout << " Undefined OPENQASM version." << endl;
 			  qre_show_v(p_base_verbosity, " OPENQASM version declaration not found. Possibly incompatible code.");
 			}
 		    }
@@ -548,7 +563,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		  // include
 		  if (qre_recog("include", qasm_instructions[i]) == true)
 		    {
-		      //cout << " Library." << endl;
 		      qre_show_v(p_base_verbosity, " Library");
 		    }	  
 
@@ -557,9 +571,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "c"));
-		      cout << q.toString() << endl;
-		      //cout << b.toString() << endl;
-		      cout << " measure gate from " << rn << " to " << rm << endl;
+		      qre_show_v(p_base_verbosity, (" measurement at qubit " + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
+		      //cout << q.toString() << endl;
 		    }
 		  
 		  // cx gate.
@@ -569,7 +582,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      q.apply(gates::CX, {rn,rm});
-		      cout << " cx gate from " << rn << " to " << rm << endl;
+		      qre_show_v(p_base_verbosity, (" cx gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
 		    }
 		  
 		  // h gate.
@@ -577,7 +590,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::H, {rn});
-		      cout << " h gate to " << rn << endl;
+		      qre_show_v(p_base_verbosity, (" h gate at qubit " + qre_d2s((double)rn)));
 		    }
 
 		  // x gate.
@@ -585,7 +598,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {		  	     
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::X, {rn});
-		      cout << " x gate to " << rn << endl;
+		      qre_show_v(p_base_verbosity, (" x gate at qubit " + qre_d2s((double)rn)));
 		    }
 	      
 		  // y gate.
@@ -593,7 +606,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::Y, {rn});
-		      cout << " y gate to " << rn << endl;
+		      qre_show_v(p_base_verbosity, (" y gate at qubit " + qre_d2s((double)rn)));
 		    }
 
 		  // z gate.
@@ -601,7 +614,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::Z, {rn});
-		      cout << " z gate to " << rn << endl;
+		      qre_show_v(p_base_verbosity, (" z gate at qubit " + qre_d2s((double)rn)));
 		    }
 
 		  // s gate.
@@ -609,7 +622,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::S, {rn});
-		      cout << " s gate to " << rn << endl;
+		      qre_show_v(p_base_verbosity, (" s gate at qubit " + qre_d2s((double)rn)));
 		    }
 
 		  // sdg gate.
@@ -617,7 +630,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::Sdg, {rn});		      
-		      cout << " sdg gate to " << rn << endl;
+		      qre_show_v(p_base_verbosity, (" sdg gate at qubit " + qre_d2s((double)rn)));
 		    }
 		  
 		  // t gate.
@@ -625,7 +638,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::T, {rn});
-		      cout << " t gate to " << rn << endl;
+		      qre_show_v(p_base_verbosity, (" t gate at qubit " + qre_d2s((double)rn)));
 		    }
 
 		  // tdg gate.
@@ -633,7 +646,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::Tdg, {rn});		      
-		      cout << " tdg gate to " << rn << endl;
+		      qre_show_v(p_base_verbosity, (" tdg gate at qubit " + qre_d2s((double)rn)));
 		    }
 		  
 		  // t gate.
@@ -641,14 +654,14 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::I, {rn});
-		      cout << " id gate to " << rn << endl;
+		      qre_show_v(p_base_verbosity, (" id gate at qubit " + qre_d2s((double)rn)));
 		    }
 
 		  // s gate.
 		  if (qre_recog("barrier ", qasm_instructions[i]) == true )
 		    {
-		      //cout << " barrier not recognized." << endl;
-		      qre_show_v(p_base_verbosity, " Barrier not recognized.");
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qre_show_v(p_base_verbosity, (" barrier at qubit " + qre_d2s((double)rn)));
 		    }
 	      
 		}
@@ -660,21 +673,20 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		  // u1 gate.
 		  if (qre_recog("u1", qasm_instructions[i]) == true)
 		    {
-		      //cout << " u1 gate not recognized." << endl;
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      //q.apply(gates::phase(M_I), {rn})
 		      qre_show_v(p_base_verbosity, " u1 gate not recognized.");
 		    }
 
 		  // u2 gate.
 		  if (qre_recog("u2", qasm_instructions[i]) == true)
 		    {
-		      //cout << " u2 gate not recognized." << endl;
 		      qre_show_v(p_base_verbosity, " u2 gate not recognized.");
 		    }
 
 		  // u3 gate.
 		  if (qre_recog("u3", qasm_instructions[i]) == true)
 		    {
-		      //cout << " u3 gate not recognized." << endl;
 		      qre_show_v(p_base_verbosity, " u3 gate not recognized.");
 		    }
 	       		  
@@ -682,22 +694,74 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	    }
 	}
 
-      // Add vales and average shots.
-      for(int j = 0; j < (int)c.size(); j++)
+      // This is required to calculate the probabilitiesafter all shots have been performed.
+      
+      //On first shot, create data set for results.
+      if (k == 0)
 	{
-	  r[j] = r[j] + c[j];
+	  delim = "> + ";
+	  
+	  //Count number of terms on linear combination.
+	  res2 = q.toString();
+	  qre_show_v(p_base_verbosity, res2);	  
+	  terms = 1;
+	  while ((pos = res2.find(delim)) != std::string::npos)
+	    {
+	      terms++;
+	      res2.erase(0, pos + delim.length());   
+	    }
+
+	  terms++;
+	    
+	  /*
+	    This gives us a string matrix and two vectors for compelx numbers:
+	    - res_parc contains strings parsed from res2.
+	    - res_sum contains the sum of all values corresponding to each ket.
+	    - res_final contains the avg probabilities obtained from res_sum and shots.
+
+	    Each celement of these vectors and matrices will be updated on each shot.
+	   */
+	  for (int i = 0; i < (int)terms; i++)
+	    {
+	      res_parc.push_back({"","",""});
+	      res_sum.push_back(0);
+	      res_final.push_back(0);
+	    }	  
 	}
-      for(int j = 0; j < (int)r.size(); j++)
+
+      /* On each iteration, after res_parc has been created, parse res2 and distribute the parsed
+      data within the struct of each row.*/
+
+      //Reset some vars.
+      int j = 0;
+      pos = 0;
+      res2 = q.toString();      
+      delim = ">";
+      while ((pos = res2.find(delim)) != std::string::npos)
 	{
-	  r[j] = r[j] / shots;
+	  res_parc[j].sterm = res2.substr(0, pos);
+	  str1 = res_parc[j].sterm;
+	  res_parc[j].sket = str1.substr((str1.find("|"))+1);
+	  res_parc[j].svec = str1.substr(0,(str1.find("|"))-1);
+	  str1 = res_parc[j].svec;
+	  res_parc[j].svec = str1.substr((str1.find("("))+1);
+	  res2.erase(0, pos + delim.length());
+	  if (p_base_verbosity == "yes")
+	    {
+	      cout << "res_parc[" << j << "].sterm =" << res_parc[j].sterm << " .sket ="<< res_parc[j].sket << " .svec=" << res_parc[j].svec << endl;
+	    }
+	  j++;
 	}
+
+      //
       
     } // k
+
+  //After performing all shots, average values, calculate probabilities and construct json snippet.
 
   
   //Format results on r vector.
   res = "{";
-  //cout << "c size " << c.size() << endl;
   for(int i = 0; i < (int)r.size(); i++)
     {
       str = qre_d2s(r[i]);    

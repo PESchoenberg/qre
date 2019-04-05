@@ -156,53 +156,40 @@ int main(int argc, char** argv)
       
       if(base_method == "test")
 	{
-	  // Show parameters if verbosity is set to yes.
-	  if(base_verbosity == "yes")
-	    {
-	      qre_show_string(line);
-	      qre_show_string("Arguments entered from the command line:");
-	      qre_show_var("File", base_file);
-	      qre_show_var("Method", base_method);
-	      qre_show_var("Verbosity", base_verbosity);
-	      qre_show_var("Device", base_device);
-	      qre_show_var("Seed", base_seed);
-	      qre_show_var("Name", base_name);	  
-	      qre_show_string(line);
-	      qre_show_string("Configuration values:");	  
-	      qre_show_var("base-file", base_file);
-	      qre_show_var("base-data", base_data);
-	      qre_show_var("base-token", base_token);
-	      qre_show_var("base-uri", base_uri);
-	      qre_show_var("base-results-storage", base_results_storage);
-	      qre_show_var("base-shots", base_shots);
-	      qre_show_var("base-max-credits", base_max_credits);
-	      qre_show_var("login-data", login_data);
-	      qre_show_var("login-uri", login_uri);
-	      qre_show_var("login-content-type", login_content_type);
-	      qre_show_var("post-content-type", post_content_type);
-	      qre_show_var("post-uri", post_uri);
-	      qre_show_var("get-content-type", get_content_type);
-	      qre_show_var("get-uri", get_uri);
-	      qre_show_var("delete-content-type", delete_content_type);
-	      qre_show_var("delete-uri", delete_uri);	  
-	    }
-	  else
-	    {
-	      qre_show_string("\n");
-	      qre_show_string("Turn verbosity on to see test results.");
-	    }
-	  qre_show_string("\n");
-	  qre_show_string("Test finished.");
+	  base_verbosity = "yes";
+	  qre_show_conclusion(line, "Testing...");
+	  qre_show_string("Arguments entered from the command line:");
+	  qre_show_var("File", base_file);
+	  qre_show_var("Method", base_method);
+	  qre_show_var("Verbosity", base_verbosity);
+	  qre_show_var("Device", base_device);
+	  qre_show_var("Seed", base_seed);
+	  qre_show_var("Name", base_name);	  
+	  qre_show_conclusion(line, "Configuration values:");
+	  qre_show_var("base-file", base_file);
+	  qre_show_var("base-data", base_data);
+	  qre_show_var("base-token", base_token);
+	  qre_show_var("base-uri", base_uri);
+	  qre_show_var("base-results-storage", base_results_storage);
+	  qre_show_var("base-shots", base_shots);
+	  qre_show_var("base-max-credits", base_max_credits);
+	  qre_show_var("login-data", login_data);
+	  qre_show_var("login-uri", login_uri);
+	  qre_show_var("login-content-type", login_content_type);
+	  qre_show_var("post-content-type", post_content_type);
+	  qre_show_var("post-uri", post_uri);
+	  qre_show_var("get-content-type", get_content_type);
+	  qre_show_var("get-uri", get_uri);
+	  qre_show_var("delete-content-type", delete_content_type);
+	  qre_show_var("delete-uri", delete_uri);	  
+	  qre_show_conclusion("Test finished", "\n");
 	}
       else if (base_device == "qlib_simulator")
 	{
 	  if(base_method == "post")
 	    {
-	      //Quantum local execution.
 	      res = qlib_post_experiment(base_verbosity, base_data, base_seed, base_shots, base_name, base_device);
-	      qre_show_string("\n");
-	      qre_show_string("Post result\n\n");
-	      qre_show_string(res);
+	      qre_show_conclusion("Post result: \n\n", res);
 	    }
 	  if(base_method == "get")
 	    {
@@ -251,9 +238,7 @@ int main(int argc, char** argv)
 					      base_seed,
 					      base_device);
 
-		  qre_show_string("\n");
-		  qre_show_string("Post result\n\n");
-		  qre_show_string(res);
+		  qre_show_conclusion("Post result:\n\n", res);
 		}
 	      if(base_method == "get")
 		{
@@ -271,10 +256,7 @@ int main(int argc, char** argv)
 						login_id,
 						base_name);
 
-		  qre_show_string("\n");
-		  qre_show_string("Deletion result\n\n");
-		  qre_show_string(res);	      
-	      
+		  qre_show_conclusion("Delete result:\n\n", res);	      
 		}
 	    }	  
 	}
@@ -289,9 +271,8 @@ int main(int argc, char** argv)
       res1 = 1;
       qre_show_string("Incorrect input.");
     }
-  qre_show_string("\n");
-  qre_show_string(line);
-  qre_show_string("\n");
+
+  qre_show_conclusion(line, "\n");
   
   return res1;
 }
