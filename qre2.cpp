@@ -451,6 +451,14 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 
   int shots = 0;
   int vector_size = 0;
+  int i = 0;
+  int j = 0;
+  int k = 0;
+
+  float svecx = 0;
+  float svecy = 0;
+  double svect = 0;
+  double sprob = 0;
   
   std::vector<double>c;
   std::vector<double>r;
@@ -460,6 +468,9 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   std::string str = "";
   std::string str1 = "";
   std::string str2 = "";
+  std::string str3 = "";
+  std::string str4 = "";
+  std::string str5 = "";
   std::string line = "";
   std::string comment = "//";
   std::string space = " ";
@@ -470,8 +481,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   long unsigned int rm = 0;
   
   size_t pos = 0;
-  //size_t pos2 = 0;
-  //size_t pos3 = 0;
   size_t terms = 0;
 
   struct res_row
@@ -482,8 +491,9 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   };
 
   std::vector<res_row> res_parc;
-  std::vector<complex> res_sum;
-  std::vector<complex> res_final;
+  std::vector<double> res_sum;
+  std::vector<double> res_shots;
+  std::vector<double> res_final;
   
   qre_show_string("Posting...");
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
@@ -491,7 +501,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   shots = (int)qre_s2d(p_base_shots);
 
   // We need to define qreg q and creg c before parsing anything else in the QASM file.
-  for(int i = 0; i < vector_size; i++)
+  for(i = 0; i < vector_size; i++)
     {
       if (qre_recog("qreg", qasm_instructions[i]) == true)
 	{
@@ -503,14 +513,14 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   qre_show_v(p_base_verbosity, (" Creating qubit register q."));
   rn = 0;
   
-  for(int i = 0; i < vector_size; i++)
+  for(i = 0; i < vector_size; i++)
     {
       if (qre_recog("creg", qasm_instructions[i]) == true)
 	{
 	  rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "c"));
 	  if (c.size() == 0)
 	    {
-	      for(int j = 0; j < (int)rn; j++)
+	      for(j = 0; j < (int)rn; j++)
 		{
 		  c.push_back(0.00);
 		  r.push_back(0.00);
@@ -522,11 +532,11 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   qre_show_v(p_base_verbosity, (" Creating bit register c."));
   
   // Shots iteration.
-  for(int k = 0; k < shots; k++)
+  for(k = 0; k < shots; k++)
     {
 
       // File parsing iteration.
-      for(int i = 0; i < vector_size; i++)
+      for(i = 0; i < vector_size; i++)
 	{
 	  // Find if line will be ingored or not based on the value of delim.
 	  if (qre_recog(comment, qasm_instructions[i]) == true)
@@ -714,17 +724,18 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	  terms++;
 	    
 	  /*
-	    This gives us a string matrix and two vectors for compelx numbers:
+	    This gives us a string matrix and two vectors:
 	    - res_parc contains strings parsed from res2.
 	    - res_sum contains the sum of all values corresponding to each ket.
 	    - res_final contains the avg probabilities obtained from res_sum and shots.
 
 	    Each celement of these vectors and matrices will be updated on each shot.
 	   */
-	  for (int i = 0; i < (int)terms; i++)
+	  for (i = 0; i < (int)terms; i++)
 	    {
 	      res_parc.push_back({"","",""});
 	      res_sum.push_back(0);
+	      res_shots.push_back(0);
 	      res_final.push_back(0);
 	    }	  
 	}
@@ -733,7 +744,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       data within the struct of each row.*/
 
       //Reset some vars.
-      int j = 0;
+      j = 0;
       pos = 0;
       res2 = q.toString();      
       delim = ">";
@@ -746,33 +757,122 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	  str1 = res_parc[j].svec;
 	  res_parc[j].svec = str1.substr((str1.find("("))+1);
 	  res2.erase(0, pos + delim.length());
+
+	  //Cast numbers as two floats.
+	  str3 = res_parc[j].svec;
+	  str4 = str3.substr(0,str3.find(" + "));
+	  str5 = str3.substr(str3.find(" + ")+3);
+	  str5 = str5.substr(0,str5.find("i"));
+	  //cout << str3 << " /// " << str4 << " /// " << str5 << endl;
+	  svecx = atof(str4.c_str());
+	  svecy = atof(str5.c_str());
+	  //cout << str3 << " floats /// " << svecx<< " /// " << svecy << endl;
+
+	  //Square both and sum to get p = x^2 + y^2.
+	  svect = (double)(pow(svecx,2) + pow(svecy,2));
+	  //cout << "double " << svect << endl;
+	  res_sum[j] = svect;
+	  
+	  //Increment value of res_sum.
+	  res_shots[j] = res_shots[j] + res_sum[j];
+	  
+	  //Show some info.
 	  if (p_base_verbosity == "yes")
 	    {
 	      cout << "res_parc[" << j << "].sterm =" << res_parc[j].sterm << " .sket ="<< res_parc[j].sket << " .svec=" << res_parc[j].svec << endl;
 	    }
 	  j++;
 	}
-
-      //
       
     } // k
 
-  //After performing all shots, average values, calculate probabilities and construct json snippet.
+  //After performing all shots, average values, calculate probabilities.
+  for (i = 0; i < (int)res_final.size(); i++)
+    {
+      res_final[i] = res_shots[i] / shots;
+      sprob = sprob + res_final[i];
+    }  
+
+    if (p_base_verbosity == "yes")
+      {  
+	cout << "final avg: " << sprob << endl;
+      }
+
+  //Build the json string with results.
+  res = "{";
+  res = res + "\'idCode\': " + "u\'na\'" + ",\'idExecution\': " + "u\'na\'" + ",\'result\': {\'measure\': {u\'labels\': [";
+
+  //Put labels.
+  for(i = 0; i < (int)res_final.size(); i++)
+  {
+    if (i < ((int)res_final.size() - 1))
+      {
+	res = res + "u\'";
+      }
+    
+    res = res + res_parc[i].sket;
+
+    if (i < ((int)res_final.size() - 1))
+      {
+	res = res + "\'";
+      }
+    
+    if (i < ((int)res_final.size() - 2))
+      {
+	res = res + ",";
+      }
+    
+  }
+  res = res + "],";
+
+  //Put qubits
+  int nq = c.size();
+  res = res + "u\'qubits\':[";
+  for(i = 0; i < nq; i++)
+    {
+      res = res + qre_d2s((double)i);
+      if (i < (nq - 1))
+	{
+	  res = res + ", ";
+	}
+    }
+    
+  res = res + "],";
+
+  //Put values.
+  res = res + "u\'values\':[";
+  nq = (int)res_final.size();
+  for(i = 0; i < nq; i++)
+    {
+      //res = res + "na";.
+      res = res + qre_d2s(res_final[i]);
+      if (i < (nq - 1))
+	{
+	  res = res + ", ";
+	}
+    }
+    
+  res = res + "]}},";
+
+  // Finish off the string.
+  res = res + "\'status\':\'DONE\'}";
 
   
-  //Format results on r vector.
-  res = "{";
-  for(int i = 0; i < (int)r.size(); i++)
+  //Format results.
+  /* res = "{";
+  for(int i = 0; i < (int)res_final.size(); i++)
     {
-      str = qre_d2s(r[i]);    
-      if (i > 0)
+      res = res + "\"" + res_parc[i].sket;
+      if (i < ((int)res_final.size() - 1))
 	{
-	  res = res + ":";
+	  res = res + "\":\""+ "na";
 	}
-      res = res + str;
+      if (i < ((int)res_final.size() - 2))
+	{
+	  res = res + "\",";
+	}      
     }
-
-  res = res + "}";
+  res = res + "}";*/
   
   return res;
 }

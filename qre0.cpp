@@ -23,6 +23,7 @@ qre0.cpp
 
 Sources:
 - https://developer.ibm.com/tutorials/os-quantum-computing-shell-game/
+- https://quantumcomputing.stackexchange.com/questions/5173/submitting-jobs-to-ibm-devices-without-python
 - https://stackoverflow.com/questions/51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it
 - https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
 - https://curl.haxx.se/libcurl/c/libcurl-tutorial.html
