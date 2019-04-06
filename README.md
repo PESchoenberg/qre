@@ -98,7 +98,7 @@ own:
 
   or
 
-  ./qre examples/example1.qasm post y simulator 1 example1_1 <ENT> to run it
+  ./qre examples/example1.qasm post y ibmqx_simulator 1 example1_1 <ENT> to run it
   on a remote IBM QX simulator.
 
   or
