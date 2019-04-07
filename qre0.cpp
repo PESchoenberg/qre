@@ -189,7 +189,14 @@ int main(int argc, char** argv)
 	{
 	  if(base_method == "post")
 	    {
-	      res = qlib_post_experiment(base_verbosity, base_data, base_seed, base_shots, base_name, base_device);
+	      res = qlib_post_experiment(base_verbosity,
+					 base_data,
+					 base_results_storage,
+					 base_seed,
+					 base_shots,
+					 base_name,
+					 base_device);
+	      
 	      qre_show_conclusion("Post result: \n\n", res);
 	    }
 	  if(base_method == "get")
