@@ -428,7 +428,7 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
 }
 
 
-/* qlib_post_experiment - perform experiment locally on p_base_device.
+/* qlib_post_experiment - perform experiment locally on a qlib-based simulator.
 
 Arguments:
 - p_base_verbosity: base_verbosity.
@@ -442,6 +442,7 @@ Arguments:
  */
 std::string qlib_post_experiment(std::string p_base_verbosity,
 				 std::string p_base_data,
+				 std::string p_base_results_storage,
 				 std::string p_base_seed,
 				 std::string p_base_shots,
 				 std::string p_base_name,
@@ -763,14 +764,11 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	  str4 = str3.substr(0,str3.find(" + "));
 	  str5 = str3.substr(str3.find(" + ")+3);
 	  str5 = str5.substr(0,str5.find("i"));
-	  //cout << str3 << " /// " << str4 << " /// " << str5 << endl;
 	  svecx = atof(str4.c_str());
 	  svecy = atof(str5.c_str());
-	  //cout << str3 << " floats /// " << svecx<< " /// " << svecy << endl;
 
 	  //Square both and sum to get p = x^2 + y^2.
 	  svect = (double)(pow(svecx,2) + pow(svecy,2));
-	  //cout << "double " << svect << endl;
 	  res_sum[j] = svect;
 	  
 	  //Increment value of res_sum.
@@ -800,7 +798,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 
   //Build the json string with results.
   res = "{";
-  res = res + "\'idCode\': " + "u\'na\'" + ",\'idExecution\': " + "u\'na\'" + ",\'result\': {\'measure\': {u\'labels\': [";
+  res = res + "\'idCode\': " + "u\'qlib_simulator\'" + ",\'idExecution\': " + "u\'" + p_base_name + "\'" + ",\'result\': {\'measure\': {u\'labels\': [";
 
   //Put labels.
   for(i = 0; i < (int)res_final.size(); i++)
@@ -825,7 +823,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   }
   res = res + "],";
 
-  //Put qubits
+  //Put qubit numbers.
   int nq = c.size();
   res = res + "u\'qubits\':[";
   for(i = 0; i < nq; i++)
@@ -839,14 +837,16 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
     
   res = res + "],";
 
-  //Put values.
+  //Put probability values.
   res = res + "u\'values\':[";
   nq = (int)res_final.size();
   for(i = 0; i < nq; i++)
     {
-      //res = res + "na";.
-      res = res + qre_d2s(res_final[i]);
       if (i < (nq - 1))
+	{
+	  res = res + qre_d2s(res_final[i]);
+	}
+      if (i < (nq - 2))
 	{
 	  res = res + ", ";
 	}
@@ -873,6 +873,9 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	}      
     }
   res = res + "}";*/
+
+  //Save.
+  qre_store_results(p_base_results_storage, p_base_name, res);
   
   return res;
 }

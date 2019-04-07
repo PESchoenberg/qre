@@ -25,6 +25,15 @@ QASM2 files.
 The program is still unfinished but at this point it can successfully log
 into the QX machine. I am still working on the execution request uri.
 
+The program has a local simulator based on the Qlib library. It is now almost
+completely functional (gates u1, u2 and u3 still need work), so if you use
+a compiler such as g2q to produce QASM2 code together with qre you can
+have a full-stack quantum computer simulator that is independent from the API
+of any provider.
+
+Bear in mind that the local simulator is an ideal one at this point. It does
+not incorporate simulated noise or other factors.
+
 
 ## Dependencies:
 
@@ -105,8 +114,11 @@ own:
 
   ./qre examples/example1.qasm post y [q processor name] [max credits]
   example_1_1 <ENT> to run it on a real IBM QX quantum processor.
-  
-- The example file provided is precompiled using g2q. If you want to test run
+
+- You will see the results of each simulation on your console. The will also be
+stored in a file. Check your /data folder.
+
+- The example files provided were precompiled using g2q. If you want to test run
 your own programs, you will have to get a copy of g2q and write your programs
 in Scheme (Lisp) or write your own QASM2 source code, or get or develop your
 own compatible compiler.

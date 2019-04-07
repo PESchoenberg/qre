@@ -68,6 +68,7 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
 
 std::string qlib_post_experiment(std::string p_base_verbosity,
 				 std::string p_base_data,
+				 std::string p_base_results_storage,
 				 std::string p_base_seed,
 				 std::string p_base_shots,
 				 std::string p_base_name,
