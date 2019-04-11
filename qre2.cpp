@@ -581,9 +581,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		  if (qre_recog("measure", qasm_instructions[i]) == true)
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "q"));
-		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "c"));
+		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "c"));
 		      qre_show_v(p_base_verbosity, (" measurement at qubit " + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
-		      //cout << q.toString() << endl;
 		    }
 		  
 		  // cx gate.
@@ -793,7 +792,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 
     if (p_base_verbosity == "yes")
       {  
-	cout << "final avg: " << sprob << endl;
+	cout << "Final avg: " << sprob << endl;
       }
 
   //Build the json string with results.
