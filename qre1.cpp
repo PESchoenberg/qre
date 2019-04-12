@@ -280,7 +280,7 @@ std::string qre_url_encode(std::string p_s)
 }
 
 
-/* qre_create_heeader - creates a header as a c string.
+/* qre_create_header - creates a header as a c string.
 
 Arguments:
 - p_data: text that will be converted to a header.
@@ -347,7 +347,7 @@ void qre_store_results(std::string p_base_results_storage,
       file = file + ".json";
       pathj = pathj + file;     
       ofstream json_file;
-      json_file.open(pathj, std::ios::app);
+      json_file.open(pathj, std::ios::out);
       json_file << p_contents_to_store << "\n";
       json_file.close();    
     }

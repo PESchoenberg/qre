@@ -199,14 +199,10 @@ int main(int argc, char** argv)
 	      
 	      qre_show_conclusion("Post result: \n\n", res);
 	    }
-	  if(base_method == "get")
+	  else
 	    {
-
+	      qre_show_conclusion("qre qlib_simulator only supports test and post requests.\n\n", " ");
 	    }
-	  if(base_method == "delete")
-	    {
-
-	    }	  
 	}    
       else if (base_device != "qlib_simulator")
 	{
