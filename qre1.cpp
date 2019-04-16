@@ -185,16 +185,13 @@ std::string qre_seek_in_json(std::string p_j, std::string p_v)
   size_t pos2;
   
   // Find if p_v is in the string.
-  //if (j.find(p_v) != std::string::npos)
   if (qre_recog(p_v, j) == true)
     {
       res1 = j.substr( j.find(v));
 
       // Now find the limit of the substring that corresponds to the value of p_v.
-      //if (res1.find(e) != std::string::npos)
       if (qre_recog(e, res1) == true)
 	{
-	  //if (res1.find("\",") != std::string::npos)
 	  if (qre_recog("\",", res1) == true)
 	    {	  
 	      pos2 = res1.find("\",");
@@ -246,15 +243,19 @@ void qre_show_string(std::string p_t)
 /* qre_show_conclusion - Shows two strings on different lines after a blank line.
 
 Arguments:
+- p_base_verbosity: base_verbosity.
 - p_t1: first string.
 - p_t2: second string.
 
  */
-void qre_show_conclusion(std::string p_t1, std::string p_t2)
+void qre_show_conclusion(std::string p_base_verbosity, std::string p_t1, std::string p_t2)
 {
-  qre_show_string(" ");
-  qre_show_string(p_t1);
-  qre_show_string(p_t2);
+  if (p_base_verbosity == "yes")
+    {  
+      qre_show_string(" ");
+      qre_show_string(p_t1);
+      qre_show_string(p_t2);
+    }
 }
 
 

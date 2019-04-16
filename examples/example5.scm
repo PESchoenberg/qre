@@ -4,12 +4,11 @@
 
 ; ==============================================================================
 ;
-; example6.scm
+; example5.scm
 ;
-; - This program is almost the same as example5.scm, but includes a system 
-; call that invokes qre. This is a program that allows for execution in real or
-; simulated remote quantum computers, or on local simulators, In this regard, 
-; g2q and qre act as a JIT compiler/runtime.
+; - This is an example circuit based on a double quantum phase estimator that
+; measures + and - at the same time on qubits 0 and 3. In this case, changing 
+; the z gate at (1) by an h gate, we obtain either 10 or 00 as results.
 ;
 ; Compilation:
 ;
@@ -17,14 +16,7 @@
 ;
 ; - Enter the following:
 ;
-;   guile example6.scm
-;
-; Notes:
-; - This program will only compile a .qasm file but not run it if you don't have
-; qre installed on your system.
-; - You should make sure that your PATH system variable points to the folder
-; where you installed qre.
-; - qre is available at https://github.com/PESchoenberg/qre
+;   guile example5.scm
 ;
 ; ==============================================================================
 ;
@@ -52,7 +44,7 @@
 
 
 ; Vars and initial stuff. 
-(define fname "example6.qasm")
+(define fname "example5.qasm")
 (define qver 2.0)
 (define q "q")
 (define c "c")
@@ -86,13 +78,9 @@
 (qmeas q 3 c 1)
 
 
-; Sets the output pot againt to the console. Don't forget to check if the 
+; Sets the output port again to the console. Don't forget to check if the 
 ; compilation is error free or you have some bugs to kill.
 (set-current-output-port port1)
 (close port2)
 (qendc)
-
-; This is a system call for qre. Replace [your-path-to-qre-folder] with
-; the correct path or change your system PATH variable accordingly.
-(system "[your-path-to-qre-folder]/qre example6.qasm post y qlib_simulator 1 example6_1")
 

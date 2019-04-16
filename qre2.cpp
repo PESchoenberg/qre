@@ -339,7 +339,10 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
   std::string header2 = "";
   std::string post_content_type = "";
 
-  qre_show_string("Posting...");
+  if (p_base_verbosity == "yes")
+    {  
+      qre_show_string("Posting...");
+    }
   post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name;
   post_uri = post_uri+"?access_token="+p_login_id+"&shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
   
@@ -495,8 +498,11 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   std::vector<double> res_sum;
   std::vector<double> res_shots;
   std::vector<double> res_final;
-  
-  qre_show_string("Posting...");
+
+  if (p_base_verbosity == "yes")
+    {  
+      qre_show_string("Posting...");
+    }
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
   vector_size = qasm_instructions.size();
   shots = (int)qre_s2d(p_base_shots);
