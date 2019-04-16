@@ -1,15 +1,20 @@
 #! /usr/local/bin/guile -s
 !#
 
-
 ; ==============================================================================
 ;
-; example6.scm
+; example3.scm
 ;
-; - This program is almost the same as example5.scm, but includes a system 
-; call that invokes qre. This is a program that allows for execution in real or
-; simulated remote quantum computers, or on local simulators, In this regard, 
-; g2q and qre act as a JIT compiler/runtime.
+; Implementation of Grover's algorithm for two qubits [1]. 
+; 
+;
+; Sources:
+;
+; - [1]: Quantum Algorithm Implementations for Beginners. Coles, Eidenbenz et al.
+;   2018, https://arxiv.org/abs/1804.03719
+;   - [1.1]: Donwloaded as https://arxiv.org/pdf/1804.03719.pdf
+;     - [1.1.1]: from [1.1], pag 26, fig 18.
+;
 ;
 ; Compilation:
 ;
@@ -17,14 +22,7 @@
 ;
 ; - Enter the following:
 ;
-;   guile example6.scm
-;
-; Notes:
-; - This program will only compile a .qasm file but not run it if you don't have
-; qre installed on your system.
-; - You should make sure that your PATH system variable points to the folder
-; where you installed qre.
-; - qre is available at https://github.com/PESchoenberg/qre
+;   guile example3.scm
 ;
 ; ==============================================================================
 ;
@@ -46,18 +44,20 @@
 ; ==============================================================================
 
 
-; Required modules.
+; Modules. These two will be almost always required.
 (use-modules (g2q g2q0)
 	     (g2q g2q2))
 
 
-; Vars and initial stuff. 
-(define fname "example6.qasm")
+; Vars and initial stuff.
+(define fname "example3.qasm")
 (define qver 2.0)
 (define q "q")
 (define c "c")
-(define qn 4)
-(define cn 2)
+(define qn 5)
+(define cn 5)
+(define a 1)
+(define b 0)
 
 
 ; This configures the output to be sent a file instead of the console. If you
@@ -74,25 +74,27 @@
 (qregdef q qn c cn)
 
 
-(g1y "h" q 0 3)
-(cx q 0 q 1)
-(g1 "h" q 2) ; (1) replace with z gate for a normal qpe+
-(g1 "h" q 0)
-(cx q 3 q 2)
-(g1 "h" q 3)
+; Main stuff.
+(g1y "h" q b a)
+(g1y "s" q b a)
+(g1cxg1 "h" q a b)
+(g1y "s" q b a)
+(g1y "h" q b a)
+(g1y "x" q b a)
+(g1cxg1 "h" q a b)
+(g1y "x" q b a)
+(g1y "h" q b a)
 
 
-(qmeas q 0 c 0)
-(qmeas q 3 c 1)
+; And finally, we measure.
+(qcomm "Measuring")
+(qmeas q b c b)
+(qmeas q a c a)
 
 
-; Sets the output pot againt to the console. Don't forget to check if the 
+; Sets the output port again to the console. Don't forget to check if the 
 ; compilation is error free or you have some bugs to kill.
 (set-current-output-port port1)
 (close port2)
 (qendc)
-
-; This is a system call for qre. Replace [your-path-to-qre-folder] with
-; the correct path or change your system PATH variable accordingly.
-(system "[your-path-to-qre-folder]/qre example6.qasm post y qlib_simulator 1 example6_1")
 

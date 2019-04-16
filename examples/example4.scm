@@ -1,15 +1,21 @@
 #! /usr/local/bin/guile -s
 !#
 
-
 ; ==============================================================================
 ;
-; example6.scm
+; example4.scm
 ;
-; - This program is almost the same as example5.scm, but includes a system 
-; call that invokes qre. This is a program that allows for execution in real or
-; simulated remote quantum computers, or on local simulators, In this regard, 
-; g2q and qre act as a JIT compiler/runtime.
+; A program that estimates decoherence time on an n-qubit quantum circuit after
+; x time steps, being n and x configurable, adapted and developed from [1].
+; 
+;
+; Sources:
+;
+; - [1]: Quantum Algorithm Implementations for Beginners. Coles, Eidenbenz et al.
+;   2018, https://arxiv.org/abs/1804.03719
+;   - [1.1]: Donwloaded as https://arxiv.org/pdf/1804.03719.pdf
+;     - [1.1.1]: from [1.1], pag 32, fig 24.
+;
 ;
 ; Compilation:
 ;
@@ -17,14 +23,7 @@
 ;
 ; - Enter the following:
 ;
-;   guile example6.scm
-;
-; Notes:
-; - This program will only compile a .qasm file but not run it if you don't have
-; qre installed on your system.
-; - You should make sure that your PATH system variable points to the folder
-; where you installed qre.
-; - qre is available at https://github.com/PESchoenberg/qre
+;   guile example4.scm
 ;
 ; ==============================================================================
 ;
@@ -46,18 +45,37 @@
 ; ==============================================================================
 
 
-; Required modules.
+; Modules. These two will be almost always required.
 (use-modules (g2q g2q0)
 	     (g2q g2q2))
 
 
-; Vars and initial stuff. 
-(define fname "example6.qasm")
+; Vars and initial stuff.
+(define fname "example4.qasm")
 (define qver 2.0)
 (define q "q")
 (define c "c")
-(define qn 4)
-(define cn 2)
+(define g "h")
+(define qn 0)
+(define cn 0)
+(define qx 0)
+(define n 0)
+(qcomm "Number of qubits: ") ; q
+(set! qn (read))
+
+
+; The number of conventional register will be the same as qubits.
+(set! cn qn) 
+
+
+; Number of times that function g1y wil be called.
+(qcomm "Number of time steps: ")
+(set! qx (read))
+
+
+; Register count starts at zero, so we need n for looping in the interval 
+; [0: (- qn 1)].
+(set! n (- qn 1))
 
 
 ; This configures the output to be sent a file instead of the console. If you
@@ -74,25 +92,21 @@
 (qregdef q qn c cn)
 
 
-(g1y "h" q 0 3)
-(cx q 0 q 1)
-(g1 "h" q 2) ; (1) replace with z gate for a normal qpe+
-(g1 "h" q 0)
-(cx q 3 q 2)
-(g1 "h" q 3)
+; Main stuff, rather short code but can expand into a lot of if q or n have 
+; significant values.
+(g1y g q 0 n)
+(g1xy "id" q 0 n qx)
 
 
-(qmeas q 0 c 0)
-(qmeas q 3 c 1)
+; And finally, we measure. Notice that we use qmeasy instead of qmeas this 
+; provides us with as many measuring gates as n requires.
+(qcomm "Measuring")
+(qmeasy q c 0 n)
 
 
-; Sets the output pot againt to the console. Don't forget to check if the 
+; Sets the output port again to the console. Don't forget to check if the 
 ; compilation is error free or you have some bugs to kill.
 (set-current-output-port port1)
 (close port2)
 (qendc)
-
-; This is a system call for qre. Replace [your-path-to-qre-folder] with
-; the correct path or change your system PATH variable accordingly.
-(system "[your-path-to-qre-folder]/qre example6.qasm post y qlib_simulator 1 example6_1")
 

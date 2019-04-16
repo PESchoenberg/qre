@@ -57,7 +57,7 @@ void qre_show_var(std::string p_t, std::string p_v);
 
 void qre_show_string(std::string p_t);
 
-void qre_show_conclusion(std::string p_t, std::string p_r);
+void qre_show_conclusion(std::string p_base_verbosity, std::string p_t, std::string p_r);
 
 std::string qre_url_encode(std::string p_s);
 

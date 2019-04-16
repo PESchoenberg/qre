@@ -158,7 +158,7 @@ int main(int argc, char** argv)
       if(base_method == "test")
 	{
 	  base_verbosity = "yes";
-	  qre_show_conclusion(line, "Testing...");
+	  qre_show_conclusion(base_verbosity, line, "Testing...");
 	  qre_show_string("Arguments entered from the command line:");
 	  qre_show_var("File", base_file);
 	  qre_show_var("Method", base_method);
@@ -166,7 +166,7 @@ int main(int argc, char** argv)
 	  qre_show_var("Device", base_device);
 	  qre_show_var("Seed", base_seed);
 	  qre_show_var("Name", base_name);	  
-	  qre_show_conclusion(line, "Configuration values:");
+	  qre_show_conclusion(base_verbosity, line, "Configuration values:");
 	  qre_show_var("base-file", base_file);
 	  qre_show_var("base-data", base_data);
 	  qre_show_var("base-token", base_token);
@@ -183,7 +183,7 @@ int main(int argc, char** argv)
 	  qre_show_var("get-uri", get_uri);
 	  qre_show_var("delete-content-type", delete_content_type);
 	  qre_show_var("delete-uri", delete_uri);	  
-	  qre_show_conclusion("Test finished", "\n");
+	  qre_show_conclusion(base_verbosity, "Test finished", "\n");
 	}
       else if (base_device == "qlib_simulator")
 	{
@@ -197,11 +197,11 @@ int main(int argc, char** argv)
 					 base_name,
 					 base_device);
 	      
-	      qre_show_conclusion("Post result: \n\n", res);
+	      qre_show_conclusion(base_verbosity, "Post result: \n\n", res);
 	    }
 	  else
 	    {
-	      qre_show_conclusion("qre qlib_simulator only supports test and post requests.\n\n", " ");
+	      qre_show_conclusion(base_verbosity, "qre qlib_simulator only supports test and post requests.\n\n", " ");
 	    }
 	}    
       else if (base_device != "qlib_simulator")
@@ -242,7 +242,7 @@ int main(int argc, char** argv)
 					      base_seed,
 					      base_device);
 
-		  qre_show_conclusion("Post result:\n\n", res);
+		  qre_show_conclusion(base_verbosity, "Post result:\n\n", res);
 		}
 	      if(base_method == "get")
 		{
@@ -260,7 +260,7 @@ int main(int argc, char** argv)
 						login_id,
 						base_name);
 
-		  qre_show_conclusion("Delete result:\n\n", res);	      
+		  qre_show_conclusion(base_verbosity, "Delete result:\n\n", res);	      
 		}
 	    }	  
 	}
@@ -276,7 +276,7 @@ int main(int argc, char** argv)
       qre_show_string("Incorrect input.");
     }
 
-  qre_show_conclusion(line, "\n");
+  qre_show_conclusion(base_verbosity, line, "\n");
   
   return res1;
 }
