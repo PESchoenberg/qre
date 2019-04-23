@@ -35,9 +35,7 @@ Sources:
 - http://docs.rigetti.com/en/stable/basics.html
 
 * Compilation (using the gcc compiler family) on Linux:
-
-- g++ -std=c++17 -Wall -O3 -c qre0.cpp qre1.cpp 
-- g++ -std=c++17 -Wall -O3 qre0.o qre1.o -o qre -lcurl
+- See README.md
 
 * Testing:
 - See README.md
@@ -89,6 +87,7 @@ int main(int argc, char** argv)
   std::string delete_data = "";
   std::string delete_name = "";
   std::string request_log = "";
+  std::string qx_simulator_path = "";
   
   std::vector<std::string>response_login;
   
@@ -148,7 +147,8 @@ int main(int argc, char** argv)
       get_uri = base_uri + qre_seek_in_file(cfg_file, "get-uri");
       delete_content_type = delete_content_type + qre_seek_in_file(cfg_file, "delete-content-type");
       delete_uri = base_uri + qre_seek_in_file(cfg_file, "delete-uri");
-
+      qx_simulator_path = qre_seek_in_file(cfg_file, "qx-simulator-path");
+      
       //Define some names.
       login_name = base_name + "_login";
       post_name = base_name + "_post";
@@ -182,7 +182,8 @@ int main(int argc, char** argv)
 	  qre_show_var("get-content-type", get_content_type);
 	  qre_show_var("get-uri", get_uri);
 	  qre_show_var("delete-content-type", delete_content_type);
-	  qre_show_var("delete-uri", delete_uri);	  
+	  qre_show_var("delete-uri", delete_uri);
+	  qre_show_var("qx-simulator-path", qx_simulator_path);
 	  qre_show_conclusion(base_verbosity, "Test finished", "\n");
 	}
       else if (base_device == "qlib_simulator")
@@ -203,8 +204,28 @@ int main(int argc, char** argv)
 	    {
 	      qre_show_conclusion(base_verbosity, "qre qlib_simulator only supports test and post requests.\n\n", " ");
 	    }
-	}    
-      else if (base_device != "qlib_simulator")
+	}
+      else if (base_device == "qx_simulator")
+	{
+	  if(base_method == "post")
+	    {
+	      res = qx_post_experiment(base_verbosity,
+				       base_data,
+				       base_results_storage,
+				       base_seed,
+				       base_shots,
+				       base_name,
+				       base_device,
+				       qx_simulator_path);
+	      
+	      qre_show_conclusion(base_verbosity, "Post result: \n\n", res);
+	    }
+	  else
+	    {
+	      qre_show_conclusion(base_verbosity, "qre qx_simulator only supports test and post requests.\n\n", " ");
+	    }
+	}       
+      else if ((base_device == "ibmqx_simulator")||(base_device == "ibmqx_real_qpu"))
 	{
 	  qre_show_string(line);
 
@@ -280,10 +301,5 @@ int main(int argc, char** argv)
   
   return res1;
 }
-
-
-
-
-
 
 
