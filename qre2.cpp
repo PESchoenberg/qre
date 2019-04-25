@@ -710,7 +710,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	    }
 	}
 
-      // This is required to calculate the probabilitiesafter all shots have been performed.
+      // This is required to calculate the probabilities after all shots have been performed.
       
       //On first shot, create data set for results.
       if (k == 0)
@@ -789,6 +789,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       
     } // k
 
+  // Construct results.
+  
   //After performing all shots, average values, calculate probabilities.
   for (i = 0; i < (int)res_final.size(); i++)
     {
@@ -855,6 +857,15 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	{
 	  res = res + ", ";
 	}
+
+      /*if (i < nq)
+	{
+	  res = res + qre_d2s(res_final[i]);
+	}
+      if (i < (nq - 1))
+	{
+	  res = res + ", ";
+	}*/      
     }
     
   res = res + "]}},";
@@ -904,6 +915,11 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   int j = 0;
   int k = 0;
   int res1 = 0;
+  int p0 = 0;
+  int p1 = 0;
+  int p2 = 0;
+  int p3 = 0;  
+  int p4 = 0;
   
   float svecx = 0;
   float svecy = 0;
@@ -915,6 +931,9 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   
   std::string res = "";
   std::string res2 = "";
+  std::string res3 = "";
+  std::string res4 = "";
+  std::string res5 = "";
   std::string str = "";
   std::string str1 = "";
   std::string str2 = "";
@@ -935,7 +954,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   long unsigned int rm = 0;
   
   size_t pos = 0;
-  size_t terms = 0;
 
   struct res_row
   {
@@ -956,12 +974,13 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
   vector_size = qasm_instructions.size();
   shots = (int)qre_s2d(p_base_shots);
-
-  //(re)Create temp.qc
+  
+  //(re)Create temp.qc and initialize some stuff.
   file = "qx_temp.qc";
   pathj = patha + file;     
   std::ofstream qc_file_ini(pathj);
   qc_file_ini << "# qx_temp.qc" << endl;
+  res1 = res1 + 0; // So that the compiler doesn't complain.
   
   // We need to define qreg q and creg c before parsing anything else in the QASM file.
   for(i = 0; i < vector_size; i++)
@@ -973,7 +992,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	}
     }
 
-  qreg q(rn);
+  //qreg q(rn);
   qre_show_v(p_base_verbosity, (" Creating qubit register q."));
   rn = 0;
   
@@ -1183,20 +1202,178 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 
     }
   
-  // Shots iteration.
-  shots = 1; //temp.
+  /* Shots iteration. Here we call the simulatore, generate on each iteration a
+     file with results, parse it to get the kets, extract the values of each ket
+     as a complex number and then process those values using vectors.*/
+  //shots = 1; //temp.
   sys_command = sys_command + " " + patha + "qx_temp.qc" + " > " + patha + "qx_temp.txt";
   for(k = 0; k < shots; k++)
     {
       //call qx simulator with created temp.qc file
       res1 = (system(sys_command.c_str()));
       
-      //Read results on each shot iteration and accummulate
+      //Read qx_temp.txt on each shot iteration, parse kets and accummulate the
+      // extracted values.
+
+      j = k;
+      std::ifstream qx_temp(patha + "qx_temp.txt");
+      while (std::getline(qx_temp, res2))
+	{
+	  //If the line contains ket data.
+	  if ((qre_recog("> +", res2) == true) && (qre_recog(") |", res2) == true))
+	    {
+
+	      /*
+		This updates and grows dynamically a string matrix and two vectors:
+		- res_parc contains strings parsed from res2.
+		- res_sum contains the sum of all values corresponding to each ket.
+		- res_final contains the avg probabilities obtained from res_sum and shots.
+
+		Each element of these vectors and matrices will be updated on each shot.
+	      */
+	      res_parc.push_back({"","",""});
+	      res_sum.push_back(0);
+	      res_shots.push_back(0);
+	      res_final.push_back(0);
+
+	      /* On each iteration, after res_parc has been created, parse res2 and distribute the parsed
+		 data within the struct of each row.*/
+
+	      // Trim string and extract real, imaginary parts and ket qbyte.
+	      p0 = res2.find("(");
+	      res3 = res2.substr(p0+1);
+	      //int l = res3.length();	      
+	      p0 = res3.find("(");
+	      p1 = res3.find(",");
+	      res4 = res3.substr(p1+1);	      
+              p2 = res4.find(")");
+              p3 = res4.find("|");	      
+	      res5 = res4.substr(p3+1);
+              p4 = res5.find(">");
+	      res_parc[j].sterm = res3.substr(0, p1);
+	      res_parc[j].svec = res4.substr(0, p2);	      
+	      res_parc[j].sket = res5.substr(0, p4);	      
+	      
+	      //Cast numbers as two floats.
+	      //str1 = res_parc[j].sterm;
+	      str4 = res_parc[j].sterm;
+	      str5 = res_parc[j].svec;
+	      svecx = atof(str4.c_str());
+	      svecy = atof(str5.c_str());
+
+	      //Square both and sum to get p = x^2 + y^2.
+	      svect = (double)(pow(svecx,2) + pow(svecy,2));
+	      res_sum[j] = svect;
+	      
+	      //Increment value of res_sum.
+	      res_shots[j] = res_shots[j] + res_sum[j];
+	      
+	      //Show some info.
+	      if (p_base_verbosity == "yes")
+		{
+		  cout << "res_parc[" << j << "].sterm = " << res_parc[j].sterm << " .sket = "<< res_parc[j].sket << " .svec = " << res_parc[j].svec << endl;
+		}
+
+	      j++;
+	      
+	    }
+	}
+      
+    } // k
+
+  //****************************************************************************
+
+  // Construct results.
+  
+  //After performing all shots, average values, calculate probabilities.
+  for (i = 0; i < (int)res_final.size(); i++)
+    {
+      res_final[i] = res_shots[i] / shots;
+      sprob = sprob + res_final[i];
+    }  
+
+    if (p_base_verbosity == "yes")
+      {  
+	cout << "Final avg: " << sprob << endl;
+      }
+
+  //Build the json string with results.
+  res = "{";
+  res = res + "\'idCode\': " + "u\'"+ p_base_device +"\'" + ",\'idExecution\': " + "u\'" + p_base_name + "\'" + ",\'result\': {\'measure\': {u\'labels\': [";
+
+  //Put labels.
+  for(i = 0; i < (int)res_final.size(); i++)
+  {
+    if (i < ((int)res_final.size() - 1))
+      {
+	res = res + "u\'";
+      }
+    
+    res = res + res_parc[i].sket;
+
+    if (i < ((int)res_final.size() - 1))
+      {
+	res = res + "\'";
+      }
+    
+    if (i < ((int)res_final.size() - 2))
+      {
+	res = res + ",";
+      }
+    
+  }
+  res = res + "],";
+
+  //Put qubit numbers.
+  int nq = c.size();
+  res = res + "u\'qubits\':[";
+  for(i = 0; i < nq; i++)
+    {
+      res = res + qre_d2s((double)i);
+      if (i < (nq - 1))
+	{
+	  res = res + ", ";
+	}
+    }
+    
+  res = res + "],";
+
+  //Put probability values.
+  res = res + "u\'values\':[";
+  nq = (int)res_final.size();
+  for(i = 0; i < nq; i++)
+    {
+      if (i < (nq - 1))
+	{
+	  res = res + qre_d2s(res_final[i]);
+	}
+      if (i < (nq - 2))
+	{
+	  res = res + ", ";
+	}
+
+      /*if (i < nq)
+	{
+	  res = res + qre_d2s(res_final[i]);
+	}
+      if (i < (nq - 1))
+	{
+	  res = res + ", ";
+	}*/
       
     }
+    
+  res = res + "]}},";
 
+  // Finish off the string.
+  res = res + "\'status\':\'DONE\'}";
+
+  
+  //****************************************************************************
+
+  
   //cout << res1 << endl;
-  res = "qx_simulator test ok.";
+  //res = "qx_simulator test ok.";
 
   //Save.
   //qre_store_results(p_base_results_storage, p_base_name, res);
