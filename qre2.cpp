@@ -1206,6 +1206,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
      file with results, parse it to get the kets, extract the values of each ket
      as a complex number and then process those values using vectors.*/
   //shots = 1; //temp.
+  //j = 0;
   sys_command = sys_command + " " + patha + "qx_temp.qc" + " > " + patha + "qx_temp.txt";
   for(k = 0; k < shots; k++)
     {
@@ -1215,7 +1216,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       //Read qx_temp.txt on each shot iteration, parse kets and accummulate the
       // extracted values.
 
-      j = k;
+      // Reset some stuff.
+      j = 0;     
       std::ifstream qx_temp(patha + "qx_temp.txt");
       while (std::getline(qx_temp, res2))
 	{
@@ -1231,18 +1233,20 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 
 		Each element of these vectors and matrices will be updated on each shot.
 	      */
-	      res_parc.push_back({"","",""});
-	      res_sum.push_back(0);
-	      res_shots.push_back(0);
-	      res_final.push_back(0);
-
+	      if (k == 0)
+		{
+		  res_parc.push_back({"","",""});
+		  res_sum.push_back(0);
+		  res_shots.push_back(0);
+		  res_final.push_back(0);
+		}
+	      
 	      /* On each iteration, after res_parc has been created, parse res2 and distribute the parsed
 		 data within the struct of each row.*/
 
 	      // Trim string and extract real, imaginary parts and ket qbyte.
 	      p0 = res2.find("(");
-	      res3 = res2.substr(p0+1);
-	      //int l = res3.length();	      
+	      res3 = res2.substr(p0+1);	      
 	      p0 = res3.find("(");
 	      p1 = res3.find(",");
 	      res4 = res3.substr(p1+1);	      
@@ -1255,7 +1259,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      res_parc[j].sket = res5.substr(0, p4);	      
 	      
 	      //Cast numbers as two floats.
-	      //str1 = res_parc[j].sterm;
 	      str4 = res_parc[j].sterm;
 	      str5 = res_parc[j].svec;
 	      svecx = atof(str4.c_str());
@@ -1267,18 +1270,16 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      
 	      //Increment value of res_sum.
 	      res_shots[j] = res_shots[j] + res_sum[j];
+	      //res_shots[k] = res_shots[k] + res_sum[j];
 	      
 	      //Show some info.
 	      if (p_base_verbosity == "yes")
 		{
 		  cout << "res_parc[" << j << "].sterm = " << res_parc[j].sterm << " .sket = "<< res_parc[j].sket << " .svec = " << res_parc[j].svec << endl;
 		}
-
 	      j++;
-	      
 	    }
-	}
-      
+	}      
     } // k
 
   //****************************************************************************
@@ -1304,7 +1305,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   //Put labels.
   for(i = 0; i < (int)res_final.size(); i++)
   {
-    if (i < ((int)res_final.size() - 1))
+    if (i < ((int)res_final.size() ))
       {
 	res = res + "u\'";
       }
@@ -1316,7 +1317,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	res = res + "\'";
       }
     
-    if (i < ((int)res_final.size() - 2))
+    if (i < ((int)res_final.size() - 1))
       {
 	res = res + ",";
       }
@@ -1343,23 +1344,23 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   nq = (int)res_final.size();
   for(i = 0; i < nq; i++)
     {
-      if (i < (nq - 1))
+      /*if (i < (nq - 1))
 	{
 	  res = res + qre_d2s(res_final[i]);
 	}
       if (i < (nq - 2))
 	{
 	  res = res + ", ";
-	}
+	}*/
 
-      /*if (i < nq)
+      if (i < nq)
 	{
 	  res = res + qre_d2s(res_final[i]);
 	}
       if (i < (nq - 1))
 	{
 	  res = res + ", ";
-	}*/
+	}
       
     }
     
@@ -1368,15 +1369,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   // Finish off the string.
   res = res + "\'status\':\'DONE\'}";
 
-  
-  //****************************************************************************
-
-  
-  //cout << res1 << endl;
-  //res = "qx_simulator test ok.";
-
   //Save.
-  //qre_store_results(p_base_results_storage, p_base_name, res);
+  qre_store_results(p_base_results_storage, p_base_name, res);
   
   return res;
 }
