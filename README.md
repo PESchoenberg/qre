@@ -37,17 +37,22 @@ not incorporate simulated noise or other factors.
 
 ## Dependencies:
 
-* g2q - v1.1.2 or later ( https://github.com/PESchoenberg/g2q )
+* Required:
 
-* curl - v7.47.0 or later.
+  - g2q - v1.1.2 or later ( https://github.com/PESchoenberg/g2q )
 
-* g++ - v4:5.3.1 or later.
+  - curl - v7.47.0 or later.
 
-* Qlib - v1.0.1 or later ( https://github.com/qkmaxware/Qlib ).
+  - g++ - v4:5.3.1 or later.
 
-* You will need an account and an api token from the IBM Quantum Experience
-(see below) if you want to access IBM QX computers and simulators.
+  - Qlib - v1.0.1 or later ( https://github.com/qkmaxware/Qlib ).
 
+* Optional:
+
+  - You will need an account and an api token from the IBM Quantum Experience
+  (see below) if you want to access IBM QX computers and simulators.
+
+  - QX Simulator - ( http://quantum-studio.net/ ).
 
 ## Installation:
 
@@ -107,6 +112,11 @@ own:
 
   or
 
+  ./qre examples/example1.qasm post y qx_simulator 1 example1_1 <ENT> to run it
+  on a locally installed qx simulator.
+
+  or
+
   ./qre examples/example1.qasm post y ibmqx_simulator 1 example1_1 <ENT> to run it
   on a remote IBM QX simulator.
 
@@ -126,12 +136,13 @@ own compatible compiler.
 
 ## Credits and Sources:
 
-* IBM Quantum Experience - ( https://quantumexperience.ng.bluemix.net/qx/experience )
+* IBM Quantum Experience - ( https://quantumexperience.ng.bluemix.net/qx/experience ).
 
-* g2q Scheme to QASM2 compiler - - https://github.com/PESchoenberg/g2q (LGPL-3.0 or later)
+* g2q Scheme to QASM2 compiler - ( https://github.com/PESchoenberg/g2q ) (LGPL-3.0 or later).
 
-* URL of this project - https://github.com/PESchoenberg/qre
+* QX Simulator - ( http://www.qutech.nl/ )
 
+* URL of this project - ( https://github.com/PESchoenberg/qre ).
 
 ## License:
 
