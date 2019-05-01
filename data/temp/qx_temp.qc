@@ -1,15 +1,19 @@
 # qx_temp.qc
-qubits 4
+qubits 5
 h q0
 h q1
 h q2
 h q3
-cx q0, q1
-h q2
-h q0
-cx q3, q2
-h q3
+h q4
+x q0
+x q1
+x q2
+x q3
+x q4
 measure q0
 measure q1
+measure q2
+measure q3
+measure q4
+error_model depolarizing_channel,0.001
 display
-# error_model depolarizing_channel,0.001

@@ -546,7 +546,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       for(i = 0; i < vector_size; i++)
 	{
 	  // Find if line will be ignored or not based on the value of delim.
-	  if (qre_recog(comment, qasm_instructions[i]) == true)
+	  //if (qre_recog(comment, qasm_instructions[i]) == true)
+	  if ((qre_recog(comment, qasm_instructions[i]) == true)&&(qre_recog("// qdeclare qlib-simulator ", qasm_instructions[i]) == false))	  
 	    {
 	      qre_show_v(p_base_verbosity, ("Ignore, comment -> " + qasm_instructions[i]));
 	    }
@@ -590,6 +591,12 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "c"));
 		      qre_show_v(p_base_verbosity, (" measurement at qubit " + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
 		    }
+
+		  // pragma qlib
+		  if (qre_recog("// qdeclare qlib-simulator ", qasm_instructions[i]) == true)
+		    {
+		      // Placeholder. Still no declarations for qlib.
+		    }	  
 		  
 		  // cx gate.
 		  if (qre_recog("cx", qasm_instructions[i]) == true)
@@ -1027,7 +1034,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       for(i = 0; i < vector_size; i++)
 	{
 	  // Find if line will be ignored or not based on the value of delim.
-	  if (qre_recog(comment, qasm_instructions[i]) == true)
+	  if ((qre_recog(comment, qasm_instructions[i]) == true)&&(qre_recog("// qdeclare qx-simulator ", qasm_instructions[i]) == false))
 	    {
 	      qre_show_v(p_base_verbosity, ("Ignore, comment -> " + qasm_instructions[i]));
 	    }
@@ -1071,6 +1078,12 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "c"));
 		      qc_file_app << "measure q" << rm << endl;
 		      qre_show_v(p_base_verbosity, (" measurement at qubit " + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
+		    }
+
+		  // pragma qx
+		  if (qre_recog("// qdeclare qx-simulator ", qasm_instructions[i]) == true)
+		    {
+		      qc_file_app << qre_what_comes_after_s1("// qdeclare qx-simulator ", qasm_instructions[i]) << endl;
 		    }
 		  
 		  // cx gate.
@@ -1195,7 +1208,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 
       //Add these lines to the end of the file
       qc_file_app << "display" << endl;
-      qc_file_app << "# error_model depolarizing_channel,0.001" << endl;
+      //qc_file_app << "# error_model depolarizing_channel,0.001" << endl;
             
       //Once finished parsing qasm_instructions file and compiling temp.qc file, close latter.
       qc_file_app.close();

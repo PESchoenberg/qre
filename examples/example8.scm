@@ -83,7 +83,9 @@
 	(porto2 (open-output-file fnameo))
 	(a "")
 	(b "")
-	(res 0))
+	(res 0)
+	(qqn (- p_qn 1))
+	(ccn (- p_cn 1)))
 
     ; This configures the output to be sent a file instead of the console.
     (set-current-output-port porto2)
@@ -112,11 +114,11 @@
     ; quantum programs using traditional programming features.
     
     ; Qcircuit.
-    (g1y "h" q 0 5)
-    (if (= p_i 1)(g1y "x" p_q 0 5))
-    (if (= p_i 2)(g1y "y" p_q 0 5))
-    (if (= p_i 3)(g1y "z" p_q 0 5))    
-    (qmeasy  p_q p_c 0 p_cn)
+    (g1y "h" q 0 qqn)
+    (if (= p_i 1)(g1y "x" p_q 0 qqn))
+    (if (= p_i 2)(g1y "y" p_q 0 qqn))
+    (if (= p_i 3)(g1y "z" p_q 0 qqn))    
+    (qmeasy  p_q p_c 0 ccn)
     
     ; Set the output port again to the console.
     (set-current-output-port porto1)
@@ -125,9 +127,9 @@
     ; This is a system call to invoke qre. Replace [your-path-to-qre-folder] with
     ; the correct path or change your system PATH variable accordingly. You need
     ; to have g2q and qre included on your system path variable or modify the
-    ; call below to make it work properly. It will alos work if you run 
+    ; call below to make it work properly. It will also work if you run 
     ; this program from within the main folder of qre.
-    (system "./qre example8.qasm post n qlib_simulator 1 example8_1")
+    (system "./qre example8.qasm post y qx_simulator 1 example8_1")
     
     ; Now get the data from the QPU.
     (set! a (read-file-as-string fnamei))
@@ -157,12 +159,11 @@
 		 (loop (- i 1)))))))
 
 
-; And this is the main program. It gives as a result the decimal ablsolute and
+; And this is the main program. It gives as a result the decimal absolute and
 ; non-probabilistic summation of the max values obtained on the execution of 
 ; each quantum circuit created on each qcall.
 (qcomm "Number of QPU call (qcalls): ")
 (set! qx (read))
-;(set! qx (- qx 1))
 (set! res (main-loop qver q c qn cn mc qx))
 (newlines 2)
 (display "Result = ")
