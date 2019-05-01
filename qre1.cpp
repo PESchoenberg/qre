@@ -446,5 +446,30 @@ std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std
 }
 
 
+/* qre_what_comes_after_s1 - returns the substring of p_s2 that comes after p_s1. 
 
+Arguments:
+- p_s1: string whose comlement is sought after in p_s2.
+- p_s2: string wher to look for the complement of p_s1.
 
+Output:
+- Returns p_s2 - p_s1. If p_s1 is non-exsitent or is shorter than p_ss1, 
+returns complete p_s2.
+
+ */
+std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2)
+{
+  std::string s1 = p_s1;
+  std::string s2 = p_s2;
+  std::string res = s2;
+  
+  int ls1 = s1.length();
+  int ls2 = s2.length();
+  
+  if ((qre_recog(s1, s2) == true)&&(ls2 >= ls1))
+    {
+      res = s2.substr(ls1);
+    }
+
+  return res;
+}

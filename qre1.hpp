@@ -75,4 +75,6 @@ std::string qre_parse_reg(std::string p_string, std::string p_type);
 
 std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std::string p_base_data);
 
+std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2);
+
 #endif // !__QRE1_H
