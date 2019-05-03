@@ -81,7 +81,9 @@ Output:
 int qre_count_string(std::string p_delim, std::string p_string)
 {
   size_t pos;
+  
   int res = 0;
+  
   std::string str;
   
   while ((pos = str.find(p_delim)) != std::string::npos)
@@ -181,6 +183,7 @@ std::string qre_seek_in_json(std::string p_j, std::string p_v)
   std::string j = p_j;
   std::string v = p_v + ":\"";
   std::string e = "}";
+  
   size_t pos1;
   size_t pos2;
   
@@ -224,6 +227,7 @@ void qre_show_var(std::string p_t, std::string p_v)
   std::string t1 = p_t;
   std::string t2 = " = ";
   std::string t3 = j + t1 + t2 + p_v + j;
+  
   cout << t3;
 }
 
@@ -268,6 +272,7 @@ Arguments:
 std::string qre_url_encode(std::string p_s)
 {
   CURL *curl;
+  
   std::string res = p_s;
   
   curl = curl_easy_init();
@@ -293,7 +298,9 @@ Output:
 char *qre_create_header(std::string p_s)
 {
   std::string ps = p_s;
+  
   const char *s = ps.c_str();
+  
   char cs[ps.length()];
 
   return strcpy(cs, s);
@@ -372,6 +379,7 @@ Output:
 int qre_parse_bitnum(std::string p_string)
 {
   int res = 0;
+  
   std::string snum = "";
 
   snum = p_string.substr(2,(p_string.length()-1));
@@ -431,9 +439,10 @@ std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std
   
   std::string base_data = p_base_data;
   std::string delim = ";";
-  size_t pos = 0;
   std::string line;
- 
+  
+  size_t pos = 0;
+   
   qre_show_v(p_base_verbosity, ("Parsing base_data..."));  
   while ((pos = base_data.find(delim)) != std::string::npos)
   {

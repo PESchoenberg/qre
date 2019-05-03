@@ -26,6 +26,10 @@ qre2.hpp
 
 #include "qre1.hpp"
 
+
+std::string construct_res_step1(std::string p_res, std::string p_base_device, std::string p_base_name);
+
+
 std::string ibmqx_qpost(std::string p_base_verbosity,
 			std::string p_base_method,
 			std::string p_base_data,
@@ -34,6 +38,7 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
 			std::string p_uri,
 			std::string p_login_id);
 
+
 std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
 				     std::string p_base_method,
 				     std::string p_login_data,
@@ -41,6 +46,7 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
 				     std::string p_base_results_storage,
 				     std::string p_login_uri,
 				     std::string p_login_name);
+
 
 std::string ibmqx_post_experiment(std::string p_base_verbosity,
 				  std::string p_base_method,
@@ -56,6 +62,7 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
 				  std::string p_base_seed,
 				  std::string p_base_device);
 
+
 std::string ibmqx_delete_experiment(std::string p_base_verbosity,
 				    std::string p_base_method,
 				    std::string p_delete_data,
@@ -66,6 +73,7 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
 				    std::string p_login_id,
 				    std::string p_base_name);
 
+
 std::string qlib_post_experiment(std::string p_base_verbosity,
 				 std::string p_base_data,
 				 std::string p_base_results_storage,
@@ -73,6 +81,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 				 std::string p_base_shots,
 				 std::string p_base_name,
 				 std::string p_base_device);
+
 
 std::string qx_post_experiment(std::string p_base_verbosity,
 			       std::string p_base_data,
@@ -82,5 +91,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 			       std::string p_base_name,
 			       std::string p_base_device,
 			       std::string p_simulator_path);
+
 
 #endif // !__QRE2_H
