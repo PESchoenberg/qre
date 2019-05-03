@@ -45,9 +45,9 @@ Sources:
 
 #include "qre0.hpp"
 
-
 using namespace std;
 
+/* Main program.*/
 int main(int argc, char** argv)
 {
   int res1 = 0;
@@ -153,8 +153,7 @@ int main(int argc, char** argv)
       login_name = base_name + "_login";
       post_name = base_name + "_post";
       get_name = base_name + "_get";
-      delete_name = base_name + "_delete";
-      
+      delete_name = base_name + "_delete";     
       if(base_method == "test")
 	{
 	  base_verbosity = "yes";
@@ -196,8 +195,7 @@ int main(int argc, char** argv)
 					 base_seed,
 					 base_shots,
 					 base_name,
-					 base_device);
-	      
+					 base_device);	      
 	      qre_show_conclusion(base_verbosity, "Post result: \n\n", res);
 	    }
 	  else
@@ -216,8 +214,7 @@ int main(int argc, char** argv)
 				       base_shots,
 				       base_name,
 				       base_device,
-				       qx_simulator_path);
-	      
+				       qx_simulator_path);	      
 	      qre_show_conclusion(base_verbosity, "Post result: \n\n", res);
 	    }
 	  else
@@ -236,10 +233,8 @@ int main(int argc, char** argv)
 				     login_content_type,
 				     base_results_storage,
 				     login_uri,
-				     login_name);
-	  
-	  login_id = response_login[3];
-	  
+				     login_name);	  
+	  login_id = response_login[3];	  
 	  if(login_id == "na")
 	    {
 	      qre_show_string("LOGIN FAILED");
@@ -262,12 +257,11 @@ int main(int argc, char** argv)
 					      base_shots,
 					      base_seed,
 					      base_device);
-
 		  qre_show_conclusion(base_verbosity, "Post result:\n\n", res);
 		}
 	      if(base_method == "get")
 		{
-	      
+		  // Placeholder.
 		}
 	      if(base_method == "delete")
 		{
@@ -280,7 +274,6 @@ int main(int argc, char** argv)
 						delete_name,
 						login_id,
 						base_name);
-
 		  qre_show_conclusion(base_verbosity, "Delete result:\n\n", res);	      
 		}
 	    }	  
@@ -296,7 +289,6 @@ int main(int argc, char** argv)
       res1 = 1;
       qre_show_string("Incorrect input.");
     }
-
   qre_show_conclusion(base_verbosity, line, "\n");
   
   return res1;
