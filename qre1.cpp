@@ -223,12 +223,13 @@ Aruments:
  */
 void qre_show_var(std::string p_t, std::string p_v)
 {
-  std::string j = "\n";
-  std::string t1 = p_t;
-  std::string t2 = " = ";
-  std::string t3 = j + t1 + t2 + p_v + j;
-  
-  cout << t3;
+  //std::string j = "\n";
+  //std::string t1 = p_t;
+  //std::string t2 = " = ";
+  //std::string t3 = j + t1 + t2 + p_v + j;
+  //cout << t3;
+  //cout << j << t1 << t2 << p_v << j << endl;
+  cout << "\n" << p_t << " = " << p_v << "\n" << endl;
 }
 
 
@@ -360,7 +361,7 @@ void qre_store_results(std::string p_base_results_storage,
       json_file.close();    
     }
   else if (p_base_results_storage == "sqlite3")
-    {;
+    {
       //Here we will put all routines to store stuff on a sqlite3 database.
     }
 }
@@ -482,3 +483,4 @@ std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2)
 
   return res;
 }
+

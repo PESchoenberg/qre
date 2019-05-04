@@ -30,6 +30,9 @@ qre2.hpp
 std::string construct_res_step1(std::string p_res, std::string p_base_device, std::string p_base_name);
 
 
+std::string construct_res_step3(std::string p_res);
+
+
 std::string ibmqx_qpost(std::string p_base_verbosity,
 			std::string p_base_method,
 			std::string p_base_data,

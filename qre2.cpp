@@ -42,11 +42,27 @@ static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, vo
 }
 
 
+/* show_res_parc - shows parcial results.
+
+Argments:
+- p_base_verbosity: base verbosity.
+- p_j: j.
+- p_sterm: sterm.
+- p_sket: sket.
+- p_svec: svec.
+
+ */
+void show_res_parc(std::string p_base_verbosity, int p_j, std::string p_sterm, std::string p_sket, std::string p_svec)
+{
+  qre_show_v(p_base_verbosity, ("res_parc["+(qre_d2s((double)p_j))+"].sterm = "+p_sterm+" .sket = "+p_sket+" .svec = "+p_svec+"\n"));
+}
+
+
 /* construct_res_step1 - builds a standard header for json results.
 
 Arguments:
 - p_res: res.
-= p_base_device: base device.
+- p_base_device: base device.
 - p_base_name: base name.
 
  */
@@ -58,6 +74,23 @@ std::string construct_res_step1(std::string p_res, std::string p_base_device, st
   
   return res;
 }
+
+
+/* construct_res_step3 - builds a standard tail for json results.
+
+Arguments:
+- p_res: res.
+
+ */
+std::string construct_res_step3(std::string p_res)
+{
+  std::string res = p_res;
+
+  res = res + "]}}," + "\'status\':\'DONE\'}"; 
+  
+  return res;
+}
+
 
 /* ibmqx_qpost- performs a post on q-series quantum computers. This function is 
 adapted from an example shown on the links listed as sources.
@@ -103,8 +136,8 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
   std::string pcontenttype = p_content_type;
   std::string puri = p_uri;
   std::string ploginid = p_login_id;
-  std::string pcontenttype2 = "x-access-token: "+p_login_id+";charset=utf-8";
-  std::string pcontentlength = "content-length: "+to_string(pdata.length());
+  std::string pcontenttype2 = "x-access-token: " + p_login_id + ";charset=utf-8";
+  std::string pcontentlength = "content-length: " + to_string(pdata.length());
   std::string pclientapp = "x-qx-client-application: qiskit-api-py";
 
   const char *cfile_cookies = file_cookies.c_str();
@@ -345,10 +378,6 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
   std::string header2 = "";
   std::string post_content_type = "";
 
-  if (p_base_verbosity == "yes")
-    {  
-      qre_show_string("Posting...");
-    }
   post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name;
   post_uri = post_uri+"?access_token="+p_login_id+"&shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
   if(p_base_verbosity == "yes")
@@ -360,8 +389,8 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
       qre_show_var("base_results_storage", p_base_results_storage);
       qre_show_var("post_uri", post_uri);
       qre_show_string("\n\n");
-      qre_show_string("Posting...");
-    }  
+    }
+  qre_show_v(p_base_verbosity, "Posting...");
   res = ibmqx_qpost(p_base_verbosity,
 		    p_base_method,
 		    post_data,
@@ -735,10 +764,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	  svect = (double)(pow(svecx,2) + pow(svecy,2));
 	  res_sum[j] = svect;
 	  res_shots[j] = res_shots[j] + res_sum[j];
-	  if (p_base_verbosity == "yes")
-	    {
-	      cout << "res_parc[" << j << "].sterm =" << res_parc[j].sterm << " .sket ="<< res_parc[j].sket << " .svec=" << res_parc[j].svec << endl;
-	    }  
+	  show_res_parc(p_base_verbosity, j, res_parc[j].sterm, res_parc[j].sket, res_parc[j].svec);
 	  j++;
 	}     
     } // k
@@ -811,8 +837,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	}*/      
     }
 
-  // Finish off the string and save.  
-  res = res + "]}}," + "\'status\':\'DONE\'}";
+  // Finish off the string and save. 
+  res = construct_res_step3(res);
   qre_store_results(p_base_results_storage, p_base_name, res);
   
   return res;
@@ -1085,7 +1111,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	}
       qc_file_app << "display" << endl;
       qc_file_app.close();
-
     }
   
   /* Shots iteration. Here we call the simulatore, generate on each iteration a
@@ -1157,10 +1182,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      res_shots[j] = res_shots[j] + res_sum[j];
 	      
 	      //Show some info.
-	      if (p_base_verbosity == "yes")
-		{
-		  cout << "res_parc[" << j << "].sterm = " << res_parc[j].sterm << " .sket = "<< res_parc[j].sket << " .svec = " << res_parc[j].svec << endl;
-		}	      
+	      show_res_parc(p_base_verbosity, j, res_parc[j].sterm, res_parc[j].sket, res_parc[j].svec);
 	      j++;
 	    }
 	}      
@@ -1233,8 +1255,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	}     
     }
 
-  // Finish off the string and save.  
-  res = res + "]}}," + "\'status\':\'DONE\'}";  
+  // Finish off the string and save.
+  res = construct_res_step3(res);
   qre_store_results(p_base_results_storage, p_base_name, res);
   
   return res;
