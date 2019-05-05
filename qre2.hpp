@@ -27,6 +27,9 @@ qre2.hpp
 #include "qre1.hpp"
 
 
+void show_res_parc(std::string p_base_verbosity, int p_j, std::string p_st, std::string p_sk, std::string p_sv);
+
+
 std::string construct_res_step1(std::string p_res, std::string p_base_device, std::string p_base_name);
 
 

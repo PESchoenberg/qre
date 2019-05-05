@@ -91,7 +91,7 @@ int main(int argc, char** argv)
   
   std::vector<std::string>response_login;
   
-  //Check number of arguments program_file, comm_file, 
+  // Check number of arguments program_file, comm_file, 
   if (argc == 7)
     {
       // Name of the qasm file to run.
@@ -103,8 +103,9 @@ int main(int argc, char** argv)
       // y: show request data, m: show nothing.
       base_verbosity = argv[3];
 
-      // Backend to use. Write test if you want to just see the contents of the qreg file, simulator for a simulator
-      // backend, or the name of the quantum processor to use in case of a real run.
+      /* Backend to use. Write test if you want to just see the contents of the 
+	 qreg file, simulator for a simulator backend, or the name of the 
+	 quantum processor to use in case of a real run. */
       base_device = argv[4];
 
       // Random seed number to use, int >= 1.
@@ -113,7 +114,7 @@ int main(int argc, char** argv)
       // Name of the experiment to run (choose your own).
       base_name = argv[6];
       
-      //Verbosity parameter.
+      // Verbosity parameter.
       if((base_verbosity == "y")||(base_verbosity == "Y"))
 	{
 	  base_verbosity = "yes";
@@ -131,7 +132,7 @@ int main(int argc, char** argv)
 	  base_verbosity = "no";
 	}
       
-      //Read parameters from file.      
+      // Read parameters from file.      
       base_data = qre_read_qasm_file(base_file);      
       base_token = qre_seek_in_file(cfg_file, "base-token");
       base_uri = qre_seek_in_file(cfg_file, "base-uri");
@@ -149,12 +150,12 @@ int main(int argc, char** argv)
       delete_uri = base_uri + qre_seek_in_file(cfg_file, "delete-uri");
       qx_simulator_path = qre_seek_in_file(cfg_file, "qx-simulator-path");
       
-      //Define some names.
+      // Define some names.
       login_name = base_name + "_login";
       post_name = base_name + "_post";
       get_name = base_name + "_get";
       delete_name = base_name + "_delete";     
-      if(base_method == "test")
+      if (base_method == "test")
 	{
 	  base_verbosity = "yes";
 	  qre_show_conclusion(base_verbosity, line, "Testing...");
@@ -205,7 +206,7 @@ int main(int argc, char** argv)
 	}
       else if (base_device == "qx_simulator")
 	{
-	  if(base_method == "post")
+	  if (base_method == "post")
 	    {
 	      res = qx_post_experiment(base_verbosity,
 				       base_data,
@@ -226,7 +227,7 @@ int main(int argc, char** argv)
 	{
 	  qre_show_string(line);
 
-	  //Login first.
+	  // Login first.
 	  response_login=ibmqx_login(base_verbosity,
 				     base_method,
 				     login_data,
@@ -235,14 +236,14 @@ int main(int argc, char** argv)
 				     login_uri,
 				     login_name);	  
 	  login_id = response_login[3];	  
-	  if(login_id == "na")
+	  if (login_id == "na")
 	    {
 	      qre_show_string("LOGIN FAILED");
 	    }
 	  else
 	    {
 	      qre_show_string("LOGIN OK");	  
-	      if(base_method == "post")
+	      if (base_method == "post")
 		{
 		  res = ibmqx_post_experiment(base_verbosity,
 					      base_method,
@@ -259,11 +260,11 @@ int main(int argc, char** argv)
 					      base_device);
 		  qre_show_conclusion(base_verbosity, "Post result:\n\n", res);
 		}
-	      if(base_method == "get")
+	      if (base_method == "get")
 		{
 		  // Placeholder.
 		}
-	      if(base_method == "delete")
+	      if (base_method == "delete")
 		{
 		  res = ibmqx_delete_experiment(base_verbosity,
 						base_method,
