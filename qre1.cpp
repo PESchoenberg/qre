@@ -50,16 +50,16 @@ std::string qre_d2s(double p_double)
 /* qre-s2d - Converts a string to a double.
 
 Arguments:
-- p_string: string to convert.
+- p_s: string to convert.
 
 Output:
 - Double.
 
  */
-double qre_s2d(std::string p_string)
+double qre_s2d(std::string p_s)
 {
   double res = 0.00;
-  std::string str = p_string;
+  std::string str = p_s;
   
   stringstream strs(str); 
   strs >> res;
@@ -72,19 +72,19 @@ double qre_s2d(std::string p_string)
 
 Arguments:
 - p_delim: delimiter or substring to be accounted for.
-- p_string: string in which to count the ocurrences of p_delim.
+- p_s: string in which to count the ocurrences of p_delim.
 
 Output:
 - Integer.
 
  */
-int qre_count_string(std::string p_delim, std::string p_string)
+int qre_count_string(std::string p_delim, std::string p_s)
 {
   size_t pos;
   
   int res = 0;
   
-  std::string str;
+  std::string str = p_s; //*********
   
   while ((pos = str.find(p_delim)) != std::string::npos)
     {
@@ -95,19 +95,19 @@ int qre_count_string(std::string p_delim, std::string p_string)
   return res;
 }
 
-/* qre_recog - recongizes if p_string1 is found in p_string2.
+/* qre_recog - recongizes if p_s1 is found in p_s2.
 
 Arguments:
-- p_string1: string to be found as a substring in p_string2.
-- p_string2: string to search for p_string_1.
+- p_s1: string to be found as a substring in p_s2.
+- p_s2: string to search for p_s1.
 
 Output:
 - Boolean true if found. False otherwise.
 
  */
-bool qre_recog(std::string p_string1, std:: string p_string2)
+bool qre_recog(std::string p_s1, std:: string p_s2)
 {
-  if (p_string2.find(p_string1) != std::string::npos)
+  if (p_s2.find(p_s1) != std::string::npos)
     {
       return true;
     }
@@ -118,18 +118,18 @@ bool qre_recog(std::string p_string1, std:: string p_string2)
 }
 
 
-/* qre_show_v - Shows p_string if verbosity is on.
+/* qre_show_v - Shows p_s if verbosity is on.
 
 Arguments:
 - p_base_verbosity: base_verbosity.
-- p_string: string to show.
+- p_s: string to show.
 
  */
-void qre_show_v(std::string p_base_verbosity, std::string p_string)
+void qre_show_v(std::string p_base_verbosity, std::string p_s)
 {
-  if(p_base_verbosity == "yes")
+  if (p_base_verbosity == "yes")
     {
-      cout << p_string << endl;
+      cout << p_s << endl;
     }
 }
 
@@ -223,12 +223,6 @@ Aruments:
  */
 void qre_show_var(std::string p_t, std::string p_v)
 {
-  //std::string j = "\n";
-  //std::string t1 = p_t;
-  //std::string t2 = " = ";
-  //std::string t3 = j + t1 + t2 + p_v + j;
-  //cout << t3;
-  //cout << j << t1 << t2 << p_v << j << endl;
   cout << "\n" << p_t << " = " << p_v << "\n" << endl;
 }
 
@@ -277,7 +271,7 @@ std::string qre_url_encode(std::string p_s)
   std::string res = p_s;
   
   curl = curl_easy_init();
-  if(curl)
+  if (curl)
     {
       res = curl_easy_escape(curl , res.c_str(), 0);
     }  
@@ -323,7 +317,7 @@ std::string qre_read_qasm_file(std::string p_f)
   
   std::ifstream file;
   file.open(file_name.c_str());
-  while ( getline (file,file_line))
+  while (getline (file,file_line))
     {
       res = res + file_line;
     }
@@ -362,7 +356,7 @@ void qre_store_results(std::string p_base_results_storage,
     }
   else if (p_base_results_storage == "sqlite3")
     {
-      //Here we will put all routines to store stuff on a sqlite3 database.
+      // Here we will put all routines to store stuff on a sqlite3 database.
     }
 }
 
@@ -371,19 +365,19 @@ void qre_store_results(std::string p_base_results_storage,
 as an integer, and the instruction to be executed.
 
 Arguments:
-- p_string: string.
+- p_s: string.
 
 Output:
 - qubit or bit number.
 
  */
-int qre_parse_bitnum(std::string p_string)
+int qre_parse_bitnum(std::string p_s)
 {
   int res = 0;
   
   std::string snum = "";
 
-  snum = p_string.substr(2,(p_string.length()-1));
+  snum = p_s.substr(2,(p_s.length()-1));
   stringstream conv(snum);
   conv >> res;
   
@@ -394,8 +388,8 @@ int qre_parse_bitnum(std::string p_string)
 /* qre_parse_reg - extracts quantum register substring.
 
 Arguments:
-- p_string: string from which to extract a register substring.
-- p_type:
+- p_s: string from which to extract a register substring.
+- p_t: typw.
   - "q".
   - "c".
 
@@ -403,17 +397,17 @@ Output:
 - A substring like "q[n]" or "c[n]" being n a qubit or bit number.
 
  */
-std::string qre_parse_reg(std::string p_string, std::string p_type)
+std::string qre_parse_reg(std::string p_s, std::string p_t)
 {
   std::string res = "//";
-  std::string reg = p_type;
+  std::string reg = p_t;
   
   reg = reg +"[";
-  if (qre_recog(reg, p_string) == true)
+  if (qre_recog(reg, p_s) == true)
     {
-      size_t pos1 = p_string.find(reg, 0);
-      size_t pos2 = p_string.find("]", pos1);
-      res = p_string.substr(pos1,pos2);
+      size_t pos1 = p_s.find(reg, 0);
+      size_t pos2 = p_s.find("]", pos1);
+      res = p_s.substr(pos1,pos2);
     }
   
   return res;
@@ -463,7 +457,7 @@ Arguments:
 - p_s2: string wher to look for the complement of p_s1.
 
 Output:
-- Returns p_s2 - p_s1. If p_s1 is non-exsitent or is shorter than p_ss1, 
+- Returns p_s2 - p_s1. If p_s1 is non-existent or is shorter than p_s1, 
 returns complete p_s2.
 
  */
