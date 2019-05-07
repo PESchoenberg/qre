@@ -525,13 +525,14 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   std::vector<double> res_shots;
   std::vector<double> res_final;
   std::vector<double>c;
-  std::vector<double>r;
+  //std::vector<double>r;
   std::vector<std::string>qasm_instructions;
   
   qre_show_v(p_base_verbosity, "Posting...");
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
   vector_size = qasm_instructions.size();
-  shots = (int)qre_s2d(p_base_shots);
+  // shots = (int)qre_s2d(p_base_shots);
+  shots = 1; // Shots inhibited.
 
   // We need to define qreg q and creg c before parsing anything else in the QASM file.
   for (i = 0; i < vector_size; i++)
@@ -554,7 +555,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	      for (j = 0; j < (int)rn; j++)
 		{
 		  c.push_back(0.00);
-		  r.push_back(0.00);
+		  //r.push_back(0.00);
 		}
 	    }
 	}
@@ -701,6 +702,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	}
       
       // On first shot, create data set for results.
+      qre_show_v(p_base_verbosity, "\n");
       if (k == 0)
 	{
 	  delim = "> + ";
@@ -741,6 +743,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       pos = 0;
       res2 = q.toString();      
       delim = ">";
+      qre_show_v(p_base_verbosity, "\n");
       while ((pos = res2.find(delim)) != std::string::npos)
 	{
 	  res_parc[j].sterm = res2.substr(0, pos);
@@ -783,16 +786,16 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   // Put labels.
   for (i = 0; i < (int)res_final.size(); i++)
   {
-    if (i < ((int)res_final.size() - 1))
+    if (i < ((int)res_final.size() - 1)) //5/6/ -1 0
       {
 	res = res + "u\'";
       }    
     res = res + res_parc[i].sket;
-    if (i < ((int)res_final.size() - 1))
+    if (i < ((int)res_final.size() - 1)) //5/6/ -1 0 
       {
 	res = res + "\'";
       }   
-    if (i < ((int)res_final.size() - 2))
+    if (i < ((int)res_final.size() - 2)) //5/6/ -2 1
       {
 	res = res + ",";
       }   
@@ -825,16 +828,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       if (i < (nq - 2))
 	{
 	  res = res + ", ";
-	}
-      /*if (i < nq)
-	{
-	  res = res + qre_d2s(res_final[i]);
-	}
-
-      if (i < (nq - 1))
-	{
-	  res = res + ", ";
-	}*/      
+	}     
     }
 
   // Finish off the string and save. 
@@ -920,13 +914,14 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   std::vector<double> res_shots;
   std::vector<double> res_final;
   std::vector<double>c;
-  std::vector<double>r;
+  //std::vector<double>r;
   std::vector<std::string>qasm_instructions;
   
   qre_show_v(p_base_verbosity, "Posting...");
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
   vector_size = qasm_instructions.size();
-  shots = (int)qre_s2d(p_base_shots);
+  //shots = (int)qre_s2d(p_base_shots);
+  shots = 1; // Shots inhibited.
   file = "qx_temp.qc";
   pathj = patha + file;     
   std::ofstream qc_file_ini(pathj);
@@ -954,7 +949,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      for (j = 0; j < (int)rn; j++)
 		{
 		  c.push_back(0.00);
-		  r.push_back(0.00);
+		  //r.push_back(0.00);
 		}
 	    }
 	}
@@ -1113,8 +1108,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   /* Shots iteration. Here we call the simulatore, generate on each iteration a
      file with results, parse it to get the kets, extract the values of each ket
      as a complex number and then process those values using vectors.*/
-  //shots = 1; //temp.
-  //j = 0;
+  qre_show_v(p_base_verbosity, "\n");
   sys_command = sys_command + " " + patha + "qx_temp.qc" + " > " + patha + "qx_temp.txt";
   for (k = 0; k < shots; k++)
     {
@@ -1127,6 +1121,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       // Reset some stuff.
       j = 0;     
       std::ifstream qx_temp(patha + "qx_temp.txt");
+      qre_show_v(p_base_verbosity, "\n");
       while (std::getline(qx_temp, res2))
 	{
 	  // If the line contains ket data.
@@ -1173,7 +1168,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 
 	      // Square both and sum to get p = x^2 + y^2.
 	      svect = (double)(pow(svecx,2) + pow(svecy,2));
-	      res_sum[j] = svect;
+	      res_sum[j] = svect; // TODO Eliminate res_sum, svecx, svecy and svect?
 	      
 	      // Increment value of res_sum.
 	      res_shots[j] = res_shots[j] + res_sum[j];
@@ -1191,7 +1186,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       res_final[i] = res_shots[i] / shots;
       sprob = sprob + res_final[i];
     } 
-  qre_show_v(p_base_verbosity, ("Final avg: " + qre_d2s(sprob)));
+  qre_show_v(p_base_verbosity, ("Sum: " + qre_d2s(sprob)));
     
   // Build the json string with results.
   res = construct_res_step1("{", p_base_device, p_base_name);  
@@ -1233,15 +1228,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   nq = (int)res_final.size();
   for (i = 0; i < nq; i++)
     {
-      /*if (i < (nq - 1))
-	{
-	  res = res + qre_d2s(res_final[i]);
-	}
-
-      if (i < (nq - 2))
-	{
-	  res = res + ", ";
-	}*/
       if (i < nq)
 	{
 	  res = res + qre_d2s(res_final[i]);
