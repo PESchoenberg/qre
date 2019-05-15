@@ -43,14 +43,13 @@
 	     (g2q g2q2))
 
 
-; Vars and initial stuff. 
+; Vars and initial stuff.
 (define fname "example5.qasm")
 (define qver 2.0)
 (define q "q")
 (define c "c")
 (define qn 4)
 (define cn 2)
-
 
 ; This configures the output to be sent a file instead of the console. If you
 ; take out or disable these lines, and those closing the output port (see at  
@@ -60,11 +59,9 @@
 (define port2 (open-output-file fname))
 (set-current-output-port port2)
 
-
 ; Creating header and required vectors.
 (qhead fname qver)
 (qregdef q qn c cn)
-
 
 (g1y "h" q 0 3)
 (cx q 0 q 1)
@@ -73,14 +70,13 @@
 (cx q 3 q 2)
 (g1 "h" q 3)
 
-
 (qmeas q 0 c 0)
 (qmeas q 3 c 1)
-
 
 ; Sets the output port again to the console. Don't forget to check if the 
 ; compilation is error free or you have some bugs to kill.
 (set-current-output-port port1)
 (close port2)
 (qendc)
+
 

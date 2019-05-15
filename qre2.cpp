@@ -490,7 +490,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   float svecx = 0;
   float svecy = 0;
   
-  double svect = 0;
+  //double svect = 0;
   double sprob = 0;
     
   std::string res = "";
@@ -656,7 +656,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      q.apply(gates::Sdg, {rn});		      
 		      qre_show_v(p_base_verbosity, (" sdg gate at qubit " + qre_d2s((double)rn)));
 		    }
-		  if (qre_recog("t ", qasm_instructions[i]) == true)
+		  if ((qre_recog("t ", qasm_instructions[i]) == true)&&(qre_recog("reset ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::T, {rn});
@@ -678,7 +678,25 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qre_show_v(p_base_verbosity, (" barrier at qubit " + qre_d2s((double)rn)));
-		    }	      
+		    }
+		  if (qre_recog("reset ", qasm_instructions[i]) == true )
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      //q.apply(gates::reset, {rn});
+		      qre_show_v(p_base_verbosity, (" reset gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, " reset gate not recognized.");
+		    }
+		  if (qre_recog("swap ", qasm_instructions[i]) == true )
+		    {
+		      pos = qasm_instructions[i].find(",");
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
+		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
+		      //Implemented with three consecutive CNOT gates.
+		      q.apply(gates::CX, {rn,rm});
+		      q.apply(gates::CX, {rm,rn});
+		      q.apply(gates::CX, {rn,rm});	      
+		      qre_show_v(p_base_verbosity, (" swap gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		    }		  
 		}
 
 	      // Instructions that have parenthesis are composites and require secial treatment.
@@ -687,16 +705,33 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		  if (qre_recog("u1", qasm_instructions[i]) == true)
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
+		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
+		      //q.apply(gates::Phase((float)phg[0]), {rn});
 		      qre_show_v(p_base_verbosity, " u1 gate not recognized.");
 		    }
 		  if (qre_recog("u2", qasm_instructions[i]) == true)
 		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qre_show_v(p_base_verbosity, (" u2 gate at qubit " + qre_d2s((double)rn)));
+		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
+		      //
 		      qre_show_v(p_base_verbosity, " u2 gate not recognized.");
 		    }
 		  if (qre_recog("u3", qasm_instructions[i]) == true)
 		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qre_show_v(p_base_verbosity, (" u3 gate at qubit " + qre_d2s((double)rn)));
+		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
+		      //
 		      qre_show_v(p_base_verbosity, " u3 gate not recognized.");
-		    }	       		  
+		    }
+		  if (qre_recog("if", qasm_instructions[i]) == true)
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qre_show_v(p_base_verbosity, (" if gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, " if gate not recognized.");
+		    }		  
 		}	      
 	    }
 	}
@@ -764,8 +799,9 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 
 	  /* Square both and sum to get p = x^2 + y^2, increment value of 
 	     res_sum and show info. */
-	  svect = (double)(pow(svecx,2) + pow(svecy,2));
-	  res_sum[j] = svect;
+	  //svect = (double)(pow(svecx,2) + pow(svecy,2));
+	  //res_sum[j] = svect;
+	  res_sum[j] = (double)(pow(svecx,2) + pow(svecy,2));
 	  res_shots[j] = res_shots[j] + res_sum[j];
 	  show_res_parc(p_base_verbosity, j, res_parc[j].sterm, res_parc[j].sket, res_parc[j].svec);
 	  j++;
@@ -778,7 +814,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       res_final[i] = res_shots[i] / shots;
       sprob = sprob + res_final[i];
     }  
-  qre_show_v(p_base_verbosity, ("Final avg: " + qre_d2s(sprob)));
+  qre_show_v(p_base_verbosity, ("Sum: " + qre_d2s(sprob)));
 
   // Build the json string with results.
   res = construct_res_step1("{", p_base_device, p_base_name);
@@ -878,7 +914,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   float svecx = 0;
   float svecy = 0;
   
-  double svect = 0;
+  //double svect = 0;
   double sprob = 0;
   
   std::string res = "";
@@ -1052,11 +1088,11 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    }
 		  if (qre_recog("sdg", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, " sdg gate not recognized.");		      
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));		      
 		      qre_show_v(p_base_verbosity, (" sdg gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, " sdg gate not recognized.");		      
 		    }
-		  if (qre_recog("t ", qasm_instructions[i]) == true)
+		  if ((qre_recog("t ", qasm_instructions[i]) == true)&&(qre_recog("reset ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qc_file_app << "t q" << rn << endl;
@@ -1070,16 +1106,30 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    }
 		  if (qre_recog("id ", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, " id gate not recognized.");
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));		      
 		      qre_show_v(p_base_verbosity, (" id gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, " id gate not recognized.");
 		    }
 		  if (qre_recog("barrier ", qasm_instructions[i]) == true )
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, " barrier not recognized.");
 		      qre_show_v(p_base_verbosity, (" barrier at qubit " + qre_d2s((double)rn)));
-		    }	      
+		      qre_show_v(p_base_verbosity, " barrier not recognized.");
+		    }
+		  if (qre_recog("reset ", qasm_instructions[i]) == true )
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qc_file_app << "prepz q" << rn << endl;
+		      qre_show_v(p_base_verbosity, (" reset gate at qubit " + qre_d2s((double)rn)));
+		    }
+		  if (qre_recog("swap ", qasm_instructions[i]) == true )
+		    {
+		      pos = qasm_instructions[i].find(",");
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
+		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
+		      qc_file_app << "swap q" << rn << ", q" << rm << endl;
+		      qre_show_v(p_base_verbosity, (" swap gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		    }		  
 		}
 
 	      // Instructions that have parenthesis are composites and require secial treatment.
@@ -1088,16 +1138,33 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		  if (qre_recog("u1", qasm_instructions[i]) == true)
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
+		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
+		      //
 		      qre_show_v(p_base_verbosity, " u1 gate not recognized.");
 		    }
 		  if (qre_recog("u2", qasm_instructions[i]) == true)
 		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qre_show_v(p_base_verbosity, (" u2 gate at qubit " + qre_d2s((double)rn)));
+		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
+		      //
 		      qre_show_v(p_base_verbosity, " u2 gate not recognized.");
 		    }
 		  if (qre_recog("u3", qasm_instructions[i]) == true)
 		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qre_show_v(p_base_verbosity, (" u3 gate at qubit " + qre_d2s((double)rn)));
+		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
+		      //
 		      qre_show_v(p_base_verbosity, " u3 gate not recognized.");
-		    }	       		  
+		    }
+		  if (qre_recog("if", qasm_instructions[i]) == true)
+		    {
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      qre_show_v(p_base_verbosity, (" if gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, " if gate not recognized.");
+		    }		  
 		}	      
 	    }
 	}
@@ -1167,8 +1234,9 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      svecy = atof(str5.c_str());
 
 	      // Square both and sum to get p = x^2 + y^2.
-	      svect = (double)(pow(svecx,2) + pow(svecy,2));
-	      res_sum[j] = svect; // TODO Eliminate res_sum, svecx, svecy and svect?
+	      //svect = (double)(pow(svecx,2) + pow(svecy,2));
+	      //res_sum[j] = svect;
+	      res_sum[j] = (double)(pow(svecx,2) + pow(svecy,2));
 	      
 	      // Increment value of res_sum.
 	      res_shots[j] = res_shots[j] + res_sum[j];
@@ -1185,6 +1253,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
     {
       res_final[i] = res_shots[i] / shots;
       sprob = sprob + res_final[i];
+      //sprob = sprob + (res_shots[i] / shots);
     } 
   qre_show_v(p_base_verbosity, ("Sum: " + qre_d2s(sprob)));
     
