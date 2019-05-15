@@ -93,4 +93,7 @@ std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std
 std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2);
 
 
+std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_delim);
+
+
 #endif // !__QRE1_H

@@ -478,3 +478,57 @@ std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2)
   return res;
 }
 
+
+/* qre_parse_phase_gate - Parses contents between parenthesis and returns its contents as a
+vector. Used to parse gates such as u1, u2, u3.
+
+Arguments:
+- p_s: string to be parsed.
+- p_delim: delimiter.
+
+Output:
+- A vector with as many elements as were parsed.
+
+ */
+std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_delim)
+{
+  std::vector<std::string> res;
+  std::string ps = p_s;
+  std::string s = "";
+  std::string delim = p_delim;
+  std::string line;
+  
+  size_t pos1 = 0;
+  size_t pos2 = 0;
+  size_t pos3 = 0;
+  size_t pos4 = 0;
+
+  //First trim ps by its parenthesis.
+  pos2 = ps.find(")");
+  s = ps.substr(0, pos2);
+  ps = s;
+  pos3 = ps.find("(");
+  s = ps.substr(pos3+1);
+  //cout << "s " << s << endl;
+
+  //Now we get the arguments of the gate.
+  if (((pos1 = s.find(delim)) != std::string::npos) == true)
+    {
+      // When there is more than one argument,  a "," separates them.
+      while (((pos4 = s.find(delim)) != std::string::npos) == true)
+	{
+	  line = s.substr(0, pos4);
+	  res.push_back(line);
+	  s.erase(0, pos4 + delim.length());
+	}
+      res.push_back(s);
+    }
+  else
+    {
+      // If the gate has one argument only, we return the value as is.
+      res.push_back(s);      
+    }
+  
+  return res;
+}
+

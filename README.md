@@ -68,12 +68,24 @@ core package. So you should:
 - Paste the clipboard contents into the /lib/qlib folder of your qre folder.
 
 * Lastly, you will need to make some updates:
-- You should overwrite:
+- Overwrite:
   file /lib/qlib/core/quantum/gates/phase.hpp
 
   with
 
   file /lib/proviso/phase.hpp
+- Overwrite:
+  file /lib/qlib/core/quantum/gates/reset.hpp
+
+  with
+
+  file /lib/proviso/reset.hpp
+- Overwrite:
+  file /lib/qlib/core/quantum/standard_gates.hpp
+
+  with
+
+  file /ib/proviso/standard_gates.hpp
 
   This is required since the original file does not have gate S specifically
   defined, while QASM2 does.
