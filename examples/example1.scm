@@ -75,7 +75,15 @@
 (qcomm "A swap gate.")
 (swap q 0 1)
 
-; A swap gate.
+; A swap gate. Swap fast gates are better than their non-fast counterparts - in
+; this case this means that swap-fast is faster in execution than swap - but 
+; might not be recognized by all sorts of QPU, be them simulators or real 
+; processors. For such cases, I have written non-fast versions of several gates. 
+; These non-fast gates are atomic decompositions of swap-fast gates into gates
+; that can be recognized by a wider variety of QPU. So, in principle, if you
+; can, use the fast version of a gate when it is available because it will run
+; faster and with a lesser error rate, but if you can't or your QPU does not
+; recongixze the fast gate in question, use the non-fas version of it.
 (qcomm "A swap-fast gate.")
 (swap-fast q 0 1)
 
@@ -110,19 +118,31 @@
 (cx q 2 q 0)
 (qcomm "Controlled y.")
 (cy q 3 q 4)
+(qcomm "Controlled y in fast form.")
+(cy-fast q 3 q 1)
 (qcomm "Controlled z.")
 (cz q 4 q 2)
+(qcomm "Controlled z in fast form.")
+(cz-fast q 4 q 2)
 (qcomm "Controlled h.")
 (ch q 2 q 0)
+(qcomm "Controlled h in fast form.")
+(ch-fast q 2 q 0)
 
 
 ; Rotations and others.
-(qcomm "Controlled x.")
+(qcomm "rx.")
 (rx 1.6 q 1)
+(qcomm "rx in fast form.")
+(rx-fast 1.6 q 1)
 (qcomm "Controlled y.")
 (ry 1.6 q 2)
+(qcomm "ry in fast form.")
+(ry-fast 1.6 q 2)
 (qcomm "Controlled z.")
 (rz 1.6 q 3)
+(qcomm "rz in fast form.")
+(rz-fast 1.6 q 3)
 (qcomm "crz.")
 (crz 1.6 q 3 q 4)
 (qcomm "Controlled u1.")
