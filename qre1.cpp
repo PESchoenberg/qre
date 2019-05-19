@@ -389,7 +389,7 @@ int qre_parse_bitnum(std::string p_s)
 
 Arguments:
 - p_s: string from which to extract a register substring.
-- p_t: typw.
+- p_t: type.
   - "q".
   - "c".
 
