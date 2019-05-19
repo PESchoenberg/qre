@@ -509,8 +509,10 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   
   long unsigned int rn = 0;
   long unsigned int rm = 0;
+  long unsigned int ro = 0;  
   
   size_t pos = 0;
+  size_t pos1 = 0;
   size_t terms = 0;
 
   struct res_row
@@ -612,7 +614,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      // Placeholder. Still no declarations for qlib.
 		    }	  
-		  if (qre_recog("cx", qasm_instructions[i]) == true)
+		  if ((qre_recog("cx", qasm_instructions[i]) == true)&&(qre_recog("ccx", qasm_instructions[i]) == false))
 		    {
 		      pos = qasm_instructions[i].find(",");
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
@@ -620,6 +622,18 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      q.apply(gates::CX, {rn,rm});
 		      qre_show_v(p_base_verbosity, (" cx gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
 		    }
+		  if (qre_recog("ccx", qasm_instructions[i]) == true)
+		    {
+		      pos = qasm_instructions[i].find(",");
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
+		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
+		      str1 = qasm_instructions[i].substr(pos+1,(qasm_instructions[i].length()-1));
+		      pos1 = str1.find(",");
+		      ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), "q"));
+		      q.apply(gates::CCNOT, {rn,rm,ro});
+		      qre_show_v(p_base_verbosity, (" ccx gate at qubit " + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
+		      //qre_show_v(p_base_verbosity, " ccx gate not recognized.");
+		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
 		      pos = qasm_instructions[i].find(",");
@@ -770,12 +784,16 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qre_show_v(p_base_verbosity, " ry gate not recognized.");
 		    }
-		  if (qre_recog("rz", qasm_instructions[i]) == true)
+		  if ((qre_recog("rz", qasm_instructions[i]) == true)&&(qre_recog("crz", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qre_show_v(p_base_verbosity, (" rz gate at qubit " + qre_d2s((double)rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qre_show_v(p_base_verbosity, " rz gate not recognized.");
+		    }
+		  if (qre_recog("crz", qasm_instructions[i]) == true)
+		    {
+		      qre_show_v(p_base_verbosity, " crz gate not recognized.");		      
 		    }		  
 		}	      
 	    }
@@ -967,6 +985,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   std::string res3 = "";
   std::string res4 = "";
   std::string res5 = "";
+  std::string str1 = "";
   std::string str4 = "";
   std::string str5 = "";
   std::string line = "";
@@ -980,8 +999,10 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   
   long unsigned int rn = 0;
   long unsigned int rm = 0;
+  long unsigned int ro = 0;
   
   size_t pos = 0;
+  size_t pos1 = 0;
 
   struct res_row
   {
@@ -1093,7 +1114,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    {
 		      qc_file_app << qre_what_comes_after_s1("// qdeclare qx-simulator ", qasm_instructions[i]) << endl;
 		    }
-		  if (qre_recog("cx", qasm_instructions[i]) == true)
+		  if ((qre_recog("cx", qasm_instructions[i]) == true)&&(qre_recog("ccx ", qasm_instructions[i]) == false))
 		    {
 		      pos = qasm_instructions[i].find(",");
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
@@ -1101,6 +1122,18 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      qc_file_app << "cx q" << rn << ", q" << rm << endl;
 		      qre_show_v(p_base_verbosity, (" cx gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
 		    }
+		  if (qre_recog("ccx", qasm_instructions[i]) == true)
+		    {
+		      pos = qasm_instructions[i].find(",");
+		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
+		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
+		      str1 = qasm_instructions[i].substr(pos+1,(qasm_instructions[i].length()-1));
+		      pos1 = str1.find(",");
+		      ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), "q"));
+		      qc_file_app << "toffoli q" << rn << ", q" << rm << ", q" << ro << endl;
+		      qre_show_v(p_base_verbosity, (" ccx gate at qubit " + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
+		      //qre_show_v(p_base_verbosity, " ccx gate not recognized.");
+		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
 		      pos = qasm_instructions[i].find(",");
@@ -1248,13 +1281,17 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qc_file_app << "ry q" << rn << ", " << phg[0] << endl;
 		    }
-		  if (qre_recog("rz", qasm_instructions[i]) == true)
+		  if ((qre_recog("rz", qasm_instructions[i]) == true)&&(qre_recog("crz", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qre_show_v(p_base_verbosity, (" rz gate at qubit " + qre_d2s((double)rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qc_file_app << "rz q" << rn << ", " << phg[0] << endl;
 		    }
+		  if (qre_recog("crz", qasm_instructions[i]) == true)
+		    {
+		      qre_show_v(p_base_verbosity, " crz gate not recognized.");		      
+		    } 
 		}	      
 	    }
 	}

@@ -27,6 +27,7 @@ s q4
 h q2
 cx q4, q2
 h q2
+cz q4, q2
 h q0
 cx q2, q0
 h q0
@@ -37,6 +38,25 @@ h q0
 s q0
 x q0
 s q2
+h q2
+cx q1, q2
+tdag q2
+cx q0, q2
+t q2
+cx q1, q2
+t q2
+cx q0, q2
+t q1
+t q2
+h q2
+cx q0, q1
+t q0
+tdag q1
+cx q0, q1
+toffoli q0, q1, q2
+rx q1, 1.570795
+ry q2, 1.570795
+rz q3, 1.570795
 cx q3, q4
 cx q3, q4
 cx q2, q0
