@@ -19,10 +19,10 @@
 [+] creating quantum register of 5 qubits... 
 [+] executing circuit 'default' (1 iter) ...
 --------------[quantum state]-------------- 
-   (+0.316229,+0.948683) |11101> +
+   (+1.000000,+0.000000) |00100> +
 ------------------------------------------- 
-[>>] measurement prediction:  | 1 | 1 | 1 | 0 | 1 |
+[>>] measurement prediction:  | 0 | 0 | 1 | 0 | 0 |
 ------------------------------------------- 
-[>>] measurement register  :  | 1 | 1 | 1 | 0 | 1 |
+[>>] measurement register  :  | 0 | 0 | 1 | 0 | 0 |
 ------------------------------------------- 
-[+] circuit execution time: +0.006999 sec.
+[+] circuit execution time: +0.007606 sec.
