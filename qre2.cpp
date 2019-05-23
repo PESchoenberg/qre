@@ -632,7 +632,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), "q"));
 		      q.apply(gates::CCNOT, {rn,rm,ro});
 		      qre_show_v(p_base_verbosity, (" ccx gate at qubit " + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
-		      //qre_show_v(p_base_verbosity, " ccx gate not recognized.");
 		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
@@ -722,7 +721,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::reset, {rn});
 		      qre_show_v(p_base_verbosity, (" reset gate at qubit " + qre_d2s((double)rn)));
-		      //qre_show_v(p_base_verbosity, " reset gate not recognized.");
 		    }
 		  if (qre_recog("swap ", qasm_instructions[i]) == true )
 		    {
@@ -745,7 +743,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
-		      //q.apply(gates::Phase((float)phg[0]), {rn});
+		      //q.apply(gates::phase(qre_s2d(phg[0])), {rn});
+		      //q.apply(gates::phase(tes), {rn});
 		      qre_show_v(p_base_verbosity, " u1 gate not recognized.");
 		    }
 		  if (qre_recog("u2", qasm_instructions[i]) == true)
@@ -1140,7 +1139,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), "q"));
 		      qc_file_app << "toffoli q" << rn << ", q" << rm << ", q" << ro << endl;
 		      qre_show_v(p_base_verbosity, (" ccx gate at qubit " + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
-		      //qre_show_v(p_base_verbosity, " ccx gate not recognized.");
 		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
