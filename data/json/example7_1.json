@@ -1,1 +1,1 @@
-{'idCode': u'qx_simulator','idExecution': u'example7_1','result': {'measure': {u'labels': [u'0010',u'0110',u'1010',u'1110],u'qubits':[0, 1],u'values':[0.25, 0.25, 0.25, 0.25]}},'status':'DONE'}
+{'idCode': u'qlib_simulator','idExecution': u'example7_1','result': {'measure': {u'labels': [u'0000',u'0001',u'0010',u'0011',u'0100',u'0101',u'0110',u'0111'],u'qubits':[0, 1],u'values':[0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]}},'status':'DONE'}
