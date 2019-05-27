@@ -744,7 +744,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      //q.apply(gates::phase(qre_s2d(phg[0])), {rn});
-		      //q.apply(gates::phase(tes), {rn});
 		      qre_show_v(p_base_verbosity, " u1 gate not recognized.");
 		    }
 		  if (qre_recog("u2", qasm_instructions[i]) == true)
@@ -1156,7 +1155,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      qc_file_app << "cz q" << rn << ", q" << rm << endl;
 		      qre_show_v(p_base_verbosity, (" cz gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
 		    }
-		  if (qre_recog("ch", qasm_instructions[i]) == true)
+		  if ((qre_recog("ch", qasm_instructions[i]) == true)&&(qre_recog("qdeclare", qasm_instructions[i]) == false))
 		    {
 		      pos = qasm_instructions[i].find(",");
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));

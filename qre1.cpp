@@ -84,7 +84,7 @@ int qre_count_string(std::string p_delim, std::string p_s)
   
   int res = 0;
   
-  std::string str = p_s; //*********
+  std::string str = p_s;
   
   while ((pos = str.find(p_delim)) != std::string::npos)
     {
@@ -295,7 +295,6 @@ char *qre_create_header(std::string p_s)
   std::string ps = p_s;
   
   const char *s = ps.c_str();
-  
   char cs[ps.length()];
 
   return strcpy(cs, s);
@@ -509,7 +508,6 @@ std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_del
   ps = s;
   pos3 = ps.find("(");
   s = ps.substr(pos3+1);
-  //cout << "s " << s << endl;
 
   //Now we get the arguments of the gate.
   if (((pos1 = s.find(delim)) != std::string::npos) == true)
