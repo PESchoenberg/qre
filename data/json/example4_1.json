@@ -1,1 +1,1 @@
-{'idCode': u'qx_simulator','idExecution': u'example4_1','result': {'measure': {u'labels': [u'1110],u'qubits':[0, 1, 2, 3],u'values':[1]}},'status':'DONE'}
+{'idCode': u'qx_simulator','idExecution': u'example4_1','result': {'measure': {u'labels': [u'11010],u'qubits':[0, 1, 2, 3, 4],u'values':[1]}},'status':'DONE'}

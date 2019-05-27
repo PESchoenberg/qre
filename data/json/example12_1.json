@@ -1,0 +1,1 @@
+{'idCode': u'qlib_simulator','idExecution': u'example12_1','result': {'measure': {u'labels': [u'011',u'111'],u'qubits':[0, 1, 2],u'values':[0.5, 0.5]}},'status':'DONE'}

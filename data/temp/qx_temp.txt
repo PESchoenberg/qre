@@ -21,15 +21,16 @@
 [+] generating noisy circuits...
 [>] processing circuit 'default'...
     [e] depolarizing_channel : injecting errors in circuit 'default'...
-    [+] circuit steps : 59
+    [+] circuit steps : 34
     [+] total injected errors in circuit 'default': 0
 [+] total errors injected in all circuits : 0
 [+] executing circuit 'default(noisy)' (1 iter) ...
 --------------[quantum state]-------------- 
-   (-0.707108,+0.707106) |110> +
+   (-0.707107,+0.000000) |110> +
+   (+0.707107,+0.000000) |111> +
 ------------------------------------------- 
-[>>] measurement prediction:  | 1 | 1 | 0 |
+[>>] measurement prediction:  | 1 | 1 | X |
 ------------------------------------------- 
 [>>] measurement register  :  | 1 | 1 | 0 |
 ------------------------------------------- 
-[+] circuit execution time: +0.002564 sec.
+[+] circuit execution time: +0.001892 sec.
