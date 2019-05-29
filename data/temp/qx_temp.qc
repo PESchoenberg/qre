@@ -12,14 +12,13 @@ t q0
 cx q1, q0
 tdag q0
 cx q2, q0
+t q1
 t q0
-tdag q1
 h q0
 cx q2, q1
+t q2
 tdag q1
 cx q2, q1
-s q1
-t q2
 h q1
 h q2
 x q1
