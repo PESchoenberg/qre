@@ -156,6 +156,9 @@ own compatible compiler.
 
 * URL of this project - ( https://github.com/PESchoenberg/qre ).
 
+Please let me know if I forgot to add any credits or sources.
+
+
 ## License:
 
 * GPL-3.0-or-later.
