@@ -26,6 +26,36 @@ qre1.cpp
 using namespace std;
 
 
+/* qre_gaq - Returns a string stating that a gate is at a certain qubit.
+
+Arguments:
+- p_s1: gate name.
+
+Output:
+- A string like "gate p_s1 at qubit."
+
+ */
+std::string qre_gaq(std::string p_s1)
+{
+  return (" gate " + p_s1 + " at qubit ");
+}
+
+
+/* qre_ina - Returns a string stating that a gate is not available.
+
+Arguments:
+- p_s1: gate name.
+
+Output:
+- A string like "gate p_s1 not available."
+
+ */
+std::string qre_ina(std::string p_s1)
+{
+  return (" " + p_s1 + " not available.");
+}
+
+
 /* qre_d2s - Converts a double to string.
 
 Arguments:
@@ -335,7 +365,8 @@ Arguments:
 - p_contents_to_store.
 
  */
-void qre_store_results(std::string p_base_results_storage,
+void qre_store_results(std::string p_base_verbosity,
+		       std::string p_base_results_storage,
 		       std::string p_file,
 		       std::string p_contents_to_store)
 {
@@ -351,11 +382,13 @@ void qre_store_results(std::string p_base_results_storage,
       ofstream json_file;
       json_file.open(pathj, std::ios::out);
       json_file << p_contents_to_store << "\n";
-      json_file.close();    
+      json_file.close();
+      qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathj));
     }
   else if (p_base_results_storage == "sqlite3")
     {
       // Here we will put all routines to store stuff on a sqlite3 database.
+      qre_show_v(p_base_verbosity, qre_ina("Sqlite3"));
     }
 }
 
@@ -519,13 +552,13 @@ std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_del
 	  res.push_back(line);
 	  s.erase(0, pos4 + delim.length());
 	}
-      res.push_back(s);
+      //res.push_back(s);
     }
-  else
+  /*else
     {
-      // If the gate has one argument only, we return the value as is.
       res.push_back(s);      
-    }
+    }*/
+  res.push_back(s);
   
   return res;
 }

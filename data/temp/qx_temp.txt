@@ -33,4 +33,4 @@
 ------------------------------------------- 
 [>>] measurement register  :  | 1 | 1 | 0 |
 ------------------------------------------- 
-[+] circuit execution time: +0.004034 sec.
+[+] circuit execution time: +0.004703 sec.
