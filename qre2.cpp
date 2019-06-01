@@ -176,6 +176,7 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
   if (p_base_verbosity == "yes")
     {
       qre_show_string("Data as is just before making the request:");
+
       qre_show_var("Method: ", p_base_method);
       qre_show_var("Data: ", cdata);
       qre_show_var("Uri: ", curi);
@@ -306,7 +307,7 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
   qre_show_string("\n");
   qre_show_string("Login result\n\n");
   qre_show_string(res00);	      
-  qre_store_results(p_base_results_storage, p_login_name, res00);
+  qre_store_results(p_base_verbosity, p_base_results_storage, p_login_name, res00);
   
   // Parse the userId value from the received json data.
   res0 = qre_seek_in_json(res00, "\"id\"");
@@ -351,8 +352,8 @@ Arguments:
 - p_base_name: nase_name.
 - p_base_data: base_data.
 - p_base_shots: base_shots.
-- p_base_seedL base_seed.
-- p_base_deviceL base_device.
+- p_base_seed: base_seed.
+- p_base_device: base_device.
 
 Output:
 -  Result of the operation.
@@ -398,7 +399,7 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
 		    p_base_results_storage,
 		    post_uri,
 		    p_login_id);
-  qre_store_results(p_base_results_storage, p_post_name, res);
+  qre_store_results(p_base_verbosity, p_base_results_storage, p_post_name, res);
   
   return res;
 }
@@ -455,7 +456,7 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
 		    p_base_results_storage,
 		    p_delete_uri,
 		    p_login_id);
-  qre_store_results(p_base_results_storage, p_delete_name, res);
+  qre_store_results(p_base_verbosity, p_base_results_storage, p_delete_name, res);
   
   return res;
 }
@@ -608,11 +609,11 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "c"));
-		      qre_show_v(p_base_verbosity, (" measurement at qubit " + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("// qdeclare qlib-simulator ", qasm_instructions[i]) == true)
 		    {
-		      // Placeholder. Still no declarations for qlib.
+		      qre_show_v(p_base_verbosity, qre_ina("qdeclare"));
 		    }	  
 		  if ((qre_recog("cx", qasm_instructions[i]) == true)&&(qre_recog("ccx", qasm_instructions[i]) == false))
 		    {
@@ -620,7 +621,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      q.apply(gates::CX, {rn,rm});
-		      qre_show_v(p_base_verbosity, (" cx gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cx") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("ccx", qasm_instructions[i]) == true)
 		    {
@@ -631,7 +632,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      pos1 = str1.find(",");
 		      ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), "q"));
 		      q.apply(gates::CCNOT, {rn,rm,ro});
-		      qre_show_v(p_base_verbosity, (" ccx gate at qubit " + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
+		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
 		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
@@ -639,7 +640,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      q.apply(gates::CY, {rn,rm});
-		      qre_show_v(p_base_verbosity, (" cy gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cy") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("cz", qasm_instructions[i]) == true)
 		    {
@@ -647,80 +648,76 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      q.apply(gates::CZ, {rn,rm});
-		      qre_show_v(p_base_verbosity, (" cz gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("ch", qasm_instructions[i]) == true)
 		    {
-		      pos = qasm_instructions[i].find(",");
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
-		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
-		      qre_show_v(p_base_verbosity, (" ch gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
-		      qre_show_v(p_base_verbosity, " ch gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("ch"));
 		    }		  
 		  if ((qre_recog("h ", qasm_instructions[i]) == true)&&(qre_recog("ch ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::H, {rn});
-		      qre_show_v(p_base_verbosity, (" h gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("h") + qre_d2s((double)rn)));
 		    }
 		  if ((qre_recog("x ", qasm_instructions[i]) == true)&&(qre_recog("cx ", qasm_instructions[i]) == false))
 		    {		  	     
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::X, {rn});
-		      qre_show_v(p_base_verbosity, (" x gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("x") + qre_d2s((double)rn)));
 		    }
 		  if ((qre_recog("y ", qasm_instructions[i]) == true)&&(qre_recog("cy ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::Y, {rn});
-		      qre_show_v(p_base_verbosity, (" y gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("y")+ qre_d2s((double)rn)));
 		    }
 		  if ((qre_recog("z ", qasm_instructions[i]) == true)&&(qre_recog("cz ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::Z, {rn});
-		      qre_show_v(p_base_verbosity, (" z gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("z") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("s ", qasm_instructions[i]) == true )
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::S, {rn});
-		      qre_show_v(p_base_verbosity, (" s gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("s") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("sdg", qasm_instructions[i]) == true)
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::Sdg, {rn});		      
-		      qre_show_v(p_base_verbosity, (" sdg gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("sdg") + qre_d2s((double)rn)));
 		    }
 		  if ((qre_recog("t ", qasm_instructions[i]) == true)&&(qre_recog("reset ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::T, {rn});
-		      qre_show_v(p_base_verbosity, (" t gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("t") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("tdg", qasm_instructions[i]) == true)
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::Tdg, {rn});		      
-		      qre_show_v(p_base_verbosity, (" tdg gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("tdg") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("id ", qasm_instructions[i]) == true)
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::I, {rn});
-		      qre_show_v(p_base_verbosity, (" id gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("id") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("barrier ", qasm_instructions[i]) == true )
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" barrier at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("barrier") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("reset ", qasm_instructions[i]) == true )
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      q.apply(gates::reset, {rn});
-		      qre_show_v(p_base_verbosity, (" reset gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("reset") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("swap ", qasm_instructions[i]) == true )
 		    {
@@ -731,7 +728,11 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      q.apply(gates::CX, {rn,rm});
 		      q.apply(gates::CX, {rm,rn});
 		      q.apply(gates::CX, {rn,rm});	      
-		      qre_show_v(p_base_verbosity, (" swap gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		    }
+		  if (qre_recog("bloch", qasm_instructions[i]) == true )
+		    {
+		      qre_show_v(p_base_verbosity, qre_ina("bloch"));
 		    }		  
 		}
 
@@ -740,66 +741,47 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		{
 		  if ((qre_recog("u1", qasm_instructions[i]) == true)&&(qre_recog("cu1", qasm_instructions[i]) == false))
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
-		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
+		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      //qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
+		      //vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      //q.apply(gates::phase(qre_s2d(phg[0])), {rn});
-		      qre_show_v(p_base_verbosity, " u1 gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("u1"));
 		    }
 		  if (qre_recog("u2", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" u2 gate at qubit " + qre_d2s((double)rn)));
-		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
-		      //
-		      qre_show_v(p_base_verbosity, " u2 gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("u2"));
 		    }
 		  if ((qre_recog("u3", qasm_instructions[i]) == true)&&(qre_recog("cu3", qasm_instructions[i]) == false))
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" u3 gate at qubit " + qre_d2s((double)rn)));
-		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
-		      //
-		      qre_show_v(p_base_verbosity, " u3 gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("u3"));
 		    }
 		  if (qre_recog("if", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" if gate at qubit " + qre_d2s((double)rn)));
-		      qre_show_v(p_base_verbosity, " if gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("if"));
 		    }
 		  if (qre_recog("rx", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" rx gate at qubit " + qre_d2s((double)rn)));
-		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
-		      qre_show_v(p_base_verbosity, " rx gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("rx"));
 		    }
 		  if (qre_recog("ry", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" ry gate at qubit " + qre_d2s((double)rn)));
-		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
-		      qre_show_v(p_base_verbosity, " ry gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("ry"));
 		    }
 		  if ((qre_recog("rz", qasm_instructions[i]) == true)&&(qre_recog("crz", qasm_instructions[i]) == false))
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" rz gate at qubit " + qre_d2s((double)rn)));
-		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
-		      qre_show_v(p_base_verbosity, " rz gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("rz"));
 		    }
 		  if (qre_recog("crz", qasm_instructions[i]) == true)
 		    {
-		      qre_show_v(p_base_verbosity, " crz gate not recognized.");		      
+		      qre_show_v(p_base_verbosity, qre_ina("crz"));
 		    }
 		  if (qre_recog("cu1", qasm_instructions[i]) == true)
 		    {
-		      qre_show_v(p_base_verbosity, " cu1 gate not recognized.");		      
+		      qre_show_v(p_base_verbosity, qre_ina("cu1"));
 		    }
 		  if (qre_recog("cu3", qasm_instructions[i]) == true)
 		    {
-		      qre_show_v(p_base_verbosity, " cu3 gate not recognized.");		      
+		      qre_show_v(p_base_verbosity, qre_ina("cu3"));
 		    }		  
 		}	      
 	    }
@@ -891,16 +873,16 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   // Put labels.
   for (i = 0; i < (int)res_final.size(); i++)
   {
-    if (i < ((int)res_final.size() - 1)) //5/6/ -1 0
+    if (i < ((int)res_final.size() - 1))
       {
 	res = res + "u\'";
       }    
     res = res + res_parc[i].sket;
-    if (i < ((int)res_final.size() - 1)) //5/6/ -1 0 
+    if (i < ((int)res_final.size() - 1))
       {
 	res = res + "\'";
       }   
-    if (i < ((int)res_final.size() - 2)) //5/6/ -2 1
+    if (i < ((int)res_final.size() - 2))
       {
 	res = res + ",";
       }   
@@ -938,7 +920,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 
   // Finish off the string and save. 
   res = construct_res_step3(res);
-  qre_store_results(p_base_results_storage, p_base_name, res);
+  qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
   
   return res;
 }
@@ -1114,7 +1096,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "c"));
 		      qc_file_app << "measure q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (" measurement at qubit " + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("// qdeclare qx-simulator ", qasm_instructions[i]) == true)
 		    {
@@ -1126,7 +1108,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      qc_file_app << "cx q" << rn << ", q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (" cx gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cx") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("ccx", qasm_instructions[i]) == true)
 		    {
@@ -1137,15 +1119,11 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      pos1 = str1.find(",");
 		      ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), "q"));
 		      qc_file_app << "toffoli q" << rn << ", q" << rm << ", q" << ro << endl;
-		      qre_show_v(p_base_verbosity, (" ccx gate at qubit " + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
+		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
 		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
-		      pos = qasm_instructions[i].find(",");
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
-		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
-		      qre_show_v(p_base_verbosity, (" cy gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
-		      qre_show_v(p_base_verbosity, " cy gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("cy"));
 		    }
 		  if (qre_recog("cz", qasm_instructions[i]) == true)
 		    {
@@ -1153,81 +1131,71 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      qc_file_app << "cz q" << rn << ", q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (" cz gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
 		    }
 		  if ((qre_recog("ch", qasm_instructions[i]) == true)&&(qre_recog("qdeclare", qasm_instructions[i]) == false))
 		    {
-		      pos = qasm_instructions[i].find(",");
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
-		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
-		      qre_show_v(p_base_verbosity, (" ch gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
-		      qre_show_v(p_base_verbosity, " ch gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("ch"));
 		    }		  
 		  if ((qre_recog("h ", qasm_instructions[i]) == true)&&(qre_recog("ch ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qc_file_app << "h q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (" h gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("h") + qre_d2s((double)rn)));
 		    }
 		  if ((qre_recog("x ", qasm_instructions[i]) == true)&&(qre_recog("cx ", qasm_instructions[i]) == false))
 		    {		  	     
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qc_file_app << "x q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (" x gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("x") + qre_d2s((double)rn)));
 		    }
 		  if ((qre_recog("y ", qasm_instructions[i]) == true)&&(qre_recog("cy ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qc_file_app << "y q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (" y gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("y") + qre_d2s((double)rn)));
 		    }
 		  if ((qre_recog("z ", qasm_instructions[i]) == true)&&(qre_recog("cz ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qc_file_app << "z q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (" z gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("z") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("s ", qasm_instructions[i]) == true )
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qc_file_app << "s q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (" s gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("s") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("sdg", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));		      
-		      qre_show_v(p_base_verbosity, (" sdg gate at qubit " + qre_d2s((double)rn)));
-		      qre_show_v(p_base_verbosity, " sdg gate not recognized.");		      
+		      qre_show_v(p_base_verbosity, qre_ina("sdg"));
 		    }
 		  if ((qre_recog("t ", qasm_instructions[i]) == true)&&(qre_recog("reset ", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qc_file_app << "t q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (" t gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("t") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("tdg", qasm_instructions[i]) == true)
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qc_file_app << "tdag q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (" tdg gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("tdg") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("id ", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));		      
-		      qre_show_v(p_base_verbosity, (" id gate at qubit " + qre_d2s((double)rn)));
-		      qre_show_v(p_base_verbosity, " id gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("id"));
 		    }
 		  if (qre_recog("barrier ", qasm_instructions[i]) == true )
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" barrier at qubit " + qre_d2s((double)rn)));
-		      qre_show_v(p_base_verbosity, " barrier not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("barrier"));
 		    }
 		  if (qre_recog("reset ", qasm_instructions[i]) == true )
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      qc_file_app << "prepz q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (" reset gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("reset") + qre_d2s((double)rn)));
 		    }
 		  if (qre_recog("swap ", qasm_instructions[i]) == true )
 		    {
@@ -1235,7 +1203,11 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      qc_file_app << "swap q" << rn << ", q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (" swap gate at qubit " + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		    }
+		  if (qre_recog("bloch", qasm_instructions[i]) == true )
+		    {
+		      qre_show_v(p_base_verbosity, qre_ina("bloch"));
 		    }		  
 		}
 
@@ -1244,66 +1216,56 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		{		  
 		  if ((qre_recog("u1", qasm_instructions[i]) == true)&&(qre_recog("cu1", qasm_instructions[i]) == false))
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
-		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
+		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
+		      //qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
+		      //vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      //
-		      qre_show_v(p_base_verbosity, " u1 gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("U1"));
 		    }
 		  if (qre_recog("u2", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" u2 gate at qubit " + qre_d2s((double)rn)));
-		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
-		      //
-		      qre_show_v(p_base_verbosity, " u2 gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("u2"));
 		    }
 		  if ((qre_recog("u3", qasm_instructions[i]) == true)&&(qre_recog("cu3", qasm_instructions[i]) == false))
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" u3 gate at qubit " + qre_d2s((double)rn)));
-		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
-		      //
-		      qre_show_v(p_base_verbosity, " u3 gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("u3"));
 		    }
 		  if (qre_recog("if", qasm_instructions[i]) == true)
 		    {
-		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" if gate at qubit " + qre_d2s((double)rn)));
-		      qre_show_v(p_base_verbosity, " if gate not recognized.");
+		      qre_show_v(p_base_verbosity, qre_ina("if"));
 		    }
 		  if (qre_recog("rx", qasm_instructions[i]) == true)
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" rx gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("rx") + qre_d2s((double)rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qc_file_app << "rx q" << rn << ", " << phg[0] << endl;
 		    }
 		  if (qre_recog("ry", qasm_instructions[i]) == true)
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" ry gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("ry") + qre_d2s((double)rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qc_file_app << "ry q" << rn << ", " << phg[0] << endl;
 		    }
 		  if ((qre_recog("rz", qasm_instructions[i]) == true)&&(qre_recog("crz", qasm_instructions[i]) == false))
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
-		      qre_show_v(p_base_verbosity, (" rz gate at qubit " + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("rz") + qre_d2s((double)rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qc_file_app << "rz q" << rn << ", " << phg[0] << endl;
 		    }
 		  if (qre_recog("crz", qasm_instructions[i]) == true)
 		    {
-		      qre_show_v(p_base_verbosity, " crz gate not recognized.");		      
+		      qre_show_v(p_base_verbosity, qre_ina("crz"));
 		    }
 		  if (qre_recog("cu1", qasm_instructions[i]) == true)
 		    {
-		      qre_show_v(p_base_verbosity, " cu1 gate not recognized.");		      
+		      qre_show_v(p_base_verbosity, qre_ina("cu1"));
 		    }
 		  if (qre_recog("cu3", qasm_instructions[i]) == true)
 		    {
-		      qre_show_v(p_base_verbosity, " cu3 gate not recognized.");		      
+		      qre_show_v(p_base_verbosity, qre_ina("cu3"));
 		    }		  
 		}	      
 	    }
@@ -1449,7 +1411,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 
   // Finish off the string and save.
   res = construct_res_step3(res);
-  qre_store_results(p_base_results_storage, p_base_name, res);
+  //qre_store_results(p_base_results_storage, p_base_name, res);
+  qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
   
   return res;
 }

@@ -37,6 +37,12 @@ qre1.hpp
 using namespace std;
 
 
+std::string qre_gaq(std::string p_s1);
+
+
+std::string qre_ina(std::string p_s1);
+
+
 std::string qre_d2s(double p_double);
 
 
@@ -76,7 +82,8 @@ char *qre_create_header(std::string p_s);
 std::string qre_read_qasm_file(std::string p_f);
 
 
-void qre_store_results(std::string p_base_results_storage,
+void qre_store_results(std::string p_base_verbosity,
+		       std::string p_base_results_storage,
 		       std::string p_file,
 		       std::string p_contents_to_store);
 
