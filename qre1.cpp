@@ -26,6 +26,129 @@ qre1.cpp
 using namespace std;
 
 
+/* qre_txt - return a standard string or text for which p_n is the corrresponding
+index.
+
+Arguments:
+- p_n: index number >= 0.
+
+Output:
+- Text or string.
+
+*/
+std::string qre_txt(int p_n)
+{
+  std::string res = "";
+ 
+  switch(p_n)
+    {
+    case 0:
+      res = "Posting...";
+      break;
+    case 1:
+      res = "Deleting...";
+      break;      
+    case 2:
+      res = "Getting...";      
+      break;
+    case 3:
+      res = "Please wait...";      
+      break;
+    case 4:
+      res = "Running...";      
+      break;
+    case 5:
+      res = "Parsing...";      
+      break;
+    case 6:
+      res = "Reading...";      
+      break;
+    case 7:
+      res = "Preparing...";      
+      break;
+    case 8:
+      res = "Finishing...";      
+      break;
+    case 9:
+      res = "Saving...";      
+      break;
+    case 10:
+      res = "Finished.";      
+      break;
+    case 11:
+      res = " Creating qubit register q.";      
+      break;
+    case 12:
+      res = " Creating bit register c.";      
+      break;
+    case 13:
+      res = "// qdeclare qx-simulator ";      
+      break;
+    case 14:
+      res = "// qdeclare qlib-simulator ";      
+      break;
+    case 15:
+      res = "Ignore, comment -> ";      
+      break;
+    case 16:
+      res = "Ignore, error -> ";      
+      break;
+    case 17:
+      res = "Post   -> ";      
+      break;
+    case 18:
+      res = " to bit ";      
+      break;
+    case 19:
+      res = " from bit ";      
+      break;
+    case 20:
+      res = " and bit ";      
+      break;
+    case 21:
+      res = " to qubit ";      
+      break;
+    case 22:
+      res = " from qubit ";      
+      break;
+    case 23:
+      res = " and qubit ";      
+      break;
+    case 24:
+      res = "";      
+      break;       
+    default:
+      res = "na";
+      break;      
+    }
+
+  return res;
+}
+
+
+/* qre_enable_shots - if p_enable is true, then it returns a number >= 1; 
+otherwise, it returns 1. 
+
+Arguments:
+- p_s1: gate name.
+
+Output:
+- A result >= 1 if p_shots true, 1 otherwise.
+
+ */
+int qre_enable_shots(bool p_enable, std::string p_base_shots)
+{
+  int res = 1;
+  
+  if (p_enable == true)
+    {
+      res = (int)qre_s2d(p_base_shots);
+    }
+
+  return res;
+}
+
+
 /* qre_gaq - Returns a string stating that a gate is at a certain qubit.
 
 Arguments:
@@ -339,7 +462,6 @@ Arguments:
  */
 std::string qre_read_qasm_file(std::string p_f)
 {
-
   std::string res = "";
   std::string file_line = "";
   std::string file_name = p_f;
@@ -552,12 +674,7 @@ std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_del
 	  res.push_back(line);
 	  s.erase(0, pos4 + delim.length());
 	}
-      //res.push_back(s);
     }
-  /*else
-    {
-      res.push_back(s);      
-    }*/
   res.push_back(s);
   
   return res;

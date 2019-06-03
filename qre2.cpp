@@ -378,9 +378,10 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
   std::string post_uri = p_post_uri;
   std::string header2 = "";
   std::string post_content_type = "";
-
+  std::string base_shots = qre_d2s((double)qre_enable_shots(true, p_base_shots));
+  
   post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name;
-  post_uri = post_uri+"?access_token="+p_login_id+"&shots="+p_base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
+  post_uri = post_uri+"?access_token="+p_login_id+"&shots="+base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
   if (p_base_verbosity == "yes")
     {
       qre_show_string("\n\n");
@@ -391,7 +392,7 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
       qre_show_var("post_uri", post_uri);
       qre_show_string("\n\n");
     }
-  qre_show_v(p_base_verbosity, "Posting...");
+  qre_show_v(p_base_verbosity, qre_txt(0));
   res = ibmqx_qpost(p_base_verbosity,
 		    p_base_method,
 		    post_data,
@@ -459,6 +460,25 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
   qre_store_results(p_base_verbosity, p_base_results_storage, p_delete_name, res);
   
   return res;
+}
+
+
+/* qre_find_qasm_standards - Finds out if code is QASM-compatible.
+
+Arguments:
+- p_qasm_instructions: qasm_instructions vectorelement.
+
+ */
+void qre_find_qasm_standard(std::string p_base_verbosity, std::string p_qasm_instructions)
+{
+  if (qre_recog("2.", p_qasm_instructions) == true)
+    {
+      qre_show_v(p_base_verbosity, " Recognized as OPENQASM 2.*.");
+    }
+  else
+    {
+      qre_show_v(p_base_verbosity, " OPENQASM version declaration not found. Possibly incompatible code.");
+    }
 }
 
 
@@ -531,11 +551,10 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   //std::vector<double>r;
   std::vector<std::string>qasm_instructions;
   
-  qre_show_v(p_base_verbosity, "Posting...");
+  qre_show_v(p_base_verbosity, qre_txt(0));
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
   vector_size = qasm_instructions.size();
-  // shots = (int)qre_s2d(p_base_shots);
-  shots = 1; // Shots inhibited.
+  shots = qre_enable_shots(false, p_base_shots);
 
   // We need to define qreg q and creg c before parsing anything else in the QASM file.
   for (i = 0; i < vector_size; i++)
@@ -546,7 +565,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	}
     }
   qreg q(rn);
-  qre_show_v(p_base_verbosity, (" Creating qubit register q."));
+  qre_show_v(p_base_verbosity, qre_txt(11));
   rn = 0;
   for (i = 0; i < vector_size; i++)
     {
@@ -563,7 +582,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	    }
 	}
     }
-  qre_show_v(p_base_verbosity, (" Creating bit register c."));
+  qre_show_v(p_base_verbosity, qre_txt(12));
   
   // Shots iteration.
   for (k = 0; k < shots; k++)
@@ -574,16 +593,16 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	  // Find if line will be ignored or not based on the value of delim.
 	  if ((qre_recog(comment, qasm_instructions[i]) == true)&&(qre_recog("// qdeclare qlib-simulator ", qasm_instructions[i]) == false))	  
 	    {
-	      qre_show_v(p_base_verbosity, ("Ignore, comment -> " + qasm_instructions[i]));
+	      qre_show_v(p_base_verbosity, (qre_txt(15) + qasm_instructions[i]));
 	    }
 	  // Find if line will be ignored if it does not have spaces.
 	  else if (qre_recog(space, qasm_instructions[i]) == false)
 	    {
-	      qre_show_v(p_base_verbosity, ("Ignore, error -> " + qasm_instructions[i]));
+	      qre_show_v(p_base_verbosity, (qre_txt(16) + qasm_instructions[i]));
 	    }
 	  else
 	    {
-	      qre_show_v(p_base_verbosity, ("Post   -> " + qasm_instructions[i]));
+	      qre_show_v(p_base_verbosity, (qre_txt(17) + qasm_instructions[i]));
 
 	      // Process quantum instructions.		  
 	      
@@ -592,14 +611,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		{	  
 		  if (qre_recog("OPENQASM", qasm_instructions[i]) == true)
 		    {
-		      if (qre_recog("2.", qasm_instructions[i]) == true)
-			{
-			  qre_show_v(p_base_verbosity, " Recognized as OPENQASM 2.*.");
-			}
-		      else
-			{
-			  qre_show_v(p_base_verbosity, " OPENQASM version declaration not found. Possibly incompatible code.");
-			}
+		      qre_find_qasm_standard(p_base_verbosity, qasm_instructions[i]);
 		    }
 		  if (qre_recog("include", qasm_instructions[i]) == true)
 		    {
@@ -609,7 +621,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    {
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "c"));
-		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_d2s((double)rn) + qre_txt(18) + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("// qdeclare qlib-simulator ", qasm_instructions[i]) == true)
 		    {
@@ -621,7 +633,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      q.apply(gates::CX, {rn,rm});
-		      qre_show_v(p_base_verbosity, (qre_gaq("cx") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cx") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("ccx", qasm_instructions[i]) == true)
 		    {
@@ -632,7 +644,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      pos1 = str1.find(",");
 		      ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), "q"));
 		      q.apply(gates::CCNOT, {rn,rm,ro});
-		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
+		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_d2s((double)rn) + qre_txt(23) + qre_d2s((double)rm) + qre_txt(21) + qre_d2s((double)ro) ));		      		      
 		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
@@ -640,7 +652,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      q.apply(gates::CY, {rn,rm});
-		      qre_show_v(p_base_verbosity, (qre_gaq("cy") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cy") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("cz", qasm_instructions[i]) == true)
 		    {
@@ -648,7 +660,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      q.apply(gates::CZ, {rn,rm});
-		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("ch", qasm_instructions[i]) == true)
 		    {
@@ -728,7 +740,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      q.apply(gates::CX, {rn,rm});
 		      q.apply(gates::CX, {rm,rn});
 		      q.apply(gates::CX, {rn,rm});	      
-		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("bloch", qasm_instructions[i]) == true )
 		    {
@@ -1007,11 +1019,10 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   //std::vector<double>r;
   std::vector<std::string>qasm_instructions;
   
-  qre_show_v(p_base_verbosity, "Posting...");
+  qre_show_v(p_base_verbosity, qre_txt(0));
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
   vector_size = qasm_instructions.size();
-  //shots = (int)qre_s2d(p_base_shots);
-  shots = 1; // Shots inhibited.
+  shots = qre_enable_shots(false, p_base_shots);
   file = "qx_temp.qc";
   pathj = patha + file;     
   std::ofstream qc_file_ini(pathj);
@@ -1027,7 +1038,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	  qc_file_ini << "qubits " << rn << endl;
 	}
     }
-  qre_show_v(p_base_verbosity, (" Creating qubit register q."));
+  qre_show_v(p_base_verbosity, qre_txt(11));
   rn = 0;  
   for (i = 0; i < vector_size; i++)
     {
@@ -1045,7 +1056,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	}
     }
   qc_file_ini.close();
-  qre_show_v(p_base_verbosity, (" Creating bit register c."));
+  qre_show_v(p_base_verbosity, qre_txt(12));
   
   // Complile qc file from qasm file.
   if (k == 0)
@@ -1058,18 +1069,18 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       for (i = 0; i < vector_size; i++)
 	{
 	  // Find if line will be ignored or not based on the value of delim.
-	  if ((qre_recog(comment, qasm_instructions[i]) == true)&&(qre_recog("// qdeclare qx-simulator ", qasm_instructions[i]) == false))
+	  if ((qre_recog(comment, qasm_instructions[i]) == true)&&(qre_recog(qre_txt(13), qasm_instructions[i]) == false))
 	    {
-	      qre_show_v(p_base_verbosity, ("Ignore, comment -> " + qasm_instructions[i]));
+	      qre_show_v(p_base_verbosity, (qre_txt(15) + qasm_instructions[i]));
 	    }
 	  // Find if line will be ignored if it does not have spaces.
 	  else if (qre_recog(space, qasm_instructions[i]) == false)
 	    {
-	      qre_show_v(p_base_verbosity, ("Ignore, error -> " + qasm_instructions[i]));
+	      qre_show_v(p_base_verbosity, (qre_txt(16) + qasm_instructions[i]));
 	    }
 	  else
 	    {
-	      qre_show_v(p_base_verbosity, ("Post   -> " + qasm_instructions[i]));
+	      qre_show_v(p_base_verbosity, (qre_txt(17) + qasm_instructions[i]));
 
 	      // Process quantum instructions.		  
 	      
@@ -1078,14 +1089,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		{	  
 		  if (qre_recog("OPENQASM", qasm_instructions[i]) == true)
 		    {
-		      if (qre_recog("2.", qasm_instructions[i]) == true)
-			{
-			  qre_show_v(p_base_verbosity, " Recognized as OPENQASM 2.*.");
-			}
-		      else
-			{
-			  qre_show_v(p_base_verbosity, " OPENQASM version declaration not found. Possibly incompatible code.");
-			}
+		      qre_find_qasm_standard(p_base_verbosity, qasm_instructions[i]);
 		    }
 		  if (qre_recog("include", qasm_instructions[i]) == true)
 		    {
@@ -1096,7 +1100,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), "c"));
 		      qc_file_app << "measure q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_d2s((double)rn) + " to bit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_d2s((double)rn) + qre_txt(18) + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("// qdeclare qx-simulator ", qasm_instructions[i]) == true)
 		    {
@@ -1119,7 +1123,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      pos1 = str1.find(",");
 		      ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), "q"));
 		      qc_file_app << "toffoli q" << rn << ", q" << rm << ", q" << ro << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_d2s((double)rn) + " and qubit " + qre_d2s((double)rm) + " to qubit " + qre_d2s((double)ro) ));		      		      
+		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_d2s((double)rn) + qre_txt(23) + qre_d2s((double)rm) + qre_txt(21) + qre_d2s((double)ro) ));		      		      
 		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
@@ -1131,7 +1135,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      qc_file_app << "cz q" << rn << ", q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
 		    }
 		  if ((qre_recog("ch", qasm_instructions[i]) == true)&&(qre_recog("qdeclare", qasm_instructions[i]) == false))
 		    {
@@ -1203,7 +1207,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), "q"));
 		      rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), "q"));
 		      qc_file_app << "swap q" << rn << ", q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
 		    }
 		  if (qre_recog("bloch", qasm_instructions[i]) == true )
 		    {
