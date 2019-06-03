@@ -37,6 +37,12 @@ qre1.hpp
 using namespace std;
 
 
+std::string qre_txt(int p_n);
+
+
+int qre_enable_shots(bool p_enable, std::string p_base_shots);
+
+
 std::string qre_gaq(std::string p_s1);
 
 

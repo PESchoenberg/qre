@@ -80,6 +80,9 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
 				    std::string p_base_name);
 
 
+void qre_find_qasm_standard(std::string p_base_verbosity, std::string p_qasm_instructions);
+
+
 std::string qlib_post_experiment(std::string p_base_verbosity,
 				 std::string p_base_data,
 				 std::string p_base_results_storage,
