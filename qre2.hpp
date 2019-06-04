@@ -33,7 +33,7 @@ void show_res_parc(std::string p_base_verbosity, int p_j, std::string p_st, std:
 std::string construct_res_step1(std::string p_res, std::string p_base_device, std::string p_base_name);
 
 
-std::string construct_res_step3(std::string p_res);
+std::string construct_res_step3(int p_step, std::string p_res);
 
 
 std::string ibmqx_qpost(std::string p_base_verbosity,
@@ -81,6 +81,9 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
 
 
 void qre_find_qasm_standard(std::string p_base_verbosity, std::string p_qasm_instructions);
+
+
+std::string qre_put_qubit_numbers (int p_nq, std::string p_res);
 
 
 std::string qlib_post_experiment(std::string p_base_verbosity,

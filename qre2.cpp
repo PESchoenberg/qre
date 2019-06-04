@@ -76,17 +76,49 @@ std::string construct_res_step1(std::string p_res, std::string p_base_device, st
 }
 
 
-/* construct_res_step3 - builds a standard tail for json results.
+/* construct_res_step3 - builds standard parts of json results results.
 
 Arguments:
+- p_step: step.
 - p_res: res.
 
  */
-std::string construct_res_step3(std::string p_res)
+std::string construct_res_step3(int p_step, std::string p_res)
 {
   std::string res = p_res;
 
-  res = res + "]}}," + "\'status\':\'DONE\'}"; 
+  if (p_step == 3)
+    {
+      res = res + "]}}," + "\'status\':\'DONE\'}";
+    }
+  else if (p_step == 1)
+    {
+      res = res + "u\'qubits\':[";
+    }
+  else if (p_step == 2)
+    {
+      res = res + "u\'values\':[";
+    }
+  else if (p_step == 4)
+    {
+      res = res + "u\'";
+    }
+  else if (p_step == 5)
+    {
+      res = res + "\'";      
+    }
+  else if (p_step == 6)
+    {
+      res = res + ",";      
+    }
+  else if (p_step == 7)
+    {
+      res = res + "],";      
+    }  
+  else if (p_step == 8)
+    {
+      res = res + ", ";      
+    }
   
   return res;
 }
@@ -479,6 +511,35 @@ void qre_find_qasm_standard(std::string p_base_verbosity, std::string p_qasm_ins
     {
       qre_show_v(p_base_verbosity, " OPENQASM version declaration not found. Possibly incompatible code.");
     }
+}
+
+
+/* qre_put_qubit_numbers - put qubit numbers in a results string.
+
+Arguments:
+- p_nq: nq.
+- p_res: res.
+
+Output:
+- Results string (res).
+
+ */
+std::string qre_put_qubit_numbers (int p_nq, std::string p_res)
+{
+  std::string res = p_res;
+
+  res = construct_res_step3(1, res);
+  for (int i = 0; i < p_nq; i++)
+    {
+      res = res + qre_d2s((double)i);
+      if (i < (p_nq - 1))
+	{
+	  res = construct_res_step3(8, res);
+	}
+    }    
+  res = construct_res_step3(7, res);
+
+  return res;
 }
 
 
@@ -881,41 +942,33 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 
   // Build the json string with results.
   res = construct_res_step1("{", p_base_device, p_base_name);
-  
+
+  // maw
   // Put labels.
   for (i = 0; i < (int)res_final.size(); i++)
   {
     if (i < ((int)res_final.size() - 1))
       {
-	res = res + "u\'";
+	res = construct_res_step3(4, res);
       }    
     res = res + res_parc[i].sket;
     if (i < ((int)res_final.size() - 1))
       {
-	res = res + "\'";
+	res = construct_res_step3(5, res);
       }   
     if (i < ((int)res_final.size() - 2))
       {
-	res = res + ",";
+	res = construct_res_step3(6, res);
       }   
   }
-  res = res + "],";
+  res = construct_res_step3(7, res);
 
   // Put qubit numbers.
   int nq = c.size();
-  res = res + "u\'qubits\':[";
-  for (i = 0; i < nq; i++)
-    {
-      res = res + qre_d2s((double)i);
-      if (i < (nq - 1))
-	{
-	  res = res + ", ";
-	}
-    }    
-  res = res + "],";
-
+  res = qre_put_qubit_numbers (nq, res);
+  
   // Put probability values.
-  res = res + "u\'values\':[";
+  res = construct_res_step3(2, res);
   nq = (int)res_final.size();
   for (i = 0; i < nq; i++)
     {
@@ -926,12 +979,12 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       
       if (i < (nq - 2))
 	{
-	  res = res + ", ";
+	  res = construct_res_step3(8, res);
 	}     
     }
 
   // Finish off the string and save. 
-  res = construct_res_step3(res);
+  res = construct_res_step3(3, res);
   qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
   
   return res;
@@ -1365,41 +1418,33 @@ std::string qx_post_experiment(std::string p_base_verbosity,
     
   // Build the json string with results.
   res = construct_res_step1("{", p_base_device, p_base_name);  
-  
+
+  // maw
   // Put labels.
   for (i = 0; i < (int)res_final.size(); i++)
     {
       if (i < ((int)res_final.size() ))
 	{
-	  res = res + "u\'";
+	  res = construct_res_step3(4, res);
 	}
       res = res + res_parc[i].sket;
       if (i < ((int)res_final.size() - 1))
 	{
-	  res = res + "\'";
+	  res = construct_res_step3(5, res);
 	}    
       if (i < ((int)res_final.size() - 1))
 	{
-	  res = res + ",";
+	  res = construct_res_step3(6, res);
 	}  
     }
-  res = res + "],";
+  res = construct_res_step3(7, res);
 
   // Put qubit numbers.
   int nq = c.size();
-  res = res + "u\'qubits\':[";
-  for (i = 0; i < nq; i++)
-    {
-      res = res + qre_d2s((double)i);
-      if (i < (nq - 1))
-	{
-	  res = res + ", ";
-	}
-    }   
-  res = res + "],";
-
+  res = qre_put_qubit_numbers (nq, res);
+  
   // Put probability values.
-  res = res + "u\'values\':[";
+  res = construct_res_step3(2, res);
   nq = (int)res_final.size();
   for (i = 0; i < nq; i++)
     {
@@ -1409,13 +1454,12 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	} 
       if (i < (nq - 1))
 	{
-	  res = res + ", ";
+	  res = construct_res_step3(8, res);
 	}     
     }
 
   // Finish off the string and save.
-  res = construct_res_step3(res);
-  //qre_store_results(p_base_results_storage, p_base_name, res);
+  res = construct_res_step3(3, res);
   qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
   
   return res;
