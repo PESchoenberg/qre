@@ -115,8 +115,23 @@ std::string qre_txt(int p_n)
       res = " and qubit ";      
       break;
     case 24:
+      res = "qx_temp.qc";      
+      break;
+    case 25:
+      res = "qx_temp.txt";      
+      break;
+    case 26:
+      res = "//";      
+      break;
+    case 27:
+      res = "data/temp/";      
+      break;
+    case 28:
       res = "";      
-      break;       
+      break;
+    case 29:
+      res = "";      
+      break;      
     default:
       res = "na";
       break;      

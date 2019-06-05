@@ -584,7 +584,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   std::string str4 = "";
   std::string str5 = "";
   std::string line = "";
-  std::string comment = "//";
+  //std::string comment = "//";
+  std::string comment = qre_txt(26);
   std::string space = " ";
   std::string sq = "";
   std::string delim = "";
@@ -1030,7 +1031,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   float svecx = 0;
   float svecy = 0;
   
-  //double svect = 0;
   double sprob = 0;
   
   std::string res = "";
@@ -1042,11 +1042,12 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   std::string str4 = "";
   std::string str5 = "";
   std::string line = "";
-  std::string comment = "//";
+  //std::string comment = "//";
+  std::string comment = qre_txt(26);
   std::string space = " ";
   std::string delim = "";
-  std::string file ="";
-  std::string patha = "data/temp/";
+  //std::string patha = "data/temp/";
+  std::string patha = qre_txt(27);
   std::string pathj = "";
   std::string sys_command = p_simulator_path;
   
@@ -1076,10 +1077,9 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   qasm_instructions = qre_parse_data_string(p_base_verbosity, p_base_data);
   vector_size = qasm_instructions.size();
   shots = qre_enable_shots(false, p_base_shots);
-  file = "qx_temp.qc";
-  pathj = patha + file;     
+  pathj = patha + qre_txt(24);
   std::ofstream qc_file_ini(pathj);
-  qc_file_ini << "# qx_temp.qc" << endl;
+  qc_file_ini << "# " << qre_txt(24) << endl;
   res1 = res1 + 0; // So that the compiler doesn't complain.
   
   // We need to define qreg q and creg c before parsing anything else in the QASM file.
@@ -1277,7 +1277,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      //qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
 		      //vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      //
-		      qre_show_v(p_base_verbosity, qre_ina("U1"));
+		      qre_show_v(p_base_verbosity, qre_ina("u1"));
 		    }
 		  if (qre_recog("u2", qasm_instructions[i]) == true)
 		    {
@@ -1335,7 +1335,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
      file with results, parse it to get the kets, extract the values of each ket
      as a complex number and then process those values using vectors.*/
   qre_show_v(p_base_verbosity, "\n");
-  sys_command = sys_command + " " + patha + "qx_temp.qc" + " > " + patha + "qx_temp.txt";
+  sys_command = sys_command + " " + patha + qre_txt(24) + " > " + patha + qre_txt(25);  
   for (k = 0; k < shots; k++)
     {
       // Call qx simulator with created temp.qc file
@@ -1346,7 +1346,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 
       // Reset some stuff.
       j = 0;     
-      std::ifstream qx_temp(patha + "qx_temp.txt");
+      std::ifstream qx_temp(patha + qre_txt(25));
       qre_show_v(p_base_verbosity, "\n");
       while (std::getline(qx_temp, res2))
 	{
@@ -1412,14 +1412,12 @@ std::string qx_post_experiment(std::string p_base_verbosity,
     {
       res_final[i] = res_shots[i] / shots;
       sprob = sprob + res_final[i];
-      //sprob = sprob + (res_shots[i] / shots);
     } 
   qre_show_v(p_base_verbosity, ("Sum: " + qre_d2s(sprob)));
     
   // Build the json string with results.
   res = construct_res_step1("{", p_base_device, p_base_name);  
 
-  // maw
   // Put labels.
   for (i = 0; i < (int)res_final.size(); i++)
     {
