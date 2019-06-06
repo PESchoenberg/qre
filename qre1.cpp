@@ -130,8 +130,14 @@ std::string qre_txt(int p_n)
       res = "na";      
       break;
     case 29:
+      res = "no";      
+      break;
+    case 30:
       res = "";      
-      break;      
+      break;
+    case 31:
+      res = "";      
+      break;        
     default:
       res = "na";
       break;      
@@ -185,7 +191,7 @@ Arguments:
 - p_s1: gate name.
 
 Output:
-- A string like "gate p_s1 not available."
+- A string stating "gate p_s1 not available."
 
  */
 std::string qre_ina(std::string p_s1)

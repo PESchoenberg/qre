@@ -53,7 +53,6 @@ int main(int argc, char** argv)
   int res1 = 0;
   
   std::string res = "";
-  //std::string res2 = "na";
   std::string res2 = qre_txt(28);
   std::string data = "";
   std::string line = "---------------------------------------------------------------\n";
@@ -64,7 +63,7 @@ int main(int argc, char** argv)
   std::string base_uri = "";
   std::string base_results_storage = "";
   std::string base_method = "";
-  std::string base_verbosity = "no";
+  std::string base_verbosity =  qre_txt(29);
   std::string base_shots = "";
   std::string base_max_credits = "";
   std::string base_device = "";
