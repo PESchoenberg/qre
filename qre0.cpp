@@ -53,7 +53,8 @@ int main(int argc, char** argv)
   int res1 = 0;
   
   std::string res = "";
-  std::string res2 = "na";
+  //std::string res2 = "na";
+  std::string res2 = qre_txt(28);
   std::string data = "";
   std::string line = "---------------------------------------------------------------\n";
   std::string cfg_file = "qre.cfg";

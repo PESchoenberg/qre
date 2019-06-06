@@ -127,7 +127,7 @@ std::string qre_txt(int p_n)
       res = "data/temp/";      
       break;
     case 28:
-      res = "";      
+      res = "na";      
       break;
     case 29:
       res = "";      
