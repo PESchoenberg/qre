@@ -1001,8 +1001,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
     }
 
   // Finish off the string and save. 
-  //res = construct_res_step3(3, res);
-  //qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
   res = finish_res_and_save(p_base_verbosity, p_base_results_storage, p_base_name, res);
   
   return res;
@@ -1467,8 +1465,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
     }
 
   // Finish off the string and save.
-  //res = construct_res_step3(3, res);
-  //qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
   res = finish_res_and_save(p_base_verbosity, p_base_results_storage, p_base_name, res);
   
   return res;
