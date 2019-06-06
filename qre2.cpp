@@ -543,6 +543,28 @@ std::string qre_put_qubit_numbers (int p_nq, std::string p_res)
 }
 
 
+/* finish_res_and_save - Finish off the string and save.
+
+Arguments:
+- p_base_verbosity: base verbosity.
+- p_base_results_storage: base results storage.
+- p_base_bane: base name.
+- p_res: res.
+
+ */
+std::string finish_res_and_save(std::string p_base_verbosity,
+				std::string p_base_results_storage,
+				std::string p_base_name,
+				std::string p_res)
+{
+  std::string res = p_res;
+  
+  res = construct_res_step3(3, res);
+  qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
+
+  return res;
+}
+
 /* qlib_post_experiment - perform experiment locally on a qlib-based simulator.
 
 Arguments:
@@ -584,7 +606,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   std::string str4 = "";
   std::string str5 = "";
   std::string line = "";
-  //std::string comment = "//";
   std::string comment = qre_txt(26);
   std::string space = " ";
   std::string sq = "";
@@ -944,7 +965,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   // Build the json string with results.
   res = construct_res_step1("{", p_base_device, p_base_name);
 
-  // maw
   // Put labels.
   for (i = 0; i < (int)res_final.size(); i++)
   {
@@ -962,14 +982,10 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	res = construct_res_step3(6, res);
       }   
   }
-  res = construct_res_step3(7, res);
 
-  // Put qubit numbers.
+  // Put qubit numbers and probability values.
   int nq = c.size();
-  res = qre_put_qubit_numbers (nq, res);
-  
-  // Put probability values.
-  res = construct_res_step3(2, res);
+  res = construct_res_step3(2, qre_put_qubit_numbers (nq, construct_res_step3(7, res)));
   nq = (int)res_final.size();
   for (i = 0; i < nq; i++)
     {
@@ -985,8 +1001,9 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
     }
 
   // Finish off the string and save. 
-  res = construct_res_step3(3, res);
-  qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
+  //res = construct_res_step3(3, res);
+  //qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
+  res = finish_res_and_save(p_base_verbosity, p_base_results_storage, p_base_name, res);
   
   return res;
 }
@@ -1042,11 +1059,9 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   std::string str4 = "";
   std::string str5 = "";
   std::string line = "";
-  //std::string comment = "//";
   std::string comment = qre_txt(26);
   std::string space = " ";
   std::string delim = "";
-  //std::string patha = "data/temp/";
   std::string patha = qre_txt(27);
   std::string pathj = "";
   std::string sys_command = p_simulator_path;
@@ -1276,7 +1291,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], "q"));
 		      //qre_show_v(p_base_verbosity, (" u1 gate at qubit " + qre_d2s((double)rn)));
 		      //vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
-		      //
 		      qre_show_v(p_base_verbosity, qre_ina("u1"));
 		    }
 		  if (qre_recog("u2", qasm_instructions[i]) == true)
@@ -1426,7 +1440,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	  res = construct_res_step3(4, res);
 	}
       res = res + res_parc[i].sket;
-      if (i < ((int)res_final.size() - 1))
+      if (i < ((int)res_final.size() - 0)) //1
 	{
 	  res = construct_res_step3(5, res);
 	}    
@@ -1435,14 +1449,10 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	  res = construct_res_step3(6, res);
 	}  
     }
-  res = construct_res_step3(7, res);
-
-  // Put qubit numbers.
-  int nq = c.size();
-  res = qre_put_qubit_numbers (nq, res);
   
-  // Put probability values.
-  res = construct_res_step3(2, res);
+  // Put qubit numbers and probability values.
+  int nq = c.size();
+  res = construct_res_step3(2, qre_put_qubit_numbers (nq, construct_res_step3(7, res)));
   nq = (int)res_final.size();
   for (i = 0; i < nq; i++)
     {
@@ -1457,8 +1467,9 @@ std::string qx_post_experiment(std::string p_base_verbosity,
     }
 
   // Finish off the string and save.
-  res = construct_res_step3(3, res);
-  qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
+  //res = construct_res_step3(3, res);
+  //qre_store_results(p_base_verbosity, p_base_results_storage, p_base_name, res);
+  res = finish_res_and_save(p_base_verbosity, p_base_results_storage, p_base_name, res);
   
   return res;
 }

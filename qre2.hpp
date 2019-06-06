@@ -83,7 +83,13 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
 void qre_find_qasm_standard(std::string p_base_verbosity, std::string p_qasm_instructions);
 
 
-std::string qre_put_qubit_numbers (int p_nq, std::string p_res);
+std::string qre_put_qubit_numbers(int p_nq, std::string p_res);
+
+
+std::string finish_res_and_save(std::string p_base_verbosity,
+				std::string p_base_results_storage,
+				std::string p_base_name,
+				std::string p_res);
 
 
 std::string qlib_post_experiment(std::string p_base_verbosity,
