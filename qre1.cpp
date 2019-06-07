@@ -133,11 +133,38 @@ std::string qre_txt(int p_n)
       res = "no";      
       break;
     case 30:
-      res = "";      
+      res = "---------------------------------------------------------------\n";      
       break;
     case 31:
+      res = "qre.cfg";      
+      break;
+    case 32:
+      res = "1";      
+      break;
+    case 33:
+      res = "Post result: \n\n";      
+      break;
+    case 34:
+      res = "Delete result: \n\n";      
+      break;
+    case 35:
+      res = "qx_simulator";      
+      break;
+    case 36:
+      res = "qlib_simulator";      
+      break;
+    case 37:
+      res = "ibmqx_simulator";      
+      break;
+    case 38:
+      res = "ibmqx_real_qpu";      
+      break;
+    case 39:
+      res = "Testing...";      
+      break;
+    case 40:
       res = "";      
-      break;        
+      break;       
     default:
       res = "na";
       break;      

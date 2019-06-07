@@ -55,19 +55,19 @@ int main(int argc, char** argv)
   std::string res = "";
   std::string res2 = qre_txt(28);
   std::string data = "";
-  std::string line = "---------------------------------------------------------------\n";
-  std::string cfg_file = "qre.cfg";
+  std::string line = qre_txt(30);
+  std::string cfg_file = qre_txt(31);
   std::string base_file = "";
   std::string base_data = "";
   std::string base_token = "";
   std::string base_uri = "";
   std::string base_results_storage = "";
   std::string base_method = "";
-  std::string base_verbosity =  qre_txt(29);
+  std::string base_verbosity = qre_txt(29);
   std::string base_shots = "";
   std::string base_max_credits = "";
   std::string base_device = "";
-  std::string base_seed = "1";
+  std::string base_seed = qre_txt(32);
   std::string base_name = "";
   std::string login_data = "";
   std::string login_uri = "";
@@ -158,7 +158,7 @@ int main(int argc, char** argv)
       if (base_method == "test")
 	{
 	  base_verbosity = "yes";
-	  qre_show_conclusion(base_verbosity, line, "Testing...");
+	  qre_show_conclusion(base_verbosity, line, qre_txt(39));
 	  qre_show_string("Arguments entered from the command line:");
 	  qre_show_var("File", base_file);
 	  qre_show_var("Method", base_method);
@@ -184,7 +184,7 @@ int main(int argc, char** argv)
 	  qre_show_var("delete-content-type", delete_content_type);
 	  qre_show_var("delete-uri", delete_uri);
 	  qre_show_var("qx-simulator-path", qx_simulator_path);
-	  qre_show_conclusion(base_verbosity, "Test finished", "\n");
+	  qre_show_conclusion(base_verbosity, qre_txt(10), "\n");
 	}
       else if (base_device == "qlib_simulator")
 	{
@@ -197,7 +197,7 @@ int main(int argc, char** argv)
 					 base_shots,
 					 base_name,
 					 base_device);	      
-	      qre_show_conclusion(base_verbosity, "Post result: \n\n", res);
+	      qre_show_conclusion(base_verbosity, qre_txt(33), res);
 	    }
 	  else
 	    {
@@ -216,7 +216,7 @@ int main(int argc, char** argv)
 				       base_name,
 				       base_device,
 				       qx_simulator_path);	      
-	      qre_show_conclusion(base_verbosity, "Post result: \n\n", res);
+	      qre_show_conclusion(base_verbosity, qre_txt(33), res);
 	    }
 	  else
 	    {
@@ -236,7 +236,7 @@ int main(int argc, char** argv)
 				     login_uri,
 				     login_name);	  
 	  login_id = response_login[3];	  
-	  if (login_id == "na")
+	  if (login_id == qre_txt(28))
 	    {
 	      qre_show_string("LOGIN FAILED");
 	    }
@@ -258,7 +258,7 @@ int main(int argc, char** argv)
 					      base_shots,
 					      base_seed,
 					      base_device);
-		  qre_show_conclusion(base_verbosity, "Post result:\n\n", res);
+		  qre_show_conclusion(base_verbosity, qre_txt(33), res);
 		}
 	      if (base_method == "get")
 		{
@@ -275,7 +275,7 @@ int main(int argc, char** argv)
 						delete_name,
 						login_id,
 						base_name);
-		  qre_show_conclusion(base_verbosity, "Delete result:\n\n", res);	      
+		  qre_show_conclusion(base_verbosity, qre_txt(34), res);	      
 		}
 	    }	  
 	}
