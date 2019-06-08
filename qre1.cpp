@@ -163,8 +163,41 @@ std::string qre_txt(int p_n)
       res = "Testing...";      
       break;
     case 40:
-      res = "";      
-      break;       
+      res = "qre.db";      
+      break;
+    case 41:
+      res = "data/json/";
+      break;
+    case 42:
+      res = "data/sqlite3/";
+      break;
+    case 43:
+      res = "u\'";
+      break;
+    case 44:
+      res = "";
+      break;
+    case 45:
+      res = "";
+      break;
+    case 46:
+      res = "";
+      break;
+    case 47:
+      res = "";
+      break;
+    case 48:
+      res = "";
+      break;
+    case 49:
+      res = "";
+      break;
+    case 50:
+      res = "";
+      break;
+    case 51:
+      res = "";
+      break;
     default:
       res = "na";
       break;      
@@ -540,9 +573,11 @@ void qre_store_results(std::string p_base_verbosity,
 		       std::string p_file,
 		       std::string p_contents_to_store)
 {
-  std::string pathj = "data/json/";
-  std::string paths = "data/sqlite3";
-  std::string db = "qre.db";
+  //std::string pathj = "data/json/";
+  //std::string paths = "data/sqlite3/";
+  std::string pathj = qre_txt(41);
+  std::string paths = qre_txt(42);  
+  std::string db = qre_txt(40);
   std::string file = p_file;
 
   if (p_base_results_storage == "json")
@@ -640,7 +675,7 @@ std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std
   
   size_t pos = 0;
    
-  qre_show_v(p_base_verbosity, ("Parsing base_data..."));  
+  qre_show_v(p_base_verbosity, qre_txt(5));  
   while ((pos = base_data.find(delim)) != std::string::npos)
   {
     line = base_data.substr(0, pos);

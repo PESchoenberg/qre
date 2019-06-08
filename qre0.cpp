@@ -186,7 +186,7 @@ int main(int argc, char** argv)
 	  qre_show_var("qx-simulator-path", qx_simulator_path);
 	  qre_show_conclusion(base_verbosity, qre_txt(10), "\n");
 	}
-      else if (base_device == "qlib_simulator")
+      else if (base_device == qre_txt(36))
 	{
 	  if(base_method == "post")
 	    {
@@ -201,10 +201,10 @@ int main(int argc, char** argv)
 	    }
 	  else
 	    {
-	      qre_show_conclusion(base_verbosity, "qre qlib_simulator only supports test and post requests.\n\n", " ");
+	      qre_show_conclusion(base_verbosity, "qre " + qre_txt(36) + " only supports test and post requests.\n\n", " ");
 	    }
 	}
-      else if (base_device == "qx_simulator")
+      else if (base_device == qre_txt(35))
 	{
 	  if (base_method == "post")
 	    {
@@ -220,10 +220,10 @@ int main(int argc, char** argv)
 	    }
 	  else
 	    {
-	      qre_show_conclusion(base_verbosity, "qre qx_simulator only supports test and post requests.\n\n", " ");
+	      qre_show_conclusion(base_verbosity, ("qre " + qre_txt(35) + " only supports test and post requests.\n\n"), " ");
 	    }
 	}       
-      else if ((base_device == "ibmqx_simulator")||(base_device == "ibmqx_real_qpu"))
+      else if ((base_device == qre_txt(37))||(base_device == qre_txt(38)))
 	{
 	  qre_show_string(line);
 
