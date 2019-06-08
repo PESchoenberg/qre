@@ -70,7 +70,7 @@ std::string construct_res_step1(std::string p_res, std::string p_base_device, st
 {
   std::string res = p_res;
 
-  res = res + "\'idCode\': " + "u\'"+ p_base_device +"\'" + ",\'idExecution\': " + "u\'" + p_base_name + "\'" + ",\'result\': {\'measure\': {u\'labels\': [";
+  res = res + "\'idCode\': " + qre_txt(43) + p_base_device + "\'" + ",\'idExecution\': " + qre_txt(43) + p_base_name + "\'" + ",\'result\': {\'measure\': {u\'labels\': [";
   
   return res;
 }
@@ -101,7 +101,7 @@ std::string construct_res_step3(int p_step, std::string p_res)
     }
   else if (p_step == 4)
     {
-      res = res + "u\'";
+      res = res + qre_txt(43);
     }
   else if (p_step == 5)
     {
