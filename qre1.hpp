@@ -64,6 +64,9 @@ bool qre_recog(std::string p_s1, std:: string p_s2);
 void qre_show_v(std::string p_base_verbosity, std::string p_s);
 
 
+void qre_show_sum_partial_probs(std::string p_base_verbosity, double p_sprob);
+
+
 std::string qre_seek_in_file(std::string p_f, std::string p_v);
 
 
