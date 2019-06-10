@@ -70,8 +70,9 @@ std::string construct_res_step1(std::string p_res, std::string p_base_device, st
 {
   std::string res = p_res;
 
-  res = res + "\'idCode\': " + qre_txt(43) + p_base_device + "\'" + ",\'idExecution\': " + qre_txt(43) + p_base_name + "\'" + ",\'result\': {\'measure\': {u\'labels\': [";
-  
+  //res = res + "\'idCode\': " + qre_txt(43) + p_base_device + "\'" + ",\'idExecution\': " + qre_txt(43) + p_base_name + "\'" + ",\'result\': {\'measure\': {u\'labels\': [";
+  res = res + "\'idCode\': " + qre_txt(43) + p_base_device + qre_txt(44) + ",\'idExecution\': " + qre_txt(43) + p_base_name + qre_txt(44) + ",\'result\': {\'measure\': {u\'labels\': [";
+
   return res;
 }
 
@@ -105,7 +106,8 @@ std::string construct_res_step3(int p_step, std::string p_res)
     }
   else if (p_step == 5)
     {
-      res = res + "\'";      
+      //res = res + "\'";
+      res = res + qre_txt(44);
     }
   else if (p_step == 6)
     {
@@ -229,11 +231,11 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
       // Depending of request.
       if (p_base_method == "post")
 	{
-	  if (p_login_id == "na")
+	  if (p_login_id == qre_txt(28))
 	    {
 	      curl_easy_setopt(curl, CURLOPT_FRESH_CONNECT, 1L);
 	    }
-	  if (p_login_id != "na")
+	  if (p_login_id != qre_txt(28))
 	    {
 	      curl_easy_setopt(curl, CURLOPT_FORBID_REUSE, 1L);	      
 	      headerlist = curl_slist_append(headerlist, ccontenttype2);
@@ -322,7 +324,8 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
 {
   std::vector<std::string> res;
   
-  std::string res00 = "na";
+  //std::string res00 = "na";
+  std::string res00 = qre_txt(28);
   std::string res0 = "";
   std::string res1 = "";
   std::string res2 = "";
@@ -335,7 +338,7 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
 		      p_post_content_type,
 		      p_base_results_storage,
 		      p_login_uri,
-		      "na");
+		      qre_txt(28));
   qre_show_string("\n");
   qre_show_string("Login result\n\n");
   qre_show_string(res00);	      
@@ -346,13 +349,15 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
   res.push_back(res0);
   // res1 = qre_seek_in_json(res00, "\"ttl\"");
   // res.push_back(res1);
-  res.push_back("na");
+  //res.push_back("na");
+  res.push_back(qre_txt(28));
   res2 = qre_seek_in_json(res00, "\"created\"");
   res.push_back(res2);  
   res3 = qre_seek_in_json(res00, "\"userId\"");      
   if (res3 == "")
     {
-      res.push_back("na");
+      //res.push_back("na");
+      res.push_back(qre_txt(28));
     }
   else
     {
@@ -432,6 +437,7 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
 		    p_base_results_storage,
 		    post_uri,
 		    p_login_id);
+  //Bug.
   qre_store_results(p_base_verbosity, p_base_results_storage, p_post_name, res);
   
   return res;
@@ -960,7 +966,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       res_final[i] = res_shots[i] / shots;
       sprob = sprob + res_final[i];
     }  
-  qre_show_v(p_base_verbosity, ("Sum: " + qre_d2s(sprob)));
+  //qre_show_v(p_base_verbosity, (qre_txt(45) + qre_d2s(sprob)));
+  qre_show_sum_partial_probs(p_base_verbosity, sprob);
 
   // Build the json string with results.
   res = construct_res_step1("{", p_base_device, p_base_name);
@@ -1425,8 +1432,9 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       res_final[i] = res_shots[i] / shots;
       sprob = sprob + res_final[i];
     } 
-  qre_show_v(p_base_verbosity, ("Sum: " + qre_d2s(sprob)));
-    
+  //qre_show_v(p_base_verbosity, (qre_txt(45) + qre_d2s(sprob)));
+  qre_show_sum_partial_probs(p_base_verbosity, sprob);
+  
   // Build the json string with results.
   res = construct_res_step1("{", p_base_device, p_base_name);  
 

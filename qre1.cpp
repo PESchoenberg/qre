@@ -175,16 +175,16 @@ std::string qre_txt(int p_n)
       res = "u\'";
       break;
     case 44:
-      res = "";
+      res = "\'";
       break;
     case 45:
-      res = "";
+      res = "SPP = ";
       break;
     case 46:
-      res = "";
+      res = "d = ";
       break;
     case 47:
-      res = "";
+      res = "Warning: ";
       break;
     case 48:
       res = "";
@@ -368,6 +368,22 @@ void qre_show_v(std::string p_base_verbosity, std::string p_s)
 }
 
 
+/* qre_show_sum_partial_probs - Shows a sum of partial probabilities.
+
+Arguments:
+- p_base_verbosity: base verbosity.
+- p_sprob: sum of partia probabilities.
+
+ */
+void qre_show_sum_partial_probs(std::string p_base_verbosity, double p_sprob)
+{
+  double d = 1.00;
+  d = d - p_sprob;
+  qre_show_v(p_base_verbosity, (qre_txt(45) + qre_d2s(p_sprob)));
+  qre_show_v(p_base_verbosity, (qre_txt(46) + qre_d2s(d)));
+}
+
+
 /* qre_seek_in_file - Seeks the name of a variable in a flat file and returns its 
 associated value.
 
@@ -412,7 +428,8 @@ Output:
  */
 std::string qre_seek_in_json(std::string p_j, std::string p_v)
 {
-  std::string res = "na";
+  //std::string res = "na";
+  std::string res = qre_txt(28);  
   std::string res1 = "";
   std::string j = p_j;
   std::string v = p_v + ":\"";
@@ -636,7 +653,8 @@ Output:
  */
 std::string qre_parse_reg(std::string p_s, std::string p_t)
 {
-  std::string res = "//";
+  //std::string res = "//";
+  std::string res = qre_txt(26);
   std::string reg = p_t;
   
   reg = reg +"[";
