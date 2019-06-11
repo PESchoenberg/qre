@@ -70,7 +70,6 @@ std::string construct_res_step1(std::string p_res, std::string p_base_device, st
 {
   std::string res = p_res;
 
-  //res = res + "\'idCode\': " + qre_txt(43) + p_base_device + "\'" + ",\'idExecution\': " + qre_txt(43) + p_base_name + "\'" + ",\'result\': {\'measure\': {u\'labels\': [";
   res = res + "\'idCode\': " + qre_txt(43) + p_base_device + qre_txt(44) + ",\'idExecution\': " + qre_txt(43) + p_base_name + qre_txt(44) + ",\'result\': {\'measure\': {u\'labels\': [";
 
   return res;
@@ -106,7 +105,6 @@ std::string construct_res_step3(int p_step, std::string p_res)
     }
   else if (p_step == 5)
     {
-      //res = res + "\'";
       res = res + qre_txt(44);
     }
   else if (p_step == 6)
@@ -324,7 +322,6 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
 {
   std::vector<std::string> res;
   
-  //std::string res00 = "na";
   std::string res00 = qre_txt(28);
   std::string res0 = "";
   std::string res1 = "";
@@ -356,7 +353,6 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
   res3 = qre_seek_in_json(res00, "\"userId\"");      
   if (res3 == "")
     {
-      //res.push_back("na");
       res.push_back(qre_txt(28));
     }
   else
@@ -437,7 +433,7 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
 		    p_base_results_storage,
 		    post_uri,
 		    p_login_id);
-  //Bug.
+  //Bug?
   qre_store_results(p_base_verbosity, p_base_results_storage, p_post_name, res);
   
   return res;
