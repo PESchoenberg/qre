@@ -33,7 +33,7 @@ Arguments:
 - p_n: index number >= 0.
 
 Output:
-- Text or string.
+- A string with a standartized text for several uses.
 
 */
 std::string qre_txt(int p_n)
@@ -329,6 +329,7 @@ int qre_count_string(std::string p_delim, std::string p_s)
   return res;
 }
 
+
 /* qre_recog - recongizes if p_s1 is found in p_s2.
 
 Arguments:
@@ -377,8 +378,7 @@ Arguments:
  */
 void qre_show_sum_partial_probs(std::string p_base_verbosity, double p_sprob)
 {
-  double d = 1.00;
-  d = d - p_sprob;
+  double d = 1.00 - p_sprob;
   qre_show_v(p_base_verbosity, (qre_txt(45) + qre_d2s(p_sprob)));
   qre_show_v(p_base_verbosity, (qre_txt(46) + qre_d2s(d)));
 }
@@ -428,7 +428,6 @@ Output:
  */
 std::string qre_seek_in_json(std::string p_j, std::string p_v)
 {
-  //std::string res = "na";
   std::string res = qre_txt(28);  
   std::string res1 = "";
   std::string j = p_j;
@@ -590,8 +589,6 @@ void qre_store_results(std::string p_base_verbosity,
 		       std::string p_file,
 		       std::string p_contents_to_store)
 {
-  //std::string pathj = "data/json/";
-  //std::string paths = "data/sqlite3/";
   std::string pathj = qre_txt(41);
   std::string paths = qre_txt(42);  
   std::string db = qre_txt(40);
@@ -653,7 +650,6 @@ Output:
  */
 std::string qre_parse_reg(std::string p_s, std::string p_t)
 {
-  //std::string res = "//";
   std::string res = qre_txt(26);
   std::string reg = p_t;
   
