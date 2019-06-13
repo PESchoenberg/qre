@@ -112,4 +112,7 @@ std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2);
 std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_delim);
 
 
+long unsigned int qre_parse_bitreg(std::string p_s, std::string p_qr);
+
+
 #endif // !__QRE1_H
