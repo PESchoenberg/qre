@@ -123,7 +123,7 @@ int main(int argc, char** argv)
 	{
 	  base_verbosity = "no";
 	}
-      else if(base_method == "test")
+      else if(base_method == qre_txt(48))
 	{
 	  base_verbosity = "yes";
 	}
@@ -155,7 +155,7 @@ int main(int argc, char** argv)
       post_name = base_name + "_post";
       get_name = base_name + "_get";
       delete_name = base_name + "_delete";     
-      if (base_method == "test")
+      if (base_method == qre_txt(48))
 	{
 	  base_verbosity = "yes";
 	  qre_show_conclusion(base_verbosity, line, qre_txt(39));
@@ -188,7 +188,7 @@ int main(int argc, char** argv)
 	}
       else if (base_device == qre_txt(36))
 	{
-	  if(base_method == "post")
+	  if(base_method == qre_txt(49))
 	    {
 	      res = qlib_post_experiment(base_verbosity,
 					 base_data,
@@ -206,7 +206,7 @@ int main(int argc, char** argv)
 	}
       else if (base_device == qre_txt(35))
 	{
-	  if (base_method == "post")
+	  if (base_method == qre_txt(49))
 	    {
 	      res = qx_post_experiment(base_verbosity,
 				       base_data,
@@ -243,7 +243,7 @@ int main(int argc, char** argv)
 	  else
 	    {
 	      qre_show_string("LOGIN OK");	  
-	      if (base_method == "post")
+	      if (base_method == qre_txt(49))
 		{
 		  res = ibmqx_post_experiment(base_verbosity,
 					      base_method,
@@ -260,11 +260,7 @@ int main(int argc, char** argv)
 					      base_device);
 		  qre_show_conclusion(base_verbosity, qre_txt(33), res);
 		}
-	      if (base_method == "get")
-		{
-		  // Placeholder.
-		}
-	      if (base_method == "delete")
+	      if (base_method == qre_txt(51))
 		{
 		  res = ibmqx_delete_experiment(base_verbosity,
 						base_method,

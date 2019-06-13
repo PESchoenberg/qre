@@ -187,16 +187,16 @@ std::string qre_txt(int p_n)
       res = "Warning: ";
       break;
     case 48:
-      res = "";
+      res = "test";
       break;
     case 49:
-      res = "";
+      res = "post";
       break;
     case 50:
-      res = "";
+      res = "get";
       break;
     case 51:
-      res = "";
+      res = "delete";
       break;
     default:
       res = "na";
@@ -777,3 +777,18 @@ std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_del
   return res;
 }
 
+
+/* qre_parse_bitreg - Combines functions qre_parse_bitnum and and qre_parse_reg
+into one.
+
+Arguments:
+- p_s: qasm instruction string.
+- p_qr: qantum register.
+
+ */
+long unsigned int qre_parse_bitreg(std::string p_s, std::string p_qr)
+{
+  long unsigned int res = qre_parse_bitnum(qre_parse_reg(p_s, p_qr));
+
+  return res;
+}
