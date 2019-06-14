@@ -779,14 +779,14 @@ std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_del
 
 
 /* qre_parse_bitreg - Combines functions qre_parse_bitnum and and qre_parse_reg
-into one.
+into one to unclutter the code in other functions.
 
 Arguments:
 - p_s: qasm instruction string.
 - p_qr: qantum register.
 
  */
-long unsigned int qre_parse_bitreg(std::string p_s, std::string p_qr)
+long unsigned int qre_parse_br(std::string p_s, std::string p_qr)
 {
   long unsigned int res = qre_parse_bitnum(qre_parse_reg(p_s, p_qr));
 
