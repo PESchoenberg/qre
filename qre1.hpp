@@ -55,6 +55,9 @@ std::string qre_d2s(double p_double);
 double qre_s2d(std::string p_s);
 
 
+std::string qre_l2s(long unsigned int p_l);
+
+
 int qre_count_string(std::string p_delim, std::string p_s);
 
 

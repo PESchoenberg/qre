@@ -198,6 +198,21 @@ std::string qre_txt(int p_n)
     case 51:
       res = "delete";
       break;
+    case 52:
+      res = "yes";
+      break;
+    case 53:
+      res = "";
+      break;
+    case 54:
+      res = "";
+      break;
+    case 55:
+      res = "";
+      break;
+    case 56:
+      res = "";
+      break;
     default:
       res = "na";
       break;      
@@ -299,6 +314,21 @@ double qre_s2d(std::string p_s)
   strs >> res;
  
   return res;
+}
+
+
+/* qre_l2s - Converta a long unsigned int to a string.
+
+Arguments:
+- p_l: lui to convert.
+
+Output:
+- String.
+
+ */
+std::string qre_l2s(long unsigned int p_l)
+{
+  return (qre_d2s((double)p_l));
 }
 
 

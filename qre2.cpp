@@ -89,7 +89,6 @@ std::string construct_res_step3(int p_step, std::string p_res)
 
   if (p_step == 3)
     {
-      //res = res + "]}}," + "\'status\':\'DONE\'}";
       res = res + "]}},\'status\':\'DONE\'}";      
     }
   else if (p_step == 1)
@@ -329,7 +328,8 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
   std::string res2 = "";
   std::string res3 = "";
   
-  qre_show_string("Sending log in data...");
+  //qre_show_string("Sending log in data...");
+  qre_show_string(qre_txt(3));
   res00 = ibmqx_qpost(p_base_verbosity,
 		      p_base_method,
 		      p_login_data,
@@ -434,7 +434,7 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
 		    p_base_results_storage,
 		    post_uri,
 		    p_login_id);
-  //Bug?
+  //Bug here when calling ibmqx using Scheme.
   qre_store_results(p_base_verbosity, p_base_results_storage, p_post_name, res);
   
   return res;
@@ -483,7 +483,7 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
       qre_show_var("base_results_storage", p_base_results_storage);
       qre_show_var("delete_uri", delete_uri);
       qre_show_string("\n\n");
-      qre_show_string("Deleting...");
+      qre_show_string(qre_txt(1));
     }  
   res = ibmqx_qpost(p_base_verbosity,
 		    p_base_method,
@@ -597,7 +597,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   float svecx = 0;
   float svecy = 0;
   
-  //double svect = 0;
   double sprob = 0;
     
   std::string res = "";
@@ -649,7 +648,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
     {
       if (qre_recog("qreg", qasm_instructions[i]) == true)
 	{
-	  //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 	  rn = qre_parse_br(qasm_instructions[i], qr);
 	}
     }
@@ -660,7 +658,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
     {
       if (qre_recog("creg", qasm_instructions[i]) == true)
 	{
-	  //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], cr));
 	  rn = qre_parse_br(qasm_instructions[i], cr);
 	  if (c.size() == 0)
 	    {
@@ -709,11 +706,9 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    }	  
 		  if (qre_recog("measure", qasm_instructions[i]) == true)
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), cr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(0), cr);
-		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_d2s((double)rn) + qre_txt(18) + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_l2s(rn) + qre_txt(18) + qre_l2s(rm)));
 		    }
 		  if (qre_recog("// qdeclare qlib-simulator ", qasm_instructions[i]) == true)
 		    {
@@ -722,46 +717,37 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		  if ((qre_recog("cx", qasm_instructions[i]) == true)&&(qre_recog("ccx", qasm_instructions[i]) == false))
 		    {
 		      pos = qasm_instructions[i].find(",");
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), qr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);
 		      q.apply(gates::CX, {rn,rm});
-		      qre_show_v(p_base_verbosity, (qre_gaq("cx") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cx") + qre_l2s(rn) + qre_txt(21) + qre_l2s(rm)));
 		    }
 		  if (qre_recog("ccx", qasm_instructions[i]) == true)
 		    {
 		      pos = qasm_instructions[i].find(",");
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), qr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);		      
 		      str1 = qasm_instructions[i].substr(pos+1,(qasm_instructions[i].length()-1));
 		      pos1 = str1.find(",");
-		      //ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), qr));
 		      ro = qre_parse_br(str1.substr(pos1), qr);
 		      q.apply(gates::CCNOT, {rn,rm,ro});
-		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_d2s((double)rn) + qre_txt(23) + qre_d2s((double)rm) + qre_txt(21) + qre_d2s((double)ro) ));		      		      
+		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_l2s(rn) + qre_txt(23) + qre_l2s(rm) + qre_txt(21) + qre_l2s(ro)));		      		      
 		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
 		      pos = qasm_instructions[i].find(",");
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), qr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);		      
 		      q.apply(gates::CY, {rn,rm});
-		      qre_show_v(p_base_verbosity, (qre_gaq("cy") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cy") + qre_l2s(rn) + qre_txt(21) + qre_l2s(rm)));
 		    }
 		  if (qre_recog("cz", qasm_instructions[i]) == true)
 		    {
 		      pos = qasm_instructions[i].find(",");
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), qr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);		      
 		      q.apply(gates::CZ, {rn,rm});
-		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_l2s(rn) + qre_txt(21) + qre_l2s(rm)));
 		    }
 		  if (qre_recog("ch", qasm_instructions[i]) == true)
 		    {
@@ -769,92 +755,79 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    }		  
 		  if ((qre_recog("h ", qasm_instructions[i]) == true)&&(qre_recog("ch ", qasm_instructions[i]) == false))
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::H, {rn});
-		      qre_show_v(p_base_verbosity, (qre_gaq("h") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("h") + qre_l2s(rn)));
 		    }
 		  if ((qre_recog("x ", qasm_instructions[i]) == true)&&(qre_recog("cx ", qasm_instructions[i]) == false))
 		    {		  	     
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::X, {rn});
-		      qre_show_v(p_base_verbosity, (qre_gaq("x") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("x") + qre_l2s(rn)));
 		    }
 		  if ((qre_recog("y ", qasm_instructions[i]) == true)&&(qre_recog("cy ", qasm_instructions[i]) == false))
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::Y, {rn});
-		      qre_show_v(p_base_verbosity, (qre_gaq("y")+ qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("y")+ qre_l2s(rn)));
 		    }
 		  if ((qre_recog("z ", qasm_instructions[i]) == true)&&(qre_recog("cz ", qasm_instructions[i]) == false))
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::Z, {rn});
-		      qre_show_v(p_base_verbosity, (qre_gaq("z") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("z") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("s ", qasm_instructions[i]) == true )
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::S, {rn});
-		      qre_show_v(p_base_verbosity, (qre_gaq("s") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("s") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("sdg", qasm_instructions[i]) == true)
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::Sdg, {rn});		      
-		      qre_show_v(p_base_verbosity, (qre_gaq("sdg") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("sdg") + qre_l2s(rn)));
 		    }
 		  if ((qre_recog("t ", qasm_instructions[i]) == true)&&(qre_recog("reset ", qasm_instructions[i]) == false))
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::T, {rn});
-		      qre_show_v(p_base_verbosity, (qre_gaq("t") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("t") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("tdg", qasm_instructions[i]) == true)
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::Tdg, {rn});		      
-		      qre_show_v(p_base_verbosity, (qre_gaq("tdg") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("tdg") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("id ", qasm_instructions[i]) == true)
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::I, {rn});
-		      qre_show_v(p_base_verbosity, (qre_gaq("id") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("id") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("barrier ", qasm_instructions[i]) == true )
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
-		      qre_show_v(p_base_verbosity, (qre_gaq("barrier") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("barrier") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("reset ", qasm_instructions[i]) == true )
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      q.apply(gates::reset, {rn});
-		      qre_show_v(p_base_verbosity, (qre_gaq("reset") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("reset") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("swap ", qasm_instructions[i]) == true )
 		    {
 		      pos = qasm_instructions[i].find(",");
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), qr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);		      
 		      //Implemented with three consecutive CNOT gates.
 		      q.apply(gates::CX, {rn,rm});
 		      q.apply(gates::CX, {rm,rn});
 		      q.apply(gates::CX, {rn,rm});	      
-		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_l2s(rn) + qre_txt(21) + qre_l2s(rm)));
 		    }
 		  if (qre_recog("bloch", qasm_instructions[i]) == true )
 		    {
@@ -976,8 +949,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 
 	  /* Square both and sum to get p = x^2 + y^2, increment value of 
 	     res_sum and show info. */
-	  //svect = (double)(pow(svecx,2) + pow(svecy,2));
-	  //res_sum[j] = svect;
 	  res_sum[j] = (double)(pow(svecx,2) + pow(svecy,2));
 	  res_shots[j] = res_shots[j] + res_sum[j];
 	  show_res_parc(p_base_verbosity, j, res_parc[j].sterm, res_parc[j].sket, res_parc[j].svec);
@@ -1145,7 +1116,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
     {
       if (qre_recog("creg", qasm_instructions[i]) == true)
 	{
-	  //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], cr));
 	  rn = qre_parse_br(qasm_instructions[i], cr);
 	  if (c.size() == 0)
 	    {
@@ -1199,12 +1169,10 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    }	  
 		  if (qre_recog("measure", qasm_instructions[i]) == true)
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0), cr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(0), cr);
 		      qc_file_app << "measure q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_d2s((double)rn) + qre_txt(18) + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("measure") + qre_l2s(rn) + qre_txt(18) + qre_l2s(rm)));
 		    }
 		  if (qre_recog("// qdeclare qx-simulator ", qasm_instructions[i]) == true)
 		    {
@@ -1213,26 +1181,21 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		  if ((qre_recog("cx", qasm_instructions[i]) == true)&&(qre_recog("ccx ", qasm_instructions[i]) == false))
 		    {
 		      pos = qasm_instructions[i].find(",");
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), qr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);
 		      qc_file_app << "cx q" << rn << ", q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("cx") + qre_d2s((double)rn) + " to qubit " + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cx") + qre_l2s(rn) + " to qubit " + qre_l2s(rm)));
 		    }
 		  if (qre_recog("ccx", qasm_instructions[i]) == true)
 		    {
 		      pos = qasm_instructions[i].find(",");
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), qr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);		      
 		      str1 = qasm_instructions[i].substr(pos+1,(qasm_instructions[i].length()-1));
 		      pos1 = str1.find(",");
-		      //ro = qre_parse_bitnum(qre_parse_reg(str1.substr(pos1), qr));
 		      ro = qre_parse_br(str1.substr(pos1), qr);
 		      qc_file_app << "toffoli q" << rn << ", q" << rm << ", q" << ro << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_d2s((double)rn) + qre_txt(23) + qre_d2s((double)rm) + qre_txt(21) + qre_d2s((double)ro) ));		      		      
+		      qre_show_v(p_base_verbosity, (qre_gaq("ccx") + qre_l2s(rn) + qre_txt(23) + qre_l2s(rm) + qre_txt(21) + qre_l2s(ro)));		      		      
 		    }		  
 		  if (qre_recog("cy", qasm_instructions[i]) == true)
 		    {
@@ -1241,12 +1204,10 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		  if (qre_recog("cz", qasm_instructions[i]) == true)
 		    {
 		      pos = qasm_instructions[i].find(",");
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), qr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);		      
 		      qc_file_app << "cz q" << rn << ", q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("cz") + qre_l2s(rn) + qre_txt(21) + qre_l2s(rm)));
 		    }
 		  if ((qre_recog("ch", qasm_instructions[i]) == true)&&(qre_recog("qdeclare", qasm_instructions[i]) == false))
 		    {
@@ -1254,38 +1215,33 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    }		  
 		  if ((qre_recog("h ", qasm_instructions[i]) == true)&&(qre_recog("ch ", qasm_instructions[i]) == false))
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      qc_file_app << "h q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("h") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("h") + qre_l2s(rn)));
 		    }
 		  if ((qre_recog("x ", qasm_instructions[i]) == true)&&(qre_recog("cx ", qasm_instructions[i]) == false))
 		    {		  	     
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      qc_file_app << "x q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("x") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("x") + qre_l2s(rn)));
 		    }
 		  if ((qre_recog("y ", qasm_instructions[i]) == true)&&(qre_recog("cy ", qasm_instructions[i]) == false))
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      qc_file_app << "y q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("y") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("y") + qre_l2s(rn)));
 		    }
 		  if ((qre_recog("z ", qasm_instructions[i]) == true)&&(qre_recog("cz ", qasm_instructions[i]) == false))
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      qc_file_app << "z q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("z") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("z") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("s ", qasm_instructions[i]) == true )
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      qc_file_app << "s q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("s") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("s") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("sdg", qasm_instructions[i]) == true)
 		    {
@@ -1293,17 +1249,15 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    }
 		  if ((qre_recog("t ", qasm_instructions[i]) == true)&&(qre_recog("reset ", qasm_instructions[i]) == false))
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      qc_file_app << "t q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("t") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("t") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("tdg", qasm_instructions[i]) == true)
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      qc_file_app << "tdag q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("tdg") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("tdg") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("id ", qasm_instructions[i]) == true)
 		    {
@@ -1315,20 +1269,17 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    }
 		  if (qre_recog("reset ", qasm_instructions[i]) == true )
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      qc_file_app << "prepz q" << rn << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("reset") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("reset") + qre_l2s(rn)));
 		    }
 		  if (qre_recog("swap ", qasm_instructions[i]) == true )
 		    {
 		      pos = qasm_instructions[i].find(",");
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(0,pos-1), qr));
-		      //rm = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i].substr(pos), qr));
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);		      
 		      qc_file_app << "swap q" << rn << ", q" << rm << endl;
-		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_d2s((double)rn) + qre_txt(21) + qre_d2s((double)rm)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("swap") + qre_l2s(rn) + qre_txt(21) + qre_l2s(rm)));
 		    }
 		  if (qre_recog("bloch", qasm_instructions[i]) == true )
 		    {
@@ -1362,23 +1313,21 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    {
 		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
-		      qre_show_v(p_base_verbosity, (qre_gaq("rx") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("rx") + qre_l2s(rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qc_file_app << "rx q" << rn << ", " << phg[0] << endl;
 		    }
 		  if (qre_recog("ry", qasm_instructions[i]) == true)
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
-		      qre_show_v(p_base_verbosity, (qre_gaq("ry") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("ry") + qre_l2s(rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qc_file_app << "ry q" << rn << ", " << phg[0] << endl;
 		    }
 		  if ((qre_recog("rz", qasm_instructions[i]) == true)&&(qre_recog("crz", qasm_instructions[i]) == false))
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
-		      qre_show_v(p_base_verbosity, (qre_gaq("rz") + qre_d2s((double)rn)));
+		      qre_show_v(p_base_verbosity, (qre_gaq("rz") + qre_l2s(rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
 		      qc_file_app << "rz q" << rn << ", " << phg[0] << endl;
 		    }
@@ -1463,8 +1412,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      svecy = atof(str5.c_str());
 
 	      // Square both and sum to get p = x^2 + y^2.
-	      //svect = (double)(pow(svecx,2) + pow(svecy,2));
-	      //res_sum[j] = svect;
 	      res_sum[j] = (double)(pow(svecx,2) + pow(svecy,2));
 	      
 	      // Increment value of res_sum.
