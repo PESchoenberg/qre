@@ -922,8 +922,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 
       /* On each iteration, after res_parc has been created, parse res2 and distribute the parsed
       data within the struct of each row.*/
-
-      // Reset some vars.
       j = 0;
       pos = 0;
       res2 = q.toString();      
@@ -962,7 +960,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       res_final[i] = res_shots[i] / shots;
       sprob = sprob + res_final[i];
     }  
-  //qre_show_v(p_base_verbosity, (qre_txt(45) + qre_d2s(sprob)));
   qre_show_sum_partial_probs(p_base_verbosity, sprob);
 
   // Build the json string with results.
@@ -1362,8 +1359,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       
       /* Read qx_temp.txt on each shot iteration, parse kets and accummulate the
 	 extracted values. */
-
-      // Reset some stuff.
       j = 0;     
       std::ifstream qx_temp(patha + qre_txt(25));
       qre_show_v(p_base_verbosity, "\n");
@@ -1411,13 +1406,10 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      svecx = atof(str4.c_str());
 	      svecy = atof(str5.c_str());
 
-	      // Square both and sum to get p = x^2 + y^2.
+	      /* Square both and sum to get p = x^2 + y^2, increment res_su and 
+		 show some info .*/
 	      res_sum[j] = (double)(pow(svecx,2) + pow(svecy,2));
-	      
-	      // Increment value of res_sum.
 	      res_shots[j] = res_shots[j] + res_sum[j];
-	      
-	      // Show some info.
 	      show_res_parc(p_base_verbosity, j, res_parc[j].sterm, res_parc[j].sket, res_parc[j].svec);
 	      j++;
 	    }
@@ -1430,7 +1422,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       res_final[i] = res_shots[i] / shots;
       sprob = sprob + res_final[i];
     } 
-  //qre_show_v(p_base_verbosity, (qre_txt(45) + qre_d2s(sprob)));
   qre_show_sum_partial_probs(p_base_verbosity, sprob);
   
   // Build the json string with results.
@@ -1444,7 +1435,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	  res = construct_res_step3(4, res);
 	}
       res = res + res_parc[i].sket;
-      if (i < ((int)res_final.size() - 0)) //1
+      if (i < ((int)res_final.size() - 0))
 	{
 	  res = construct_res_step3(5, res);
 	}    
