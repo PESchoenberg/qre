@@ -45,7 +45,9 @@ Sources:
 
 #include "qre0.hpp"
 
+
 using namespace std;
+
 
 /* Main program.*/
 int main(int argc, char** argv)

@@ -24,6 +24,7 @@ qre1.hpp
 #ifndef __QRE1_H
 #define __QRE1_H
 
+
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
@@ -33,6 +34,7 @@ qre1.hpp
 #include <vector>
 #include <algorithm>
 #include <curl/curl.h>
+
 
 using namespace std;
 
