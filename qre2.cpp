@@ -21,8 +21,10 @@ qre2.cpp
 
 ============================================================================= */
 
+
 #include "qre2.hpp"
 #include "./lib/qlib/core/qlib.h"
+
 
 using namespace qlib::quantum;
 using namespace std;
@@ -68,11 +70,13 @@ Arguments:
  */
 std::string construct_res_step1(std::string p_res, std::string p_base_device, std::string p_base_name)
 {
-  std::string res = p_res;
+  /*std::string res = p_res;
 
   res = res + "\'idCode\': " + qre_txt(43) + p_base_device + qre_txt(44) + ",\'idExecution\': " + qre_txt(43) + p_base_name + qre_txt(44) + ",\'result\': {\'measure\': {u\'labels\': [";
 
-  return res;
+  return res;*/
+
+  return (p_res + "\'idCode\': " + qre_txt(43) + p_base_device + qre_txt(44) + ",\'idExecution\': " + qre_txt(43) + p_base_name + qre_txt(44) + ",\'result\': {\'measure\': {u\'labels\': [");
 }
 
 
@@ -337,8 +341,7 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
 		      p_base_results_storage,
 		      p_login_uri,
 		      qre_txt(28));
-  qre_show_string("\n");
-  qre_show_string("Login result\n\n");
+  qre_show_string("\nLogin result\n\n");
   qre_show_string(res00);	      
   qre_store_results(p_base_verbosity, p_base_results_storage, p_login_name, res00);
   
@@ -418,8 +421,7 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
   post_uri = post_uri+"?access_token="+p_login_id+"&shots="+base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
   if (p_base_verbosity == "yes")
     {
-      qre_show_string("\n\n");
-      qre_show_string("Data to be posted: ");
+      qre_show_string("\n\nData to be posted: ");
       qre_show_var("post_data", post_data);
       qre_show_var("post_content_type", p_post_content_type);
       qre_show_var("base_results_storage", p_base_results_storage);

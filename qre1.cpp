@@ -21,6 +21,7 @@ qre1.cpp
 
 ============================================================================= */
 
+
 #include "qre1.hpp"
 
 
@@ -234,15 +235,15 @@ Output:
 
  */
 int qre_enable_shots(bool p_enable, std::string p_base_shots)
-{
-  int res = 1;
-  
+{ 
   if (p_enable == true)
     {
-      res = (int)qre_s2d(p_base_shots);
+      return ((int)qre_s2d(p_base_shots));
     }
-
-  return res;
+  else
+    {
+      return 1;
+    }
 }
 
 
@@ -287,13 +288,18 @@ Output:
  */
 std::string qre_d2s(double p_double)
 {
-  double dob = p_double;
+  /*double dob = p_double;
   
   std::ostringstream stro;
   stro << dob;
   std::string res = stro.str();  
 
-  return res;
+  return res;*/
+
+  std::ostringstream stro;
+  stro << p_double;
+  return (stro.str());   
+  
 }
 
 
@@ -309,9 +315,10 @@ Output:
 double qre_s2d(std::string p_s)
 {
   double res = 0.00;
-  std::string str = p_s;
+  //std::string str = p_s;
   
-  stringstream strs(str); 
+  //stringstream strs(str);
+  stringstream strs(p_s);
   strs >> res;
  
   return res;
@@ -409,9 +416,8 @@ Arguments:
  */
 void qre_show_sum_partial_probs(std::string p_base_verbosity, double p_sprob)
 {
-  double d = 1.00 - p_sprob;
   qre_show_v(p_base_verbosity, (qre_txt(45) + qre_d2s(p_sprob)));
-  qre_show_v(p_base_verbosity, (qre_txt(46) + qre_d2s(d)));
+  qre_show_v(p_base_verbosity, (qre_txt(46) + qre_d2s(1.00 - p_sprob)));
 }
 
 
@@ -532,9 +538,7 @@ void qre_show_conclusion(std::string p_base_verbosity, std::string p_t1, std::st
 {
   if (p_base_verbosity == "yes")
     {  
-      qre_show_string(" ");
-      qre_show_string(p_t1);
-      qre_show_string(p_t2);
+      qre_show_string("\n"+p_t1+"\n"+p_t2);
     }
 }
 
@@ -592,10 +596,9 @@ std::string qre_read_qasm_file(std::string p_f)
 {
   std::string res = "";
   std::string file_line = "";
-  std::string file_name = p_f;
   
   std::ifstream file;
-  file.open(file_name.c_str());
+  file.open(p_f.c_str());
   while (getline (file,file_line))
     {
       res = res + file_line;
@@ -716,15 +719,13 @@ std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std
   
   std::string base_data = p_base_data;
   std::string delim = ";";
-  std::string line;
   
   size_t pos = 0;
    
   qre_show_v(p_base_verbosity, qre_txt(5));  
   while ((pos = base_data.find(delim)) != std::string::npos)
   {
-    line = base_data.substr(0, pos);
-    res.push_back(line);
+    res.push_back(base_data.substr(0, pos));
     base_data.erase(0, pos + delim.length());
   }
 
@@ -778,7 +779,6 @@ std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_del
   std::string ps = p_s;
   std::string s = "";
   std::string delim = p_delim;
-  std::string line;
   
   size_t pos1 = 0;
   size_t pos2 = 0;
@@ -798,8 +798,7 @@ std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_del
       // When there is more than one argument,  a "," separates them.
       while (((pos4 = s.find(delim)) != std::string::npos) == true)
 	{
-	  line = s.substr(0, pos4);
-	  res.push_back(line);
+	  res.push_back(s.substr(0, pos4));
 	  s.erase(0, pos4 + delim.length());
 	}
     }
@@ -819,7 +818,6 @@ Arguments:
  */
 long unsigned int qre_parse_br(std::string p_s, std::string p_qr)
 {
-  long unsigned int res = qre_parse_bitnum(qre_parse_reg(p_s, p_qr));
-
-  return res;
+  return ((long unsigned int) qre_parse_bitnum(qre_parse_reg(p_s, p_qr)));
 }
+
