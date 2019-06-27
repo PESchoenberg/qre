@@ -28,7 +28,7 @@ qre1.cpp
 using namespace std;
 
 
-/* qre_txt - return a standard string or text for which p_n is the corrresponding
+/* qre_txt - Return a standard string or text for which p_n is the corrresponding
 index.
 
 Arguments:
@@ -224,7 +224,7 @@ std::string qre_txt(int p_n)
 }
 
 
-/* qre_enable_shots - if p_enable is true, then it returns a number >= 1; 
+/* qre_enable_shots - If p_enable is true, then it returns a number >= 1; 
 otherwise, it returns 1. 
 
 Arguments:
@@ -288,18 +288,9 @@ Output:
  */
 std::string qre_d2s(double p_double)
 {
-  /*double dob = p_double;
-  
-  std::ostringstream stro;
-  stro << dob;
-  std::string res = stro.str();  
-
-  return res;*/
-
   std::ostringstream stro;
   stro << p_double;
-  return (stro.str());   
-  
+  return (stro.str()); 
 }
 
 
@@ -315,9 +306,7 @@ Output:
 double qre_s2d(std::string p_s)
 {
   double res = 0.00;
-  //std::string str = p_s;
-  
-  //stringstream strs(str);
+
   stringstream strs(p_s);
   strs >> res;
  
@@ -325,7 +314,7 @@ double qre_s2d(std::string p_s)
 }
 
 
-/* qre_l2s - Converta a long unsigned int to a string.
+/* qre_l2s - Converts a long unsigned int to a string.
 
 Arguments:
 - p_l: lui to convert.
@@ -368,7 +357,7 @@ int qre_count_string(std::string p_delim, std::string p_s)
 }
 
 
-/* qre_recog - recongizes if p_s1 is found in p_s2.
+/* qre_recog - Recongizes if p_s1 is found in p_s2.
 
 Arguments:
 - p_s1: string to be found as a substring in p_s2.
@@ -436,15 +425,16 @@ std::string qre_seek_in_file(std::string p_f, std::string p_v)
 {
   std::string res = " ";
   std::string file_line = "";
-  std::string file_name = p_f;
+  //std::string file_name = p_f;
   
   std::ifstream file;
-  file.open(file_name.c_str());
-  while ( getline (file,file_line))
+  //file.open(file_name.c_str());
+  file.open(p_f.c_str());  
+  while (getline(file, file_line))
     {
       if (qre_recog(p_v, file_line) == true)
 	{
-	  res = file_line.substr( file_line.find("=") + 1 );
+	  res = file_line.substr(file_line.find("=") + 1);
 	}
     }
   file.close();
@@ -453,7 +443,7 @@ std::string qre_seek_in_file(std::string p_f, std::string p_v)
 }
 
 
-/* qre_seek_in_json - seeks the value of p_v in json string p_j.
+/* qre_seek_in_json - Seeks the value of p_v in json string p_j.
 
 Arguments:
 - p_j: jason string passed as a std:string.
@@ -477,7 +467,7 @@ std::string qre_seek_in_json(std::string p_j, std::string p_v)
   // Find if p_v is in the string.
   if (qre_recog(p_v, j) == true)
     {
-      res1 = j.substr( j.find(v));
+      res1 = j.substr(j.find(v));
 
       // Now find the limit of the substring that corresponds to the value of p_v.
       if (qre_recog(e, res1) == true)
@@ -501,7 +491,7 @@ std::string qre_seek_in_json(std::string p_j, std::string p_v)
 }
 
 
-/* qre_show_var - shows the name and value of a variable.
+/* qre_show_var - Shows the name and value of a variable.
 
 Aruments:
 - p_t: text to show (name of the variable).
@@ -543,7 +533,7 @@ void qre_show_conclusion(std::string p_base_verbosity, std::string p_t1, std::st
 }
 
 
-/* qre_url_encode - url encodes a string.
+/* qre_url_encode - Url encodes a string.
 
 Arguments:
 - p_s: string to url encode.
@@ -566,7 +556,7 @@ std::string qre_url_encode(std::string p_s)
 }
 
 
-/* qre_create_header - creates a header as a c string.
+/* qre_create_header - Creates a header as a c string.
 
 Arguments:
 - p_data: text that will be converted to a header.
@@ -577,16 +567,19 @@ Output:
  */
 char *qre_create_header(std::string p_s)
 {
-  std::string ps = p_s;
+  /*std::string ps = p_s;
   
   const char *s = ps.c_str();
-  char cs[ps.length()];
+  char cs[ps.length()];*/
 
+  const char *s = p_s.c_str();
+  char cs[p_s.length()];
+  
   return strcpy(cs, s);
 }
 
 
-/* qre_read_qasm_file - reads a qasm file.
+/* qre_read_qasm_file - Reads a qasm file.
 
 Arguments:
 - p_f: qasm file to read.
@@ -599,7 +592,7 @@ std::string qre_read_qasm_file(std::string p_f)
   
   std::ifstream file;
   file.open(p_f.c_str());
-  while (getline (file,file_line))
+  while (getline(file,file_line))
     {
       res = res + file_line;
     }
@@ -609,7 +602,7 @@ std::string qre_read_qasm_file(std::string p_f)
 }
 
 
-/* qre_store_results - stores results from remote execution in the selected format and file.
+/* qre_store_results - Stores results from remote execution in the selected format and file.
 
 Arguments:
 - p_base_results_storage: base_results_storage.
@@ -670,7 +663,7 @@ int qre_parse_bitnum(std::string p_s)
 }
 
 
-/* qre_parse_reg - extracts quantum register substring.
+/* qre_parse_reg - Extracts quantum register substring.
 
 Arguments:
 - p_s: string from which to extract a register substring.
@@ -699,7 +692,7 @@ std::string qre_parse_reg(std::string p_s, std::string p_t)
 }
 
 
-/* qre_parse_data_string - parses base_data strings and puts fractions of the
+/* qre_parse_data_string - Parses base_data strings and puts fractions of the
 original string parsed using ";" as delimiter on each vector cell.
 
 Arguments:
@@ -733,7 +726,7 @@ std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std
 }
 
 
-/* qre_what_comes_after_s1 - returns the substring of p_s2 that comes after p_s1. 
+/* qre_what_comes_after_s1 - Returns the substring of p_s2 that comes after p_s1. 
 
 Arguments:
 - p_s1: string whose comlement is sought after in p_s2.
@@ -751,9 +744,10 @@ std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2)
   std::string res = s2;
   
   int ls1 = s1.length();
-  int ls2 = s2.length();
+  //int ls2 = s2.length();
   
-  if ((qre_recog(s1, s2) == true)&&(ls2 >= ls1))
+  //if ((qre_recog(s1, s2) == true)&&(ls2 >= ls1))
+  if ((qre_recog(s1, s2) == true)&&(s2.length() >= ls1))    
     {
       res = s2.substr(ls1);
     }
