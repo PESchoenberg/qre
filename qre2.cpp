@@ -44,7 +44,7 @@ static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, vo
 }
 
 
-/* show_res_parc - shows parcial results.
+/* show_res_parc - Shows parcial results.
 
 Argments:
 - p_base_verbosity: base verbosity.
@@ -60,7 +60,7 @@ void show_res_parc(std::string p_base_verbosity, int p_j, std::string p_st, std:
 }
 
 
-/* construct_res_step1 - builds a standard header for json results.
+/* construct_res_step1 - Builds a standard header for json results.
 
 Arguments:
 - p_res: res.
@@ -70,17 +70,11 @@ Arguments:
  */
 std::string construct_res_step1(std::string p_res, std::string p_base_device, std::string p_base_name)
 {
-  /*std::string res = p_res;
-
-  res = res + "\'idCode\': " + qre_txt(43) + p_base_device + qre_txt(44) + ",\'idExecution\': " + qre_txt(43) + p_base_name + qre_txt(44) + ",\'result\': {\'measure\': {u\'labels\': [";
-
-  return res;*/
-
   return (p_res + "\'idCode\': " + qre_txt(43) + p_base_device + qre_txt(44) + ",\'idExecution\': " + qre_txt(43) + p_base_name + qre_txt(44) + ",\'result\': {\'measure\': {u\'labels\': [");
 }
 
 
-/* construct_res_step3 - builds standard parts of json results results.
+/* construct_res_step3 - Builds standard parts of json results results.
 
 Arguments:
 - p_step: step.
@@ -128,7 +122,7 @@ std::string construct_res_step3(int p_step, std::string p_res)
 }
 
 
-/* ibmqx_qpost - performs a post on q-series quantum computers. This function 
+/* ibmqx_qpost - Performs a post on q-series quantum computers. This function 
 is adapted from an example shown on the links listed as sources.
 
 Arguments:
@@ -301,7 +295,7 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
 }
 
 
-/* ibmqx_login - attempts to log in into the IBM QX server.
+/* ibmqx_login - Attempts to log in into the IBM QX server.
 
 Arguments:
 - p_base_verbosity.
@@ -332,7 +326,6 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
   std::string res2 = "";
   std::string res3 = "";
   
-  //qre_show_string("Sending log in data...");
   qre_show_string(qre_txt(3));
   res00 = ibmqx_qpost(p_base_verbosity,
 		      p_base_method,
@@ -375,7 +368,7 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
 }
 
 
-/* ibmqx_post_experiment - posts an experiment.
+/* ibmqx_post_experiment - Posts an experiment.
 
 Arguments:
 - p_base_verbosity: base_verbosity.
@@ -443,7 +436,7 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
 }
 
 
-/* ibmqx_delete_experiment - deletes an experiment.
+/* ibmqx_delete_experiment - Deletes an experiment.
 
 Arguments:
 - p_base_verbosity: base_verbosity.
@@ -519,7 +512,7 @@ void qre_find_qasm_standard(std::string p_base_verbosity, std::string p_qasm_ins
 }
 
 
-/* qre_put_qubit_numbers - put qubit numbers in a results string.
+/* qre_put_qubit_numbers - Put qubit numbers in a results string.
 
 Arguments:
 - p_nq: nq.
@@ -570,7 +563,8 @@ std::string finish_res_and_save(std::string p_base_verbosity,
   return res;
 }
 
-/* qlib_post_experiment - perform experiment locally on a qlib-based simulator.
+
+/* qlib_post_experiment - Perform experiment locally on a qlib-based simulator.
 
 Arguments:
 - p_base_verbosity: base_verbosity.
@@ -1009,7 +1003,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 }
 
 
-/* qx_post_experiment - perform experiment locally on the qx simulator.
+/* qx_post_experiment - Perform experiment locally on the qx simulator.
 
 Arguments:
 - p_base_verbosity: base_verbosity.
@@ -1310,7 +1304,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    }
 		  if (qre_recog("rx", qasm_instructions[i]) == true)
 		    {
-		      //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 		      rn = qre_parse_br(qasm_instructions[i], qr);
 		      qre_show_v(p_base_verbosity, (qre_gaq("rx") + qre_l2s(rn)));
 		      vector<std::string> phg = qre_parse_phase_gate(qasm_instructions[i], ",");
