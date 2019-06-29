@@ -143,6 +143,7 @@ Sources:
 - https://developer.ibm.com/tutorials/os-quantum-computing-shell-game/
 - https://stackoverflow.com/questions/22457601/http-post-header-fields-with-libcurl
 - https://stackoverflow.com/questions/328281/why-content-length-0-in-post-requests
+- https://github.com/quantumjim/qreative/blob/master/tutorials/qrng_with_http.ipynb
 
 Output:
 - Updated value for request log.
@@ -203,7 +204,8 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
   headerlist = curl_slist_append(headerlist, "Transfer-Encoding: chunked");
   
   // Final check of data. 
-  if (p_base_verbosity == "yes")
+  //if (p_base_verbosity == "yes")
+  if (qre_vb(p_base_verbosity))
     {
       qre_show_string("Data as is just before making the request:");
 
@@ -264,7 +266,8 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
 
       /* If verbosity value is yes, some more of info concerning the connection will be shown.*/
-      if (p_base_verbosity == "yes")
+      //if (p_base_verbosity == "yes")
+      if (qre_vb(p_base_verbosity))
 	{
 	  curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
 	}
@@ -356,7 +359,8 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
     {
       res.push_back(res3);
     }
-  if (p_base_verbosity == "yes")
+  //if (p_base_verbosity == "yes")
+  if (qre_vb(p_base_verbosity))
     {
         qre_show_var("id", res[0]);
 	qre_show_var("ttl", res[1]);
@@ -412,7 +416,8 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
   
   post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name;
   post_uri = post_uri+"?access_token="+p_login_id+"&shots="+base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
-  if (p_base_verbosity == "yes")
+  //if (p_base_verbosity == "yes")
+  if (qre_vb(p_base_verbosity))
     {
       qre_show_string("\n\nData to be posted: ");
       qre_show_var("post_data", post_data);
@@ -470,7 +475,8 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
   std::string delete_uri = p_delete_uri; 
     
   delete_uri = delete_uri + "/users/"+p_login_id+"/codes/"+p_base_name;
-  if (p_base_verbosity == "yes")
+  //if (p_base_verbosity == "yes")
+  if (qre_vb(p_base_verbosity))
     {
       qre_show_string("Deletion data: ");
       qre_show_var("delete_data", p_delete_data);

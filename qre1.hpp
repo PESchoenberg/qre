@@ -40,6 +40,9 @@ qre1.hpp
 using namespace std;
 
 
+bool qre_vb(std::string p_base_verbosity);
+
+
 std::string qre_txt(int p_n);
 
 
