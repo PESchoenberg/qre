@@ -28,6 +28,24 @@ qre1.cpp
 using namespace std;
 
 
+/* qre_vb - If base verbosity is yes, returns true, false otherwise.
+
+Arguments:
+- p_base_verbosity: base verbosity.
+
+ */
+bool qre_vb(std::string p_base_verbosity)
+{
+  if (p_base_verbosity == "yes")
+    {
+      return true;
+    }
+  else
+    {
+      return false;
+    }
+}
+      
 /* qre_txt - Return a standard string or text for which p_n is the corrresponding
 index.
 
@@ -389,7 +407,8 @@ Arguments:
  */
 void qre_show_v(std::string p_base_verbosity, std::string p_s)
 {
-  if (p_base_verbosity == "yes")
+  //if (p_base_verbosity == "yes")
+  if (qre_vb(p_base_verbosity))    
     {
       cout << p_s << endl;
     }
@@ -526,7 +545,8 @@ Arguments:
  */
 void qre_show_conclusion(std::string p_base_verbosity, std::string p_t1, std::string p_t2)
 {
-  if (p_base_verbosity == "yes")
+  //if (p_base_verbosity == "yes")
+  if (qre_vb(p_base_verbosity))
     {  
       qre_show_string("\n"+p_t1+"\n"+p_t2);
     }
