@@ -204,7 +204,6 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
   headerlist = curl_slist_append(headerlist, "Transfer-Encoding: chunked");
   
   // Final check of data. 
-  //if (p_base_verbosity == "yes")
   if (qre_vb(p_base_verbosity))
     {
       qre_show_string("Data as is just before making the request:");
@@ -266,7 +265,6 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
 
       /* If verbosity value is yes, some more of info concerning the connection will be shown.*/
-      //if (p_base_verbosity == "yes")
       if (qre_vb(p_base_verbosity))
 	{
 	  curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
@@ -359,7 +357,6 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
     {
       res.push_back(res3);
     }
-  //if (p_base_verbosity == "yes")
   if (qre_vb(p_base_verbosity))
     {
         qre_show_var("id", res[0]);
@@ -416,7 +413,6 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
   
   post_data = "qasm="+p_base_data+"&codeType="+"QASM2"+"&name="+p_base_name;
   post_uri = post_uri+"?access_token="+p_login_id+"&shots="+base_shots+"&seed="+p_base_seed+"&deviceRunType="+p_base_device;
-  //if (p_base_verbosity == "yes")
   if (qre_vb(p_base_verbosity))
     {
       qre_show_string("\n\nData to be posted: ");
@@ -475,7 +471,6 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
   std::string delete_uri = p_delete_uri; 
     
   delete_uri = delete_uri + "/users/"+p_login_id+"/codes/"+p_base_name;
-  //if (p_base_verbosity == "yes")
   if (qre_vb(p_base_verbosity))
     {
       qre_show_string("Deletion data: ");
@@ -1104,7 +1099,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
     {
       if (qre_recog("qreg", qasm_instructions[i]) == true)
 	{
-	  //rn = qre_parse_bitnum(qre_parse_reg(qasm_instructions[i], qr));
 	  rn = qre_parse_br(qasm_instructions[i], qr);
 	  qc_file_ini << "qubits " << rn << endl;
 	}

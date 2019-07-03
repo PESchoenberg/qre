@@ -17,20 +17,21 @@
 [+] code loaded successfully. 
 [+] initializing xpu...
 [+] initialized.
-[+] creating quantum register of 3 qubits... 
+[+] creating quantum register of 5 qubits... 
 [+] generating noisy circuits...
 [>] processing circuit 'default'...
     [e] depolarizing_channel : injecting errors in circuit 'default'...
-    [+] circuit steps : 33
-    [+] total injected errors in circuit 'default': 0
-[+] total errors injected in all circuits : 0
+    [+] circuit steps : 16
+    [>>>] error injection step 2 : number of affected qubits: 1
+      |--> error on qubit  3 (x error) 
+    [+] total injected errors in circuit 'default': 1
+[+] total errors injected in all circuits : 1
 [+] executing circuit 'default(noisy)' (1 iter) ...
 --------------[quantum state]-------------- 
-   (-0.707107,+0.000000) |110> +
-   (+0.707107,-0.000000) |111> +
+   (-1.000000,+0.000000) |00101> +
 ------------------------------------------- 
-[>>] measurement prediction:  | 1 | 1 | X |
+[>>] measurement prediction:  | 0 | 0 | 1 | 0 | 1 |
 ------------------------------------------- 
-[>>] measurement register  :  | 1 | 1 | 0 |
+[>>] measurement register  :  | 0 | 0 | 1 | 0 | 1 |
 ------------------------------------------- 
-[+] circuit execution time: +0.001922 sec.
+[+] circuit execution time: +0.005928 sec.

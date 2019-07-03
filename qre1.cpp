@@ -407,7 +407,6 @@ Arguments:
  */
 void qre_show_v(std::string p_base_verbosity, std::string p_s)
 {
-  //if (p_base_verbosity == "yes")
   if (qre_vb(p_base_verbosity))    
     {
       cout << p_s << endl;
@@ -444,10 +443,8 @@ std::string qre_seek_in_file(std::string p_f, std::string p_v)
 {
   std::string res = " ";
   std::string file_line = "";
-  //std::string file_name = p_f;
   
   std::ifstream file;
-  //file.open(file_name.c_str());
   file.open(p_f.c_str());  
   while (getline(file, file_line))
     {
@@ -545,7 +542,6 @@ Arguments:
  */
 void qre_show_conclusion(std::string p_base_verbosity, std::string p_t1, std::string p_t2)
 {
-  //if (p_base_verbosity == "yes")
   if (qre_vb(p_base_verbosity))
     {  
       qre_show_string("\n"+p_t1+"\n"+p_t2);
@@ -587,11 +583,6 @@ Output:
  */
 char *qre_create_header(std::string p_s)
 {
-  /*std::string ps = p_s;
-  
-  const char *s = ps.c_str();
-  char cs[ps.length()];*/
-
   const char *s = p_s.c_str();
   char cs[p_s.length()];
   
@@ -764,9 +755,7 @@ std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2)
   std::string res = s2;
   
   int ls1 = s1.length();
-  //int ls2 = s2.length();
-  
-  //if ((qre_recog(s1, s2) == true)&&(ls2 >= ls1))
+
   if ((qre_recog(s1, s2) == true)&&(s2.length() >= ls1))    
     {
       res = s2.substr(ls1);
