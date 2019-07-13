@@ -754,9 +754,9 @@ std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2)
   std::string s2 = p_s2;
   std::string res = s2;
   
-  int ls1 = s1.length();
+  signed int ls1 = s1.length();
 
-  if ((qre_recog(s1, s2) == true)&&(s2.length() >= ls1))    
+  if ((qre_recog(s1, s2) == true)&&((signed int)s2.length() >= ls1))    
     {
       res = s2.substr(ls1);
     }
