@@ -4,9 +4,9 @@
 
 ; ==============================================================================
 ;
-; example13.scm
+; example15.scm
 ;
-; - cswap (Fredkin) gate.
+; - swap fast ladder test.
 
 ;
 ; Compilation (if you have g2q and qre in your system path):
@@ -15,17 +15,17 @@
 ;
 ; - Enter the following:
 ;
-;   guile example13.scm
+;   guile example15.scm
 ;   
 ; Notice that you will need to have g2q and qre (see README.md for details)
 ; installed on your system  and your system path variable set to point to both
 ; in order for this program to work properly. Alternatively, you can:
 ;
-; - copy example13.scm to the main folder of your qre installation.
+; - copy example15.scm to the main folder of your qre installation.
 ; 
 ; - Enter the following:
 ;
-;   guile example13.scm 
+;   guile example15.scm 
 ;
 ; ==============================================================================
 ;
@@ -56,12 +56,12 @@
 
 
 ; Vars and initial stuff. These are editable.
-(define fname "example13") ; File name
+(define fname "example15") ; File name
 (define qpu "qlib_simulator")
 (define clean "y") ; Clean the json files created in ddir after use.
 (define qver 2.0) ; OpenQASM version
-(define qn 3) ; Length of the quantum register.
-(define cn 3) ; Length of the conventional register
+(define qn 5) ; Length of the quantum register.
+(define cn 5) ; Length of the conventional register
 (define v "y") ; Verbosity.
 
 ; Vars and initial stuff. Do not edit these.
@@ -91,13 +91,15 @@
 ;
 (define (qf p_i p_q p_c p_qnl p_qnh p_cnl p_cnh)
   ; Prep.
-  (g1 "h" p_q 0)
-  (g1 "h" p_q 1)
-  (g1 "h" p_q 2)  
-  ; cswap.
-  (cswap q 0 q 1 q 2)
+  (g1y "h" p_q p_qnl p_qnh)
+  ; cswap "wave"; this doesn't do anything special quantum-mechanically but 
+  ; shows four different ladder variants available. For detals, see the 
+  ; documentation for this function (comments on file g2q2.scm.)
+  (swap-fast-ladder p_q p_qnl p_qnh 1)
+  (swap-fast-ladder p_q p_qnh p_qnl 2)
   ; Measurement.
-  (qmeasy p_q p_c 0 2)
+  (qmeasy p_q p_c 0 4)
+  ; Declaratons for internal simulators available on qre.
   (qdeclare "qx-simulator" "error_model depolarizing_channel,0.001")
   (qdeclare "qlib-simulator" "// Hello qlib-simulator"))
 
@@ -137,7 +139,7 @@
 ; And this is the main program. It gives as a result the decimal absolute and
 ; non-probabilistic summation of the max values obtained on the execution of 
 ; each quantum circuit created on each qcall.
-(qpresent "cswap gate" "Se g2q2.scm for details" "n")
+(qpresent "swap fast ladder" "Se g2q2.scm for details" "n")
 (set! qpu (g2q-select-qpu))
 (cond ((equal? qpu "none")(display "\nBye!\n"))
       (else  
