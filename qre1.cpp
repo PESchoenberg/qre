@@ -153,7 +153,7 @@ std::string qre_txt(int p_n)
       res = "no";      
       break;
     case 30:
-      res = "---------------------------------------------------------------\n";      
+      res = "---------------------------------------------------------------\n";
       break;
     case 31:
       res = "qre.cfg";      
@@ -357,7 +357,8 @@ Output:
 - Integer.
 
  */
-int qre_count_string(std::string p_delim, std::string p_s)
+int qre_count_string(std::string p_delim,
+		     std::string p_s)
 {
   size_t pos;
   
@@ -385,7 +386,8 @@ Output:
 - Boolean true if found. False otherwise.
 
  */
-bool qre_recog(std::string p_s1, std:: string p_s2)
+bool qre_recog(std::string p_s1,
+	       std:: string p_s2)
 {
   if (p_s2.find(p_s1) != std::string::npos)
     {
@@ -405,7 +407,8 @@ Arguments:
 - p_s: string to show.
 
  */
-void qre_show_v(std::string p_base_verbosity, std::string p_s)
+void qre_show_v(std::string p_base_verbosity,
+		std::string p_s)
 {
   if (qre_vb(p_base_verbosity))    
     {
@@ -421,7 +424,8 @@ Arguments:
 - p_sprob: sum of partia probabilities.
 
  */
-void qre_show_sum_partial_probs(std::string p_base_verbosity, double p_sprob)
+void qre_show_sum_partial_probs(std::string p_base_verbosity,
+				double p_sprob)
 {
   qre_show_v(p_base_verbosity, (qre_txt(45) + qre_d2s(p_sprob)));
   qre_show_v(p_base_verbosity, (qre_txt(46) + qre_d2s(1.00 - p_sprob)));
@@ -439,7 +443,8 @@ Output:
 - The value associated to p_v, as a string.
 
  */
-std::string qre_seek_in_file(std::string p_f, std::string p_v)
+std::string qre_seek_in_file(std::string p_f,
+			     std::string p_v)
 {
   std::string res = " ";
   std::string file_line = "";
@@ -469,7 +474,8 @@ Output:
 - The value associated to p_v, as a string; returns "na" if not found.
 
  */
-std::string qre_seek_in_json(std::string p_j, std::string p_v)
+std::string qre_seek_in_json(std::string p_j,
+			     std::string p_v)
 {
   std::string res = qre_txt(28);  
   std::string res1 = "";
@@ -485,7 +491,8 @@ std::string qre_seek_in_json(std::string p_j, std::string p_v)
     {
       res1 = j.substr(j.find(v));
 
-      // Now find the limit of the substring that corresponds to the value of p_v.
+      /* Now find the limit of the substring that corresponds to the value of 
+	 p_v. */
       if (qre_recog(e, res1) == true)
 	{
 	  if (qre_recog("\",", res1) == true)
@@ -514,7 +521,8 @@ Aruments:
 - p_v: variable value.
 
  */
-void qre_show_var(std::string p_t, std::string p_v)
+void qre_show_var(std::string p_t,
+		  std::string p_v)
 {
   cout << "\n" << p_t << " = " << p_v << "\n" << endl;
 }
@@ -540,7 +548,9 @@ Arguments:
 - p_t2: second string.
 
  */
-void qre_show_conclusion(std::string p_base_verbosity, std::string p_t1, std::string p_t2)
+void qre_show_conclusion(std::string p_base_verbosity,
+			 std::string p_t1,
+			 std::string p_t2)
 {
   if (qre_vb(p_base_verbosity))
     {  
@@ -613,7 +623,8 @@ std::string qre_read_qasm_file(std::string p_f)
 }
 
 
-/* qre_store_results - Stores results from remote execution in the selected format and file.
+/* qre_store_results - Stores results from remote execution in the selected 
+format and file.
 
 Arguments:
 - p_base_results_storage: base_results_storage.
@@ -686,7 +697,8 @@ Output:
 - A substring like "q[n]" or "c[n]" being n a qubit or bit number.
 
  */
-std::string qre_parse_reg(std::string p_s, std::string p_t)
+std::string qre_parse_reg(std::string p_s,
+			  std::string p_t)
 {
   std::string res = qre_txt(26);
   std::string reg = p_t;
@@ -717,7 +729,8 @@ Sources:
 - https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
 
  */
-std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std::string p_base_data)
+std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity,
+					       std::string p_base_data)
 {
   std::vector<std::string> res;
   
@@ -748,7 +761,8 @@ Output:
 returns complete p_s2.
 
  */
-std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2)
+std::string qre_what_comes_after_s1(std::string p_s1,
+				    std::string p_s2)
 {
   std::string s1 = p_s1;
   std::string s2 = p_s2;
@@ -765,8 +779,8 @@ std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2)
 }
 
 
-/* qre_parse_phase_gate - Parses contents between parenthesis and returns its contents as a
-vector. Used to parse gates such as u1, u2, u3.
+/* qre_parse_phase_gate - Parses contents between parenthesis and returns its 
+contents as a vector. Used to parse gates such as u1, u2, u3.
 
 Arguments:
 - p_s: string to be parsed.
@@ -776,7 +790,8 @@ Output:
 - A vector with as many elements as were parsed.
 
  */
-std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_delim)
+std::vector<std::string> qre_parse_phase_gate(std::string p_s,
+					      std::string p_delim)
 {
   std::vector<std::string> res;
   std::string ps = p_s;
@@ -819,7 +834,8 @@ Arguments:
 - p_qr: qantum register.
 
  */
-long unsigned int qre_parse_br(std::string p_s, std::string p_qr)
+long unsigned int qre_parse_br(std::string p_s,
+			       std::string p_qr)
 {
   return ((long unsigned int) qre_parse_bitnum(qre_parse_reg(p_s, p_qr)));
 }

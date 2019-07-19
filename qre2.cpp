@@ -36,7 +36,10 @@ Sources:
 - Based on an example at https://stackoverflow.com/questions/51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it
 
  */
-static size_t write_callback(void *p_contents, size_t p_size, size_t p_nmemb, void *p_userp)
+static size_t write_callback(void *p_contents,
+			     size_t p_size,
+			     size_t p_nmemb,
+			     void *p_userp)
 {
   ((std::string*)p_userp)->append((char*)p_contents, p_size * p_nmemb);
     
@@ -54,7 +57,11 @@ Argments:
 - p_sv: svec.
 
  */
-void show_res_parc(std::string p_base_verbosity, int p_j, std::string p_st, std::string p_sk, std::string p_sv)
+void show_res_parc(std::string p_base_verbosity,
+		   int p_j,
+		   std::string p_st,
+		   std::string p_sk,
+		   std::string p_sv)
 {
   qre_show_v(p_base_verbosity, ("res_parc[" + (qre_d2s((double)p_j)) + "].sterm = " + p_st + " .sket = " + p_sk + " .svec = " + p_sv + "\n"));
 }
@@ -68,7 +75,9 @@ Arguments:
 - p_base_name: base name.
 
  */
-std::string construct_res_step1(std::string p_res, std::string p_base_device, std::string p_base_name)
+std::string construct_res_step1(std::string p_res,
+				std::string p_base_device,
+				std::string p_base_name)
 {
   return (p_res + "\'idCode\': " + qre_txt(43) + p_base_device + qre_txt(44) + ",\'idExecution\': " + qre_txt(43) + p_base_name + qre_txt(44) + ",\'result\': {\'measure\': {u\'labels\': [");
 }
@@ -81,7 +90,8 @@ Arguments:
 - p_res: res.
 
  */
-std::string construct_res_step3(int p_step, std::string p_res)
+std::string construct_res_step3(int p_step,
+				std::string p_res)
 {
   std::string res = p_res;
 
@@ -244,7 +254,7 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
 	  curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 	  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, cdata);
 	  
-	  /* if we don't provide POSTFIELDSIZE, libcurl will strlen() by itself */
+	  /* if we don't provide POSTFIELDSIZE, libcurl will strlen() itself */
 	  // curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (long)strlen(data));
 	  curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE_LARGE, (long)strlen(data));	  
 	}
@@ -264,7 +274,8 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
 
-      /* If verbosity value is yes, some more of info concerning the connection will be shown.*/
+      /* If verbosity value is yes, some more of info concerning the connection 
+	 will be shown.*/
       if (qre_vb(p_base_verbosity))
 	{
 	  curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
@@ -337,7 +348,10 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
 		      qre_txt(28));
   qre_show_string("\nLogin result\n\n");
   qre_show_string(res00);	      
-  qre_store_results(p_base_verbosity, p_base_results_storage, p_login_name, res00);
+  qre_store_results(p_base_verbosity,
+		    p_base_results_storage,
+		    p_login_name,
+		    res00);
   
   // Parse the userId value from the received json data.
   res0 = qre_seek_in_json(res00, "\"id\"");
@@ -431,7 +445,10 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
 		    post_uri,
 		    p_login_id);
   //Bug here when calling ibmqx using Scheme.
-  qre_store_results(p_base_verbosity, p_base_results_storage, p_post_name, res);
+  qre_store_results(p_base_verbosity,
+		    p_base_results_storage,
+		    p_post_name,
+		    res);
   
   return res;
 }
@@ -488,7 +505,10 @@ std::string ibmqx_delete_experiment(std::string p_base_verbosity,
 		    p_base_results_storage,
 		    p_delete_uri,
 		    p_login_id);
-  qre_store_results(p_base_verbosity, p_base_results_storage, p_delete_name, res);
+  qre_store_results(p_base_verbosity,
+		    p_base_results_storage,
+		    p_delete_name,
+		    res);
   
   return res;
 }
@@ -500,7 +520,8 @@ Arguments:
 - p_qasm_instructions: qasm_instructions vectorelement.
 
  */
-void qre_find_qasm_standard(std::string p_base_verbosity, std::string p_qasm_instructions)
+void qre_find_qasm_standard(std::string p_base_verbosity,
+			    std::string p_qasm_instructions)
 {
   if (qre_recog("2.", p_qasm_instructions) == true)
     {
@@ -523,7 +544,8 @@ Output:
 - Results string (res).
 
  */
-std::string qre_put_qubit_numbers (int p_nq, std::string p_res)
+std::string qre_put_qubit_numbers (int p_nq,
+				   std::string p_res)
 {
   std::string res = p_res;
 
@@ -640,7 +662,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   vector_size = qasm_instructions.size();
   shots = qre_enable_shots(false, p_base_shots);
 
-  // We need to define qreg q and creg c before parsing anything else in the QASM file.
+  /* We need to define qreg q and creg c before parsing anything else in the 
+     QASM file. */
   for (i = 0; i < vector_size; i++)
     {
       if (qre_recog("qreg", qasm_instructions[i]) == true)
@@ -904,9 +927,11 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	    This gives us a string matrix and two vectors:
 	    - res_parc contains strings parsed from res2.
 	    - res_sum contains the sum of all values corresponding to each ket.
-	    - res_final contains the avg probabilities obtained from res_sum and shots.
+	    - res_final contains the avg probabilities obtained from res_sum 
+	      and shots.
 
-	    Each element of these vectors and matrices will be updated on each shot.
+	    Each element of these vectors and matrices will be updated on each 
+	    shot.
 	   */
 	  for (i = 0; i < (int)terms; i++)
 	    {
@@ -917,8 +942,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	    }	  
 	}
 
-      /* On each iteration, after res_parc has been created, parse res2 and distribute the parsed
-      data within the struct of each row.*/
+      /* On each iteration, after res_parc has been created, parse res2 and 
+	 distribute the parser data within the struct of each row.*/
       j = 0;
       pos = 0;
       res2 = q.toString();      
@@ -946,7 +971,11 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	     res_sum and show info. */
 	  res_sum[j] = (double)(pow(svecx,2) + pow(svecy,2));
 	  res_shots[j] = res_shots[j] + res_sum[j];
-	  show_res_parc(p_base_verbosity, j, res_parc[j].sterm, res_parc[j].sket, res_parc[j].svec);
+	  show_res_parc(p_base_verbosity,
+			j,
+			res_parc[j].sterm,
+			res_parc[j].sket,
+			res_parc[j].svec);
 	  j++;
 	}     
     } // k
@@ -998,7 +1027,10 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
     }
 
   // Finish off the string and save. 
-  res = finish_res_and_save(p_base_verbosity, p_base_results_storage, p_base_name, res);
+  res = finish_res_and_save(p_base_verbosity,
+			    p_base_results_storage,
+			    p_base_name,
+			    res);
   
   return res;
 }
@@ -1094,7 +1126,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   qc_file_ini << "# " << qre_txt(24) << endl;
   res1 = res1 + 0; // So that the compiler doesn't complain.
   
-  // We need to define qreg q and creg c before parsing anything else in the QASM file.
+  /* We need to define qreg q and creg c before parsing anything else in the 
+     QASM file. */
   for (i = 0; i < vector_size; i++)
     {
       if (qre_recog("qreg", qasm_instructions[i]) == true)
@@ -1280,7 +1313,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		    }		  
 		}
 
-	      // Instructions that have parenthesis are composites and require secial treatment.
+	      /* Instructions that have parenthesis are composites and require 
+		 special treatment. */
 	      if (qre_recog("(", qasm_instructions[i]) == true)
 		{		  
 		  if ((qre_recog("u1", qasm_instructions[i]) == true)&&(qre_recog("cu1", qasm_instructions[i]) == false))
@@ -1363,12 +1397,16 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	  if ((qre_recog("> +", res2) == true) && (qre_recog(") |", res2) == true))
 	    {
 	      /*
-		This updates and grows dynamically a string matrix and two vectors:
+		This updates and grows dynamically a string matrix and two 
+		vectors:
 		- res_parc contains strings parsed from res2.
-		- res_sum contains the sum of all values corresponding to each ket.
-		- res_final contains the avg probabilities obtained from res_sum and shots.
+		- res_sum contains the sum of all values corresponding to each 
+		  ket.
+		- res_final contains the avg probabilities obtained from 
+		  res_sum and shots.
 
-		Each element of these vectors and matrices will be updated on each shot.
+		Each element of these vectors and matrices will be updated on 
+		each shot.
 	      */
 	      if (k == 0)
 		{
@@ -1378,8 +1416,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		  res_final.push_back(0);
 		}
 	      
-	      /* On each iteration, after res_parc has been created, parse res2 and distribute the parsed
-		 data within the struct of each row.*/
+	      /* On each iteration, after res_parc has been created, parse res2 
+		 and distribute the parsed data within the struct of each row.*/
 
 	      // Trim string and extract real, imaginary parts and ket qbyte.
 	      p0 = res2.find("(");
@@ -1457,7 +1495,10 @@ std::string qx_post_experiment(std::string p_base_verbosity,
     }
 
   // Finish off the string and save.
-  res = finish_res_and_save(p_base_verbosity, p_base_results_storage, p_base_name, res);
+  res = finish_res_and_save(p_base_verbosity,
+			    p_base_results_storage,
+			    p_base_name,
+			    res);
   
   return res;
 }

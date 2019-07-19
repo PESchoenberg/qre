@@ -46,7 +46,8 @@ bool qre_vb(std::string p_base_verbosity);
 std::string qre_txt(int p_n);
 
 
-int qre_enable_shots(bool p_enable, std::string p_base_shots);
+int qre_enable_shots(bool p_enable,
+		     std::string p_base_shots);
 
 
 std::string qre_gaq(std::string p_s1);
@@ -64,31 +65,40 @@ double qre_s2d(std::string p_s);
 std::string qre_l2s(long unsigned int p_l);
 
 
-int qre_count_string(std::string p_delim, std::string p_s);
+int qre_count_string(std::string p_delim,
+		     std::string p_s);
 
 
-bool qre_recog(std::string p_s1, std:: string p_s2);
+bool qre_recog(std::string p_s1,
+	       std:: string p_s2);
 
 
-void qre_show_v(std::string p_base_verbosity, std::string p_s);
+void qre_show_v(std::string p_base_verbosity,
+		std::string p_s);
 
 
-void qre_show_sum_partial_probs(std::string p_base_verbosity, double p_sprob);
+void qre_show_sum_partial_probs(std::string p_base_verbosity,
+				double p_sprob);
 
 
-std::string qre_seek_in_file(std::string p_f, std::string p_v);
+std::string qre_seek_in_file(std::string p_f,
+			     std::string p_v);
 
 
-std::string qre_seek_in_json(std::string p_j, std::string p_v);
+std::string qre_seek_in_json(std::string p_j,
+			     std::string p_v);
 
 
-void qre_show_var(std::string p_t, std::string p_v);
+void qre_show_var(std::string p_t,
+		  std::string p_v);
 
 
 void qre_show_string(std::string p_t);
 
 
-void qre_show_conclusion(std::string p_base_verbosity, std::string p_t, std::string p_r);
+void qre_show_conclusion(std::string p_base_verbosity,
+			 std::string p_t,
+			 std::string p_r);
 
 
 std::string qre_url_encode(std::string p_s);
@@ -109,19 +119,24 @@ void qre_store_results(std::string p_base_verbosity,
 int qre_parse_bitnum(std::string p_s);
 
 
-std::string qre_parse_reg(std::string p_s, std::string p_type);
+std::string qre_parse_reg(std::string p_s,
+			  std::string p_type);
 
 
-std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity, std::string p_base_data);
+std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity,
+					       std::string p_base_data);
 
 
-std::string qre_what_comes_after_s1(std::string p_s1, std::string p_s2);
+std::string qre_what_comes_after_s1(std::string p_s1,
+				    std::string p_s2);
 
 
-std::vector<std::string> qre_parse_phase_gate(std::string p_s, std::string p_delim);
+std::vector<std::string> qre_parse_phase_gate(std::string p_s,
+					      std::string p_delim);
 
 
-long unsigned int qre_parse_br(std::string p_s, std::string p_qr);
+long unsigned int qre_parse_br(std::string p_s,
+			       std::string p_qr);
 
 
 #endif // !__QRE1_H
