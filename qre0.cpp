@@ -273,7 +273,7 @@ int main(int argc, char** argv)
 						delete_name,
 						login_id,
 						base_name);
-		  qre_show_conclusion(base_verbosity, qre_txt(34), res);	      
+		  qre_show_conclusion(base_verbosity, qre_txt(34), res);  
 		}
 	    }	  
 	}
