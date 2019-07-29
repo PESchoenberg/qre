@@ -21,17 +21,15 @@
 [+] generating noisy circuits...
 [>] processing circuit 'default'...
     [e] depolarizing_channel : injecting errors in circuit 'default'...
-    [+] circuit steps : 43
-    [>>>] error injection step 23 : number of affected qubits: 1
-      |--> error on qubit  3 (x error) 
-    [+] total injected errors in circuit 'default': 1
-[+] total errors injected in all circuits : 1
+    [+] circuit steps : 11
+    [+] total injected errors in circuit 'default': 0
+[+] total errors injected in all circuits : 0
 [+] executing circuit 'default(noisy)' (1 iter) ...
 --------------[quantum state]-------------- 
-   (+1.000000,+0.000000) |10101> +
+   (+1.000000,+0.000000) |01100> +
 ------------------------------------------- 
-[>>] measurement prediction:  | 1 | 0 | 1 | 0 | 1 |
+[>>] measurement prediction:  | 0 | 1 | 1 | 0 | 0 |
 ------------------------------------------- 
-[>>] measurement register  :  | 1 | 0 | 1 | 0 | 1 |
+[>>] measurement register  :  | 0 | 1 | 1 | 0 | 0 |
 ------------------------------------------- 
-[+] circuit execution time: +0.001207 sec.
+[+] circuit execution time: +0.001768 sec.
