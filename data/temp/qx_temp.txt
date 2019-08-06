@@ -26,10 +26,10 @@
 [+] total errors injected in all circuits : 0
 [+] executing circuit 'default(noisy)' (1 iter) ...
 --------------[quantum state]-------------- 
-   (+1.000000,+0.000000) |01100> +
+   (+1.000000,+0.000000) |01101> +
 ------------------------------------------- 
-[>>] measurement prediction:  | 0 | 1 | 1 | 0 | 0 |
+[>>] measurement prediction:  | 0 | 1 | 1 | 0 | 1 |
 ------------------------------------------- 
-[>>] measurement register  :  | 0 | 1 | 1 | 0 | 0 |
+[>>] measurement register  :  | 0 | 1 | 1 | 0 | 1 |
 ------------------------------------------- 
-[+] circuit execution time: +0.001768 sec.
+[+] circuit execution time: +0.000979 sec.
