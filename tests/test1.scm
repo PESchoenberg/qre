@@ -31,7 +31,8 @@
 ;   guile test1.scm 
 ;
 ; Sources:
-; - Andrew W. Cross, Lev S. Bishop, John A. Smolin, Jay M. Gambetta "Open Quantum Assembly Language", https://arxiv.org/abs/1707.03429
+; - Andrew W. Cross, Lev S. Bishop, John A. Smolin, Jay M. Gambetta "Open 
+;   Quantum Assembly Language", https://arxiv.org/abs/1707.03429
 ; - https://en.wikipedia.org/wiki/OpenQASM
 ; - https://github.com/Qiskit/openqasm
 ;
@@ -73,7 +74,7 @@
 (define v "y") ; Verbosity.
 
 ; Vars and initial stuff. Do not edit these.
-(define ddir (car (g2q-qre-config))) ;Obtain this value from configuration list.
+(define ddir (car (g2q-qre-config))) ; Obtain this value from configuration list.
 (define fnameo (strings-append (list fname ".qasm") 0))
 (define q "q")
 (define c "c")
@@ -142,8 +143,10 @@
   ; QFT
   (qftyn q 0 q 2)
   (qftdgyn q 0 q 2)
+  ; g2q specific.
+  (g1cxg1 "h" q 0 1)  
   ; Barrier and measure.
-  (g1y "barrier" q 0 (- qn 1))
+  (g1y "barrier" q 0 (- p_qnh 1))
   (qmeasy p_q p_c p_cnl p_cnh)
   (qdeclare "qx-simulator" "error_model depolarizing_channel,0.001")
   (qdeclare "qlib-simulator" "// Hello qlib-simulator"))
@@ -188,6 +191,6 @@
 	 (newline)
 	 (set! res (qmain-loop clean fname fnameo qver ddir qpu qf q c qn cn mc qx v rf))
 	 (newlines 2)
-	 (display (strings-append (list "Result = " (number->string res) " , please read the output provided to check the status of each gate in relation to " qpu ".") 0))
+	 (display (strings-append (list "Result = " (grsp-n2s res) " , please read the output provided to check the status of each gate in relation to " qpu ".") 0))	 
 	 (newlines 1))))
 
