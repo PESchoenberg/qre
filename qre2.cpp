@@ -49,7 +49,7 @@ static size_t write_callback(void *p_contents,
 
 /* show_res_parc - Shows parcial results.
 
-Argments:
+Arguments:
 - p_base_verbosity: base verbosity.
 - p_j: j.
 - p_st: sterm.
@@ -83,7 +83,7 @@ std::string construct_res_step1(std::string p_res,
 }
 
 
-/* construct_res_step3 - Builds standard parts of json results results.
+/* construct_res_step3 - Builds standard parts of json results string.
 
 Arguments:
 - p_step: step.
@@ -208,12 +208,12 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
   strcpy(ccloginid, loginid);
   strcpy(cclientapp, clientapp);
   
-  // Defining headers.
+  /* Defining headers. */
   struct curl_slist *headerlist=NULL;
   headerlist = curl_slist_append(headerlist, ccontenttype);
   headerlist = curl_slist_append(headerlist, "Transfer-Encoding: chunked");
   
-  // Final check of data. 
+  /* Final check of data. */
   if (qre_vb(p_base_verbosity))
     {
       qre_show_string("Data as is just before making the request:");
@@ -235,7 +235,7 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
       curl_easy_setopt(curl, CURLOPT_COOKIEJAR, ccfile_cookies);
       curl_easy_setopt(curl, CURLOPT_HEADER, true);
       
-      // Depending of request.
+      /* Depending of request. */
       if (p_base_method == qre_txt(49))
 	{
 	  if (p_login_id == qre_txt(28))
@@ -267,7 +267,7 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
 	  curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
 	}
             
-      // Send the list with all headers.
+      /* Send the list with all headers. */
       curl_easy_setopt(curl, CURLOPT_HEADER, headerlist);
       
       /* Required to receive string data. */
@@ -353,7 +353,7 @@ std::vector<std::string> ibmqx_login(std::string p_base_verbosity,
 		    p_login_name,
 		    res00);
   
-  // Parse the userId value from the received json data.
+  /* Parse the userId value from the received json data. */
   res0 = qre_seek_in_json(res00, "\"id\"");
   res.push_back(res0);
   // res1 = qre_seek_in_json(res00, "\"ttl\"");
@@ -444,7 +444,7 @@ std::string ibmqx_post_experiment(std::string p_base_verbosity,
 		    p_base_results_storage,
 		    post_uri,
 		    p_login_id);
-  //Bug here when calling ibmqx using Scheme.
+  // Bug here when calling ibmqx using Scheme.
   qre_store_results(p_base_verbosity,
 		    p_base_results_storage,
 		    p_post_name,
@@ -691,18 +691,18 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
     }
   qre_show_v(p_base_verbosity, qre_txt(12));
   
-  // Shots iteration.
+  /* Shots iteration. */
   for (k = 0; k < shots; k++)
     {
-      // File parsing iteration.
+      /* File parsing iteration. */
       for (i = 0; i < vector_size; i++)
 	{
-	  // Find if line will be ignored or not based on the value of delim.
+	  /* Find if line will be ignored or not based on the value of delim. */
 	  if ((qre_recog(comment, qasm_instructions[i]) == true)&&(qre_recog("// qdeclare qlib-simulator ", qasm_instructions[i]) == false))	  
 	    {
 	      qre_show_v(p_base_verbosity, (qre_txt(15) + qasm_instructions[i]));
 	    }
-	  // Find if line will be ignored if it does not have spaces.
+	  /* Find if line will be ignored if it does not have spaces. */
 	  else if (qre_recog(space, qasm_instructions[i]) == false)
 	    {
 	      qre_show_v(p_base_verbosity, (qre_txt(16) + qasm_instructions[i]));
@@ -711,9 +711,9 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	    {
 	      qre_show_v(p_base_verbosity, (qre_txt(17) + qasm_instructions[i]));
 
-	      // Process quantum instructions.		  
+	      /* Process quantum instructions. */
 	      
-	      // If instructions are atomic (no parenthesis found).
+	      /* If instructions are atomic (no parenthesis found). */
 	      if (qre_recog("(", qasm_instructions[i]) == false)
 		{	  
 		  if (qre_recog("OPENQASM", qasm_instructions[i]) == true)
@@ -843,7 +843,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		      pos = qasm_instructions[i].find(",");
 		      rn = qre_parse_br(qasm_instructions[i].substr(0, pos-1), qr);
 		      rm = qre_parse_br(qasm_instructions[i].substr(pos), qr);		      
-		      //Implemented with three consecutive CNOT gates.
+		      /* Implemented with three consecutive CNOT gates. */
 		      q.apply(gates::CX, {rn,rm});
 		      q.apply(gates::CX, {rm,rn});
 		      q.apply(gates::CX, {rn,rm});	      
@@ -855,7 +855,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    }		  
 		}
 
-	      // Instructions that have parenthesis are composites and require secial treatment.
+	      /* Instructions that have parenthesis are composites and require secial treatment. */
 	      if (qre_recog("(", qasm_instructions[i]) == true)
 		{
 		  if ((qre_recog("u1", qasm_instructions[i]) == true)&&(qre_recog("cu1", qasm_instructions[i]) == false))
@@ -906,13 +906,13 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	    }
 	}
       
-      // On first shot, create data set for results.
+      /* On first shot, create data set for results. */
       qre_show_v(p_base_verbosity, "\n");
       if (k == 0)
 	{
 	  delim = "> + ";
 	  
-	  // Count number of terms on linear combination.
+	  /* Count number of terms on linear combination. */
 	  res2 = q.toString();
 	  qre_show_v(p_base_verbosity, res2);	  
 	  terms = 1;
@@ -978,9 +978,9 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 			res_parc[j].svec);
 	  j++;
 	}     
-    } // k
+    }
 
-  // After all shots, average values, calculate probabilities and results.
+  /* After all shots, average values, calculate probabilities and results. */
   for (i = 0; i < (int)res_final.size(); i++)
     {
       res_final[i] = res_shots[i] / shots;
@@ -988,10 +988,10 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
     }  
   qre_show_sum_partial_probs(p_base_verbosity, sprob);
 
-  // Build the json string with results.
+  /* Build the json string with results. */
   res = construct_res_step1("{", p_base_device, p_base_name);
 
-  // Put labels.
+  /* Put labels. */
   for (i = 0; i < (int)res_final.size(); i++)
   {
     if (i < ((int)res_final.size() - 1))
@@ -1009,7 +1009,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
       }   
   }
 
-  // Put qubit numbers and probability values.
+  /* Put qubit numbers and probability values. */
   int nq = c.size();
   res = construct_res_step3(2, qre_put_qubit_numbers (nq, construct_res_step3(7, res)));
   nq = (int)res_final.size();
@@ -1026,7 +1026,7 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	}     
     }
 
-  // Finish off the string and save. 
+  /* Finish off the string and save. */
   res = finish_res_and_save(p_base_verbosity,
 			    p_base_results_storage,
 			    p_base_name,
@@ -1156,22 +1156,22 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   qc_file_ini.close();
   qre_show_v(p_base_verbosity, qre_txt(12));
   
-  // Complile qc file from qasm file.
+  /* Complile qc file from qasm file. */
   if (k == 0)
     {
-      // Reopen temp.qc, but to append stuff.
+      /* Reopen temp.qc, but to append stuff. */
       std::ofstream qc_file_app;
       qc_file_app.open(pathj, std::ios::app);
       
-      // File parsing iteration.
+      /* File parsing iteration. */
       for (i = 0; i < vector_size; i++)
 	{
-	  // Find if line will be ignored or not based on the value of delim.
+	  /* Find if line will be ignored or not based on the value of delim. */
 	  if ((qre_recog(comment, qasm_instructions[i]) == true)&&(qre_recog(qre_txt(13), qasm_instructions[i]) == false))
 	    {
 	      qre_show_v(p_base_verbosity, (qre_txt(15) + qasm_instructions[i]));
 	    }
-	  // Find if line will be ignored if it does not have spaces.
+	  /* Find if line will be ignored if it does not have spaces. */
 	  else if (qre_recog(space, qasm_instructions[i]) == false)
 	    {
 	      qre_show_v(p_base_verbosity, (qre_txt(16) + qasm_instructions[i]));
@@ -1180,9 +1180,9 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	    {
 	      qre_show_v(p_base_verbosity, (qre_txt(17) + qasm_instructions[i]));
 
-	      // Process quantum instructions.		  
+	      /* Process quantum instructions. */	  
 	      
-	      // If instructions are atomic (no parenthesis found).
+	      /* If instructions are atomic (no parenthesis found). */
 	      if (qre_recog("(", qasm_instructions[i]) == false)
 		{	  
 		  if (qre_recog("OPENQASM", qasm_instructions[i]) == true)
@@ -1383,7 +1383,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   sys_command = sys_command + " " + patha + qre_txt(24) + " > " + patha + qre_txt(25);  
   for (k = 0; k < shots; k++)
     {
-      // Call qx simulator with created temp.qc file
+      /* Call qx simulator with created temp.qc file. */
       res1 = (system(sys_command.c_str()));
       
       /* Read qx_temp.txt on each shot iteration, parse kets and accummulate the
@@ -1393,7 +1393,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       qre_show_v(p_base_verbosity, "\n");
       while (std::getline(qx_temp, res2))
 	{
-	  // If the line contains ket data.
+	  /* If the line contains ket data. */
 	  if ((qre_recog("> +", res2) == true) && (qre_recog(") |", res2) == true))
 	    {
 	      /*
@@ -1419,7 +1419,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      /* On each iteration, after res_parc has been created, parse res2 
 		 and distribute the parsed data within the struct of each row.*/
 
-	      // Trim string and extract real, imaginary parts and ket qbyte.
+	      /* Trim string and extract real, imaginary parts and ket qbyte. */
 	      p0 = res2.find("(");
 	      res3 = res2.substr(p0+1);	      
 	      p0 = res3.find("(");
@@ -1433,7 +1433,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      res_parc[j].svec = res4.substr(0, p2);	      
 	      res_parc[j].sket = res5.substr(0, p4);	      
 	      
-	      // Cast numbers as two floats.
+	      /* Cast numbers as two floats. */
 	      str4 = res_parc[j].sterm;
 	      str5 = res_parc[j].svec;
 	      svecx = atof(str4.c_str());
@@ -1447,9 +1447,9 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      j++;
 	    }
 	}      
-    } // k
+    }
   
-  // After performing all shots, average values, calculate probabilities.
+  /* After performing all shots, average values, calculate probabilities. */
   for (i = 0; i < (int)res_final.size(); i++)
     {
       res_final[i] = res_shots[i] / shots;
@@ -1457,10 +1457,10 @@ std::string qx_post_experiment(std::string p_base_verbosity,
     } 
   qre_show_sum_partial_probs(p_base_verbosity, sprob);
   
-  // Build the json string with results.
+  /* Build the json string with results. */
   res = construct_res_step1("{", p_base_device, p_base_name);  
 
-  // Put labels.
+  /* Put labels. */
   for (i = 0; i < (int)res_final.size(); i++)
     {
       if (i < ((int)res_final.size() ))
@@ -1478,7 +1478,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	}  
     }
   
-  // Put qubit numbers and probability values.
+  /* Put qubit numbers and probability values. */
   int nq = c.size();
   res = construct_res_step3(2, qre_put_qubit_numbers (nq, construct_res_step3(7, res)));
   nq = (int)res_final.size();
@@ -1494,7 +1494,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	}     
     }
 
-  // Finish off the string and save.
+  /* Finish off the string and save. */
   res = finish_res_and_save(p_base_verbosity,
 			    p_base_results_storage,
 			    p_base_name,
@@ -1502,7 +1502,5 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   
   return res;
 }
-
-
 
 
