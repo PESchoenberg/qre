@@ -93,16 +93,16 @@ int main(int argc, char** argv)
   
   std::vector<std::string>response_login;
   
-  // Check number of arguments program_file, comm_file, 
+  /* Check number of arguments program_file, comm_file, */
   if (argc == 7)
     {
-      // Name of the qasm file to run.
+      /* Name of the qasm file to run. */
       base_file = argv[1];
 
-      // http method to use (get, post, etc.)
+      /* http method to use (get, post, etc.) */
       base_method = argv[2];
 
-      // y: show request data, m: show nothing.
+      /* y: show request data, m: show nothing. */
       base_verbosity = argv[3];
 
       /* Backend to use. Write test if you want to just see the contents of the 
@@ -110,13 +110,13 @@ int main(int argc, char** argv)
 	 quantum processor to use in case of a real run. */
       base_device = argv[4];
 
-      // Random seed number to use, int >= 1.
+      /* Random seed number to use, int >= 1. */
       base_seed = argv[5];
 
-      // Name of the experiment to run (choose your own).
+      /* Name of the experiment to run (choose your own). */
       base_name = argv[6];
       
-      // Verbosity parameter.
+      /* Verbosity parameter. */
       if((base_verbosity == "y")||(base_verbosity == "Y"))
 	{
 	  base_verbosity = "yes";
@@ -134,7 +134,7 @@ int main(int argc, char** argv)
 	  base_verbosity = "no";
 	}
       
-      // Read parameters from file.      
+      /* Read parameters from file. */
       base_data = qre_read_qasm_file(base_file);      
       base_token = qre_seek_in_file(cfg_file, "base-token");
       base_uri = qre_seek_in_file(cfg_file, "base-uri");
@@ -152,7 +152,7 @@ int main(int argc, char** argv)
       delete_uri = base_uri + qre_seek_in_file(cfg_file, "delete-uri");
       qx_simulator_path = qre_seek_in_file(cfg_file, "qx-simulator-path");
       
-      // Define some names.
+      /* Define some names. */
       login_name = base_name + "_login";
       post_name = base_name + "_post";
       get_name = base_name + "_get";
@@ -229,7 +229,7 @@ int main(int argc, char** argv)
 	{
 	  qre_show_string(line);
 
-	  // Login first.
+	  /* Login first. */
 	  response_login=ibmqx_login(base_verbosity,
 				     base_method,
 				     login_data,
