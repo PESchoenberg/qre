@@ -655,7 +655,7 @@ void qre_store_results(std::string p_base_verbosity,
     }
   else if (p_base_results_storage == "sqlite3")
     {
-      // Here we will put all routines to store stuff on a sqlite3 database.
+      /* Here we will put all routines to store stuff on a sqlite3 database. */
       qre_show_v(p_base_verbosity, qre_ina("Sqlite3"));
     }
 }
@@ -803,17 +803,17 @@ std::vector<std::string> qre_parse_phase_gate(std::string p_s,
   size_t pos3 = 0;
   size_t pos4 = 0;
 
-  //First trim ps by its parenthesis.
+  /* First trim ps by its parenthesis. */
   pos2 = ps.find(")");
   s = ps.substr(0, pos2);
   ps = s;
   pos3 = ps.find("(");
   s = ps.substr(pos3+1);
 
-  //Now we get the arguments of the gate.
+  /* Now we get the arguments of the gate. */
   if (((pos1 = s.find(delim)) != std::string::npos) == true)
     {
-      // When there is more than one argument,  a "," separates them.
+      /* When there is more than one argument,  a "," separates them. */
       while (((pos4 = s.find(delim)) != std::string::npos) == true)
 	{
 	  res.push_back(s.substr(0, pos4));
