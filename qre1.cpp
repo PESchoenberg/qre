@@ -700,18 +700,28 @@ Output:
 std::string qre_parse_reg(std::string p_s,
 			  std::string p_t)
 {
-  std::string res = qre_txt(26);
+  //std::string res = qre_txt(26);
   std::string reg = p_t;
   
   reg = reg +"[";
-  if (qre_recog(reg, p_s) == true)
+  /*if (qre_recog(reg, p_s) == true)
     {
       size_t pos1 = p_s.find(reg, 0);
       size_t pos2 = p_s.find("]", pos1);
       res = p_s.substr(pos1,pos2);
     }
   
-  return res;
+  return res;*/
+  if (qre_recog(reg, p_s) == true)
+    {
+      size_t pos1 = p_s.find(reg, 0);
+      size_t pos2 = p_s.find("]", pos1);
+      return(p_s.substr(pos1,pos2));
+    }
+  else
+    {
+      return (qre_txt(26));
+    }
 }
 
 
@@ -753,7 +763,7 @@ std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity,
 /* qre_what_comes_after_s1 - Returns the substring of p_s2 that comes after p_s1. 
 
 Arguments:
-- p_s1: string whose comlement is sought after in p_s2.
+- p_s1: string whose comlementp is sought after in p_s2.
 - p_s2: string wher to look for the complement of p_s1.
 
 Output:
@@ -766,16 +776,25 @@ std::string qre_what_comes_after_s1(std::string p_s1,
 {
   std::string s1 = p_s1;
   std::string s2 = p_s2;
-  std::string res = s2;
+  //std::string res = s2;
   
   signed int ls1 = s1.length();
 
-  if ((qre_recog(s1, s2) == true)&&((signed int)s2.length() >= ls1))    
+  /*if ((qre_recog(s1, s2) == true)&&((signed int)s2.length() >= ls1))    
     {
       res = s2.substr(ls1);
     }
 
-  return res;
+  return res;*/
+
+  if ((qre_recog(s1, s2) == true)&&((signed int)s2.length() >= ls1))    
+    {
+      return (s2.substr(ls1));
+    }
+  else
+    {
+      return s2;  
+    }
 }
 
 
