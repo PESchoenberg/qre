@@ -558,9 +558,6 @@ std::string qre_put_qubit_numbers (int p_nq,
 	  res = construct_res_step3(8, res);
 	}
     }    
-  //res = construct_res_step3(7, res);
-
-  //return res;
 
   return (construct_res_step3(7, res));
 }
@@ -1028,14 +1025,6 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	}     
     }
 
-  /* Finish off the string and save. */
-  /*res = finish_res_and_save(p_base_verbosity,
-			    p_base_results_storage,
-			    p_base_name,
-			    res);
-  
-  return res;*/
-
   return(finish_res_and_save(p_base_verbosity,p_base_results_storage, p_base_name, res));
 }
 
@@ -1497,14 +1486,6 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	  res = construct_res_step3(8, res);
 	}     
     }
-
-  /* Finish off the string and save. */
-  /*res = finish_res_and_save(p_base_verbosity,
-			    p_base_results_storage,
-			    p_base_name,
-			    res);
-  
-  return res;*/
 
   return(finish_res_and_save(p_base_verbosity, p_base_results_storage, p_base_name, res));  
 }
