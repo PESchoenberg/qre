@@ -148,13 +148,18 @@ own compatible compiler.
 
 ## Credits and Sources:
 
-* IBM Quantum Experience - ( https://quantumexperience.ng.bluemix.net/qx/experience ).
+* IBM Q Experience. (2019). IBM Q Experience. [online] Available at:
+https://quantumexperience.ng.bluemix.net/qx/experience [Accessed 2 Sep. 2019].
 
-* g2q Scheme to QASM2 compiler - ( https://github.com/PESchoenberg/g2q ) (LGPL-3.0 or later).
+* Edronkin, P. (2019). g2q - Guile to QASM compiler. [online] g2q. Available at:
+https://peschoenberg.github.io/g2q/ [Accessed 26 Aug. 2019].
 
-* QX Simulator - ( http://www.qutech.nl/ )
+* Delft University of Technology and Netherlands Organisation for Applied
+Scientific Research (2019). QuTech - Research and development in quantum
+technology. [online] QuTech. Available at: http://www.qutech.nl/
+[Accessed 2 Sep. 2019].
 
-* URL of this project - ( https://github.com/PESchoenberg/qre ).
+* URL of this project - https://github.com/PESchoenberg/qre .
 
 Please let me know if I forgot to add any credits or sources.
 
