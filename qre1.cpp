@@ -376,7 +376,7 @@ int qre_count_string(std::string p_delim,
 }
 
 
-/* qre_recog - Recongizes if p_s1 is found in p_s2.
+/* qre_recog - Recognizes if p_s1 is found in p_s2.
 
 Arguments:
 - p_s1: string to be found as a substring in p_s2.
