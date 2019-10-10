@@ -22,17 +22,34 @@ qre0.cpp
 ================================================================================
 
 Sources:
-- https://developer.ibm.com/tutorials/os-quantum-computing-shell-game/
-- https://quantumcomputing.stackexchange.com/questions/5173/submitting-jobs-to-ibm-devices-without-python
-- https://stackoverflow.com/questions/51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it
-- https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
-- https://curl.haxx.se/libcurl/c/libcurl-tutorial.html
-- https://github.com/XanaduAI/pennylane-pq
-- https://arxiv.org/pdf/1710.01794.pdf
-- https://arxiv.org/pdf/1805.09607.pdf
-- https://arxiv.org/pdf/1808.02449.pdf
-- ftp://ftp.cs.princeton.edu/techreports/2012/934.pdf
-- http://docs.rigetti.com/en/stable/basics.html
+- IBM Developer. (2019). Archived | Quantum computing in action: IBM's Q 
+  experience and the quantum shell game. [online] Available at: 
+  https://developer.ibm.com/tutorials/os-quantum-computing-shell-game/ 
+  [Accessed 9 Oct. 2019].
+- Wootton, J. (2019). Submitting jobs to IBM devices without Python. [online] 
+  Quantum Computing Stack Exchange. Available at: 
+  https://quantumcomputing.stackexchange.com/questions/5173/submitting-jobs-to-
+  ibm-devices-without-python [Accessed 9 Oct. 2019].
+- Stack Overflow. (2019). How to use libcurl in c++ to send a POST request and 
+  receive it?. [online] Available at: https://stackoverflow.com/questions/
+  51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it 
+  [Accessed 9 Oct. 2019].
+- GitHub. (2019). nanowebcoder/NanoQuantumShellGame. [online] Available at: 
+  https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/
+  NanoQuantum.Core/QProcessor.cs [Accessed 9 Oct. 2019].
+- Curl.haxx.se. (2019). libcurl - programming tutorial. [online] Available at: 
+  https://curl.haxx.se/libcurl/c/libcurl-tutorial.html [Accessed 9 Oct. 2019].
+- GitHub. (2019). XanaduAI/pennylane-pq. [online] Available at: 
+  https://github.com/XanaduAI/pennylane-pq [Accessed 9 Oct. 2019].
+- Arxiv.org. (2019). [online] Available at: 
+  https://arxiv.org/pdf/1710.01794.pdf [Accessed 9 Oct. 2019].
+- Arxiv.org. (2019). [online] Available at: https://arxiv.org/pdf/
+  1805.09607.pdf [Accessed 9 Oct. 2019].
+- Arxiv.org. (2019). [online] Available at: https://arxiv.org/pdf/
+  1808.02449.pdf [Accessed 9 Oct. 2019].
+- Docs.rigetti.com. (2019). Programs and Gates — pyQuil 2.12.0 documentation. 
+  [online] Available at: http://docs.rigetti.com/en/stable/basics.html 
+  [Accessed 9 Oct. 2019].
 
 * Compilation (using the gcc compiler family) on Linux:
 - See README.md
