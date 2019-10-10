@@ -727,7 +727,10 @@ Output:
 - A string vector containing each QASM line on each vector cell.
 
 Sources:
-- https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+- C++), P., Pii, V. and Hasan, A. (2019). Parse (split) a string in C++ using 
+  string delimiter (standard C++). [online] Stack Overflow. Available at: 
+  https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-
+  string-delimiter-standard-c [Accessed 9 Oct. 2019].
 
  */
 std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity,
