@@ -26,7 +26,7 @@
 ;
 ; ==============================================================================
 ;
-; Copyright (C) 2018 - 2019  Pablo Edronkin (pablo.edronkin at yahoo.com)
+; Copyright (C) 2018 - 2020  Pablo Edronkin (pablo.edronkin at yahoo.com)
 ;
 ;   This program is free software: you can redistribute it and/or modify
 ;   it under the terms of the GNU Lesser General Public License as published by
@@ -173,6 +173,15 @@
 (qcond1 "==" q 1)(g1 "y" q 2)
 (qcomm "Conditional2 eq.")
 (qcond2 "!=" q 2 1)(g1 "y" q 2)
+
+; GHZ state stuff.
+(qcomm "Three qubit GHZ state generation")
+(ghzy "h" "x" q 0 2 1)
+(ghzy "h" "x" q 0 2 2)
+
+; Using lists.
+(g1yl q '("h" "h" "h" "h" "sdg") 0)
+(g1yl q '("x" "h" "h" "sdg") 1)
 
 ; Let's put a barrier.
 (qcomm "Barriers.")

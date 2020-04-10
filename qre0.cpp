@@ -4,7 +4,7 @@ qre0.cpp
 
 ================================================================================
 
- Copyright (C) 2018 - 2019  Pablo Edronkin (pablo.edronkin at yahoo.com)
+ Copyright (C) 2018 - 2020  Pablo Edronkin (pablo.edronkin at yahoo.com)
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -51,10 +51,10 @@ Sources:
   [online] Available at: http://docs.rigetti.com/en/stable/basics.html 
   [Accessed 9 Oct. 2019].
 
-* Compilation (using the gcc compiler family) on Linux:
+Compilation (using the gcc compiler family) on Linux:
 - See README.md
 
-* Testing:
+Testing:
 - See README.md
 
 ============================================================================= */

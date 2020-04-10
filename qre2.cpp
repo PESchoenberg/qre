@@ -4,7 +4,7 @@ qre2.cpp
 
 ================================================================================
 
- Copyright (C) 2018 - 2019  Pablo Edronkin (pablo.edronkin at yahoo.com)
+ Copyright (C) 2018 - 2020  Pablo Edronkin (pablo.edronkin at yahoo.com)
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -33,7 +33,10 @@ using namespace std;
 /* write_callback - Required to read data received using curl.
 
 Sources:
-- Based on an example at https://stackoverflow.com/questions/51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it
+- Stack Overflow. (2019). How to use libcurl in c++ to send a POST request and 
+  receive it?. [online] Available at: https://stackoverflow.com/questions/
+  51317221/how-to-use-libcurl-in-c-to-send-a-post-request-and-receive-it 
+  [Accessed 21 Dec. 2019].
 
  */
 static size_t write_callback(void *p_contents,
@@ -149,23 +152,33 @@ Note:
 - Arguments correspond to the standard parameters contained in a .qreg file.
 
 Sources:
-- https://curl.haxx.se/libcurl/c/simplepost.html
-- https://developer.ibm.com/tutorials/os-quantum-computing-shell-game/
-- https://stackoverflow.com/questions/22457601/http-post-header-fields-with-libcurl
-- https://stackoverflow.com/questions/328281/why-content-length-0-in-post-requests
-- https://github.com/quantumjim/qreative/blob/master/tutorials/qrng_with_http.ipynb
+- Curl.haxx.se. (2019). libcurl example - simplepost.c. [online] Available at: 
+  https://curl.haxx.se/libcurl/c/simplepost.html [Accessed 21 Dec. 2019].
+- IBM Developer. (2019). Archived | Quantum computing in action: IBM's Q 
+  experience and the quantum shell game. [online] Available at: 
+  https://developer.ibm.com/tutorials/os-quantum-computing-shell-game/ 
+  [Accessed 21 Dec. 2019].
+- Stenberg, D. (2019). HTTP Post Header Fields with libcurl. [online] 
+  Stack Overflow. Available at: https://stackoverflow.com/questions/22457601/
+  http-post-header-fields-with-libcurl [Accessed 21 Dec. 2019].
+- Bondy, B. (2019). Why "Content-Length: 0" in POST requests?. [online] Stack 
+  Overflow. Available at: https://stackoverflow.com/questions/328281/
+  why-content-length-0-in-post-requests [Accessed 21 Dec. 2019].
+- GitHub. (2019). quantumjim/qreative. [online] Available at: 
+  https://github.com/quantumjim/qreative/blob/master/tutorials/qrng_with_http.ipynb 
+  [Accessed 21 Dec. 2019].
 
 Output:
 - Updated value for request log.
 
  */
 std::string ibmqx_qpost(std::string p_base_verbosity,
-		  std::string p_base_method,
-		  std::string p_base_data,
-		  std::string p_content_type,
-		  std::string p_base_results_storage,
-		  std::string p_uri,
-		  std::string p_login_id)
+			std::string p_base_method,
+			std::string p_base_data,
+			std::string p_content_type,
+			std::string p_base_results_storage,
+			std::string p_uri,
+			std::string p_login_id)
 {
   CURL *curl;
   CURLcode res1 = CURLE_OK;
@@ -471,7 +484,9 @@ Output:
 -  Result of the operation.
 
 Sources:
-- https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/NanoQuantum.Core/QProcessor.cs
+- GitHub. (2019). nanowebcoder/NanoQuantumShellGame. [online] Available at: 
+  https://github.com/nanowebcoder/NanoQuantumShellGame/blob/master/
+  NanoQuantum.Core/QProcessor.cs [Accessed 21 Dec. 2019].
 
  */
 std::string ibmqx_delete_experiment(std::string p_base_verbosity,
@@ -1041,7 +1056,10 @@ Arguments:
   - "qx_simulator": local simulator
 
 Sources:
-- https://www.tudelft.nl/eemcs/the-faculty/departments/quantum-computer-engineering/quantum-computer-architecture-lab/research/quantum-programming/
+- TU Delft. (2019). Quantum Programming. [online] Available at: 
+  https://www.tudelft.nl/eemcs/the-faculty/departments/quantum-computer-
+  engineering/quantum-computer-architecture-lab/research/quantum-programming/ 
+  [Accessed 21 Dec. 2019].
 
  */
 std::string qx_post_experiment(std::string p_base_verbosity,
