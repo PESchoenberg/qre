@@ -1430,7 +1430,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      /* On each iteration, after res_parc has been created, parse res2 
 		 and distribute the parsed data within the struct of each row.*/
 
-	      /* Trim string and extract real, imaginary parts and ket qbyte. */
+	      /* Trim string and extract real, imaginary parts and ket qubyte. */
 	      p0 = res2.find("(");
 	      res3 = res2.substr(p0+1);	      
 	      p0 = res3.find("(");
