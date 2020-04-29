@@ -659,6 +659,16 @@ void qre_store_results(std::string p_base_verbosity,
       /* Here we will put all routines to store stuff on a sqlite3 database. */
       qre_show_v(p_base_verbosity, qre_ina("Sqlite3"));
     }
+  else if (p_base_results_storage == "hdf5")
+    {
+      /* Here we will put all routines to store stuff on a hdf5 database. */
+      qre_show_v(p_base_verbosity, qre_ina("HDF5"));
+    }
+  else if (p_base_results_storage == "all")
+    {
+      /* Here we will put all routines to store stuff on a json file, Sqlite and hdf5 database. */
+      qre_show_v(p_base_verbosity, qre_ina("All"));
+    }
 }
 
 
