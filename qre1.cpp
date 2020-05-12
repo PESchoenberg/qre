@@ -233,6 +233,9 @@ std::string qre_txt(int p_n)
     case 56:
       res = "";
       break;
+    case 57:
+      res = "data/hdf5/";
+      break;      
     default:
       res = "na";
       break;      
@@ -333,6 +336,21 @@ double qre_s2d(std::string p_s)
 }
 
 
+/* qre_i2s - Converts an integerto a string.
+
+Arguments:
+- p_i: int to convert.
+
+Output:
+- String.
+
+ */
+std::string qre_i2s(int p_i)
+{
+  return (qre_d2s((double)p_i));
+}
+
+
 /* qre_l2s - Converts a long unsigned int to a string.
 
 Arguments:
@@ -400,7 +418,37 @@ bool qre_recog(std::string p_s1,
     }
 }
 
+/* qre_find_and_replace_all - Fids all ocurrences of string p_s1 with p_s2 in 
+p_s3.
 
+Arguments:
+- p_s1: string.
+- p_s1: string.
+- p_s1: string.
+
+Sources:
+- Lyadvinsky, K., Boaglio, G. et al. 2020. How To Replace All Occurrences Of A 
+  Character In String?.  [online] Stack Overflow. Available at: 
+  <https://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string> [Accessed 3 May 2020].
+
+ */
+std::string qre_find_and_replace_all(std::string p_s1,
+				     std::string p_s2,
+				     std::string p_s3)
+{
+  std::string s1 = p_s1;
+  std::string s2 = p_s2;
+  std::string s3 = p_s3;
+  
+  while (s3.find(s1) != std::string::npos)
+    {
+      s3.replace(s3.find(s1),s1.size(),s2);
+    }
+
+  return s3;
+}
+  
+  
 /* qre_show_v - Shows p_s if verbosity is on.
 
 Arguments:
@@ -640,35 +688,81 @@ void qre_store_results(std::string p_base_verbosity,
 		       std::string p_contents_to_store)
 {
   std::string pathj = qre_txt(41);
-  std::string paths = qre_txt(42);  
+  std::string paths = qre_txt(42);
+  std::string pathh = qre_txt(57);
   std::string db = qre_txt(40);
   std::string file = p_file;
+  std::string file2 = "";
+  std::string sysstr = "./sqlp";
+  std::string sysstr2 = "";
+  std::string sysstr3 = "";
+  std::string sql_string = "";
+  std::string contents_to_store = p_contents_to_store;
+  std::string tstamp = "";
 
-  if (p_base_results_storage == "json")
+  /* Create a json file bsed on the results received from the qpu. A json file will 
+     be created in all cases since this is the standard way in which the data is 
+     received by qre from online or offline quantum processors. */
+  file = file + ".json";
+  pathj = pathj + file;     
+  ofstream json_file;
+  json_file.open(pathj, std::ios::out);
+  json_file << p_contents_to_store << "\n";
+  json_file.close();
+  qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathj));
+
+  /* Create the name of the dataset based on a timestamp. */
+  tstamp = qre_namestamp("qre");
+
+  /* Save as Sqlite3 data. */
+  if (p_base_results_storage == "sqlite3")
     {
-      file = file + ".json";
-      pathj = pathj + file;     
-      ofstream json_file;
-      json_file.open(pathj, std::ios::out);
-      json_file << p_contents_to_store << "\n";
-      json_file.close();
-      qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathj));
+      /* Replace characters that Sqlite3 does not accept. */
+      contents_to_store = qre_find_and_replace_all("\'", " ", contents_to_store);
+
+      paths = paths + "qre.db";
+      sql_string = "INSERT INTO results (Status, Dataset, Json) VALUES (\'enabled\',\'";
+      sql_string = sql_string + tstamp + "\',\'" + contents_to_store + "\');";    
+      sysstr = sysstr + " " + paths + " " + "\"" + sql_string + "\"";      
+      if (system(sysstr.c_str()) != 0)
+	{
+	  qre_show_v(p_base_verbosity, qre_ina("Sqlite3"));
+	}
+      else
+	{
+	  qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + paths));
+	}
     }
-  else if (p_base_results_storage == "sqlite3")
-    {
-      /* Here we will put all routines to store stuff on a sqlite3 database. */
-      qre_show_v(p_base_verbosity, qre_ina("Sqlite3"));
-    }
+
+  /* Save as HDF5  data. */
   else if (p_base_results_storage == "hdf5")
     {
-      /* Here we will put all routines to store stuff on a hdf5 database. */
-      qre_show_v(p_base_verbosity, qre_ina("HDF5"));
-    }
-  else if (p_base_results_storage == "all")
-    {
-      /* Here we will put all routines to store stuff on a json file, Sqlite and hdf5 database. */
-      qre_show_v(p_base_verbosity, qre_ina("All"));
-    }
+      /* Replace characters that Sqlite3 does not accept (just to keep data stored in a similar format. */
+      contents_to_store = qre_find_and_replace_all("\'", " ", contents_to_store);
+      
+      pathh = pathh + "qre.h5";     
+      sysstr2 = "CREATE DATASET " + tstamp + " AS UTF8 CHAR(" + qre_i2s(contents_to_store.length()) + ");";
+      sysstr3 = sysstr + " " + pathh + " " + "\"" + sysstr2 + "\"";
+      if (system(sysstr3.c_str()) == 0)
+	{ 
+	  sysstr2 = "INSERT INTO ";
+	  sysstr2 = sysstr2 + tstamp + " VALUES(\"" + contents_to_store + "\");";
+	  sysstr3 = sysstr + " " + pathh + " " + "\'" + sysstr2 + "\'";	  
+	  if (system(sysstr3.c_str()) != 0)
+	    {
+	      qre_show_v(p_base_verbosity, qre_ina("HDF5"));
+	    }
+	  else
+	    {
+	      qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathh));
+	    }
+	  qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathh));
+	}
+      else
+	{
+	  qre_show_v(p_base_verbosity, qre_ina("HDF5"));
+	}
+    }  
 }
 
 
@@ -856,3 +950,20 @@ long unsigned int qre_parse_br(std::string p_s,
   return ((long unsigned int) qre_parse_bitnum(qre_parse_reg(p_s, p_qr)));
 }
 
+
+/* qre_namestamp - Creates a namestamp string.
+
+Arguments:
+- p_s1: namestamp ID string.
+
+ */
+std::string qre_namestamp(std::string p_s1)
+{
+  std::string res = p_s1;
+  srand(time(NULL));
+  int rn = rand();
+  
+  res = res + "-" + qre_d2s( abs( rn * 0.9 ) );
+  
+  return res;
+}
