@@ -54,6 +54,10 @@ not incorporate simulated noise or other factors.
 
   - QX Simulator - ( http://quantum-studio.net/ ).
 
+  - Sqlite3 - ( https://www.sqlite.org/index.html ).
+
+  - sqlp - v1.0.0 or later ( https://github.com/PESchoenberg/g2q ).
+
 ## Installation:
 
 * Copy the contents of the compressed file in any folder you like and compile
@@ -66,6 +70,16 @@ core package. So you should:
 - Now cd to the folder containing qre.
 - Create /lib/qlib if you don’t have it already within qre’s main folder.
 - Paste the clipboard contents into the /lib/qlib folder of your qre folder.
+
+* If you want to store the results of queries made by means of qre set the
+following values on your qre.cfg file:
+- base-results-storage=json to save them only to json files.
+- base-results-storage=sqlite3 to save them to ~/qre/data/sqlite3/qre.db
+
+* Bear in mind that:
+- Unless you save your results only to json files, you will need to instal
+sqlp (see dependencies above).
+- Saving your results to Sqlite3 will also produce an intermediate json file.
 
 * Lastly, you will need to make some updates:
 - Overwrite:

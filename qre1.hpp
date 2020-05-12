@@ -35,6 +35,7 @@ qre1.hpp
 #include <vector>
 #include <algorithm>
 #include <curl/curl.h>
+#include <ctime>
 
 
 using namespace std;
@@ -62,6 +63,9 @@ std::string qre_d2s(double p_double);
 double qre_s2d(std::string p_s);
 
 
+std::string qre_i2s(int p_i);
+
+
 std::string qre_l2s(long unsigned int p_l);
 
 
@@ -71,6 +75,11 @@ int qre_count_string(std::string p_delim,
 
 bool qre_recog(std::string p_s1,
 	       std:: string p_s2);
+
+
+std::string qre_find_and_replace_all(std::string p_s1,
+				     std::string p_s2,
+				     std::string p_s3);
 
 
 void qre_show_v(std::string p_base_verbosity,
@@ -137,6 +146,9 @@ std::vector<std::string> qre_parse_phase_gate(std::string p_s,
 
 long unsigned int qre_parse_br(std::string p_s,
 			       std::string p_qr);
+
+
+std::string qre_namestamp(std::string p_s1);
 
 
 #endif // !__QRE1_H
