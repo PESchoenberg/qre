@@ -110,7 +110,7 @@ int main(int argc, char** argv)
   
   std::vector<std::string>response_login;
   
-  /* Check number of arguments program_file, comm_file, */
+  /* Check number of arguments program_file, comm_file. */
   if (argc == 7)
     {
       /* Name of the qasm file to run. */
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
       delete_uri = base_uri + qre_seek_in_file(cfg_file, "delete-uri");
       qx_simulator_path = qre_seek_in_file(cfg_file, "qx-simulator-path");
       
-      /* Define some names. */
+      /* Define some strings. */
       login_name = base_name + "_login";
       post_name = base_name + "_post";
       get_name = base_name + "_get";

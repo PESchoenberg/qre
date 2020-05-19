@@ -50,7 +50,7 @@ static size_t write_callback(void *p_contents,
 }
 
 
-/* show_res_parc - Shows parcial results.
+/* show_res_parc - Shows partial results.
 
 Arguments:
 - p_base_verbosity: base verbosity.
@@ -1387,7 +1387,7 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       qc_file_app.close();
     }
   
-  /* Shots iteration. Here we call the simulatore, generate on each iteration a
+  /* Shots iteration. Here we call the simulator, generate on each iteration a
      file with results, parse it to get the kets, extract the values of each ket
      as a complex number and then process those values using vectors.*/
   qre_show_v(p_base_verbosity, "\n");

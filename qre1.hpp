@@ -151,5 +151,8 @@ long unsigned int qre_parse_br(std::string p_s,
 std::string qre_namestamp(std::string p_s1);
 
 
+std::string qre_timestamp();
+
+
 #endif // !__QRE1_H
 
