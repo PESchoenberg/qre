@@ -336,7 +336,7 @@ double qre_s2d(std::string p_s)
 }
 
 
-/* qre_i2s - Converts an integerto a string.
+/* qre_i2s - Converts an integer to a string.
 
 Arguments:
 - p_i: int to convert.
@@ -366,7 +366,8 @@ std::string qre_l2s(long unsigned int p_l)
 }
 
 
-/* qre_count_string
+/* qre_count_string - Counts the number of thimes that p_delim appears
+in string p_s.
 
 Arguments:
 - p_delim: delimiter or substring to be accounted for.
@@ -395,7 +396,7 @@ int qre_count_string(std::string p_delim,
 }
 
 
-/* qre_recog - Recognizes if p_s1 is found in p_s2.
+/* qre_recog - Recognizes if string p_s1 is found in string p_s2.
 
 Arguments:
 - p_s1: string to be found as a substring in p_s2.
@@ -418,7 +419,8 @@ bool qre_recog(std::string p_s1,
     }
 }
 
-/* qre_find_and_replace_all - Fids all ocurrences of string p_s1 with p_s2 in 
+
+/* qre_find_and_replace_all - Reolaces all ocurrences of string p_s1 with p_s2 in 
 p_s3.
 
 Arguments:
@@ -429,7 +431,7 @@ Arguments:
 Sources:
 - Lyadvinsky, K., Boaglio, G. et al. 2020. How To Replace All Occurrences Of A 
   Character In String?.  [online] Stack Overflow. Available at: 
-  <https://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string> [Accessed 3 May 2020].
+  https://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string [Accessed 3 May 2020].
 
  */
 std::string qre_find_and_replace_all(std::string p_s1,
@@ -535,7 +537,7 @@ std::string qre_seek_in_json(std::string p_j,
   size_t pos1;
   size_t pos2;
   
-  // Find if p_v is in the string.
+  /* Find if p_v is in the string. */
   if (qre_recog(p_v, j) == true)
     {
       res1 = j.substr(j.find(v));
@@ -695,11 +697,29 @@ void qre_store_results(std::string p_base_verbosity,
   std::string file2 = "";
   std::string sysstr = "./sqlp";
   std::string sysstr2 = "";
-  std::string sysstr3 = "";
   std::string sql_string = "";
   std::string contents_to_store = p_contents_to_store;
-  std::string tstamp = "";
+  std::string nstamp = "";
+  std::string tstamp = "";  
 
+  bool use_sqlite3 = false;
+  bool use_hdf5 = false;  
+
+  /* Define which storage options will be used. */
+  if (p_base_results_storage == "sqlite3")
+    {
+      use_sqlite3 = true;
+    }
+  else if (p_base_results_storage == "hdf5")
+    {
+      use_hdf5 = true;
+    }  
+  else if (p_base_results_storage == "all")
+    {
+      use_sqlite3 = true;
+      use_hdf5 = true;
+    }
+  
   /* Create a json file bsed on the results received from the qpu. A json file will 
      be created in all cases since this is the standard way in which the data is 
      received by qre from online or offline quantum processors. */
@@ -711,20 +731,32 @@ void qre_store_results(std::string p_base_verbosity,
   json_file.close();
   qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathj));
 
-  /* Create the name of the dataset based on a timestamp. */
-  tstamp = qre_namestamp("qre");
-
+  /* Creating the name of the dataset based on a timestamp. The name of the 
+     each Sqlite or HDF5 dataset will be constructed as a string consisting of 
+     by an initial string that indicates that it originates from a qre run, 
+     plus this timestamp. The difference between Sqlite3 and HDF5 data is 
+     the format in which tha dataset name will be stored. In the case of Sqlite3 
+     it will be saed to the Dataset filed in each record, while in the case of 
+     HDF5 a new dataset with the name as constructed with the timestamp will be 
+     created and then experimental data will be stored within that dataset.
+  */
+  nstamp = qre_namestamp("qre");
+  tstamp = qre_timestamp();
+  
+  /* Replace characters that Sqlite3 does not accept. Some issues arise when 
+     special characters as required by SQL, Sqlite3 and C++ or other programming 
+     languages. Therefore some tweaking is required. 
+  */
+  contents_to_store = qre_find_and_replace_all("\'", " ", p_contents_to_store);
+  
   /* Save as Sqlite3 data. */
-  if (p_base_results_storage == "sqlite3")
+  if (use_sqlite3 == true)
     {
-      /* Replace characters that Sqlite3 does not accept. */
-      contents_to_store = qre_find_and_replace_all("\'", " ", contents_to_store);
-
       paths = paths + "qre.db";
-      sql_string = "INSERT INTO results (Status, Dataset, Json) VALUES (\'enabled\',\'";
-      sql_string = sql_string + tstamp + "\',\'" + contents_to_store + "\');";    
-      sysstr = sysstr + " " + paths + " " + "\"" + sql_string + "\"";      
-      if (system(sysstr.c_str()) != 0)
+      sql_string = "INSERT INTO results (Status, Dataset, Json, Tstamp) VALUES (\'enabled\',\'";
+      sql_string = sql_string + nstamp + "\',\'" + contents_to_store + "\',\'" + tstamp + "\');";    
+      sysstr2 = sysstr + " " + paths + " " + "\"" + sql_string + "\"";      
+      if (system(sysstr2.c_str()) != 0)
 	{
 	  qre_show_v(p_base_verbosity, qre_ina("Sqlite3"));
 	}
@@ -734,29 +766,42 @@ void qre_store_results(std::string p_base_verbosity,
 	}
     }
 
-  /* Save as HDF5  data. */
-  else if (p_base_results_storage == "hdf5")
-    {
-      /* Replace characters that Sqlite3 does not accept (just to keep data stored in a similar format. */
-      contents_to_store = qre_find_and_replace_all("\'", " ", contents_to_store);
-      
-      pathh = pathh + "qre.h5";     
-      sysstr2 = "CREATE DATASET " + tstamp + " AS UTF8 CHAR(" + qre_i2s(contents_to_store.length()) + ");";
-      sysstr3 = sysstr + " " + pathh + " " + "\"" + sysstr2 + "\"";
-      if (system(sysstr3.c_str()) == 0)
-	{ 
-	  sysstr2 = "INSERT INTO ";
-	  sysstr2 = sysstr2 + tstamp + " VALUES(\"" + contents_to_store + "\");";
-	  sysstr3 = sysstr + " " + pathh + " " + "\'" + sysstr2 + "\'";	  
-	  if (system(sysstr3.c_str()) != 0)
+  /* Save as HDF5 data. */
+  if (use_hdf5 == true)
+    {      
+      pathh = pathh + "qre.h5";
+
+      /* First we create the dataset that will hold the restults.*/
+      sql_string = "CREATE DATASET " + nstamp + " AS UTF8 CHAR(" + qre_i2s(contents_to_store.length()) + ");";
+      sysstr2 = sysstr + " " + pathh + " " + "\"" + sql_string + "\"";
+      if (system(sysstr2.c_str()) == 0)
+	{
+	  /* Create attribute Status. */
+	  sql_string = "CREATE ATTRIBUTE ";
+	  sql_string = sql_string + nstamp + "/Status AS UTF8 VARCHAR VALUES(“enabled”);";
+	  sysstr2 = sysstr + " " + pathh + " " + "\"" + sql_string + "\"";
+	  if (system(sysstr2.c_str()) == 0)
 	    {
-	      qre_show_v(p_base_verbosity, qre_ina("HDF5"));
+	      /* Create attribute Tstamp. */
+	      sql_string = "CREATE ATTRIBUTE ";
+	      sql_string = sql_string + nstamp + "/Tstamp AS UTF8 VARCHAR VALUES(“"+ tstamp +"”);"; //Note dff quotation marks.
+	      sysstr2 = sysstr + " " + pathh + " " + "\"" + sql_string + "\"";
+	      if (system(sysstr2.c_str()) == 0)
+		{	      
+		  /*Then we insert the results into the dataset. */
+		  sql_string = "INSERT INTO ";
+		  sql_string = sql_string + nstamp + " VALUES(\"" + contents_to_store + "\");";
+		  sysstr2 = sysstr + " " + pathh + " " + "\'" + sql_string + "\'";	  
+		  if (system(sysstr2.c_str()) != 0)
+		    {
+		      qre_show_v(p_base_verbosity, qre_ina("HDF5"));
+		    }
+		  else
+		    {
+		      qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathh));
+		    }
+		}
 	    }
-	  else
-	    {
-	      qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathh));
-	    }
-	  qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathh));
 	}
       else
 	{
@@ -951,7 +996,9 @@ long unsigned int qre_parse_br(std::string p_s,
 }
 
 
-/* qre_namestamp - Creates a namestamp string.
+/* qre_namestamp - Creates a namestamp string based on the time() and rand()
+C++ functions. A string containing p_s1 and the resulting number is returned 
+as result.
 
 Arguments:
 - p_s1: namestamp ID string.
@@ -960,10 +1007,19 @@ Arguments:
 std::string qre_namestamp(std::string p_s1)
 {
   std::string res = p_s1;
+
   srand(time(NULL));
-  int rn = rand();
-  
-  res = res + "-" + qre_d2s( abs( rn * 0.9 ) );
+  res = res + "-" + qre_d2s( abs( rand() * 0.9 ) );
   
   return res;
+}
+
+
+/* qre_namestamp - Creates a namestamp string based on the time() C++ functions. 
+A string containing the resulting number is returned as result.
+
+ */
+std::string qre_timestamp()
+{
+  return (qre_i2s((long int)time(NULL)));
 }

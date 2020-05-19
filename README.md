@@ -11,7 +11,7 @@ on QASM - compatible quantum systems and simulators, such as IBM QX
 computers. You can also run those programs on a local simulator.
 
 
-Currently you cou can create the required QASM2 files in various ways:
+Currently you can create the required QASM2 files in various ways:
 
 * Create a compiler that produces QASM2 code.
 
@@ -58,6 +58,8 @@ not incorporate simulated noise or other factors.
 
   - sqlp - v1.0.0 or later ( https://github.com/PESchoenberg/g2q ).
 
+  - HDF5 - ( https://www.hdfgroup.org/ ).
+
 ## Installation:
 
 * Copy the contents of the compressed file in any folder you like and compile
@@ -75,11 +77,13 @@ core package. So you should:
 following values on your qre.cfg file:
 - base-results-storage=json to save them only to json files.
 - base-results-storage=sqlite3 to save them to ~/qre/data/sqlite3/qre.db
+- base-results-storage=hdf5 to save them to ~/qre/data/hdf5/qre.h5
+- base-results-storage=all to save them in Sqlite3 and HDF5 format.
 
 * Bear in mind that:
 - Unless you save your results only to json files, you will need to instal
 sqlp (see dependencies above).
-- Saving your results to Sqlite3 will also produce an intermediate json file.
+- Saving your results to Sqlite3 or HDF5 will also produce an intermediate json file.
 
 * Lastly, you will need to make some updates:
 - Overwrite:
