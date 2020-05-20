@@ -771,24 +771,40 @@ void qre_store_results(std::string p_base_verbosity,
     {      
       pathh = pathh + "qre.h5";
 
-      /* First we create the dataset that will hold the restults.*/
+      /* This is a step-by-step version of data insertion in an hdf5 file. The 
+	 whole section could be reduced to a single step in the future. */
+      /*sql_string = "CREATE DATASET ";
+      sql_string = sql_string + nstamp + " AS UTF8 CHAR(" + qre_i2s(contents_to_store.length()) + ");";
+      sql_string = sql_string + " CREATE ATTRIBUTE " + nstamp + "/Status AS UTF8 VARCHAR VALUES(“enabled”);";
+      sql_string = sql_string + " CREATE ATTRIBUTE " + nstamp + "/Tstamp AS UTF8 VARCHAR VALUES(“"+ tstamp +"”);";
+      sql_string = sql_string + " INSERT INTO " + nstamp + " VALUES(\"" + contents_to_store + "\");";
+      sysstr2 = sysstr + " " + pathh + " " + "\"" + sql_string + "\"";
+      cout << "***" << endl;
+      cout << sql_string << endl;
+      cout << "***" << endl;      
+      if (system(sysstr2.c_str()) != 0)
+	{
+	  qre_show_v(p_base_verbosity, qre_ina("HDF5"));
+	}
+      else
+	{
+	  qre_show_v(p_base_verbosity, ("Results saved to ~/qre/" + pathh));
+	}*/
+	  
       sql_string = "CREATE DATASET " + nstamp + " AS UTF8 CHAR(" + qre_i2s(contents_to_store.length()) + ");";
       sysstr2 = sysstr + " " + pathh + " " + "\"" + sql_string + "\"";
       if (system(sysstr2.c_str()) == 0)
 	{
-	  /* Create attribute Status. */
 	  sql_string = "CREATE ATTRIBUTE ";
 	  sql_string = sql_string + nstamp + "/Status AS UTF8 VARCHAR VALUES(“enabled”);";
 	  sysstr2 = sysstr + " " + pathh + " " + "\"" + sql_string + "\"";
 	  if (system(sysstr2.c_str()) == 0)
 	    {
-	      /* Create attribute Tstamp. */
 	      sql_string = "CREATE ATTRIBUTE ";
 	      sql_string = sql_string + nstamp + "/Tstamp AS UTF8 VARCHAR VALUES(“"+ tstamp +"”);"; //Note dff quotation marks.
 	      sysstr2 = sysstr + " " + pathh + " " + "\"" + sql_string + "\"";
 	      if (system(sysstr2.c_str()) == 0)
 		{	      
-		  /*Then we insert the results into the dataset. */
 		  sql_string = "INSERT INTO ";
 		  sql_string = sql_string + nstamp + " VALUES(\"" + contents_to_store + "\");";
 		  sysstr2 = sysstr + " " + pathh + " " + "\'" + sql_string + "\'";	  
