@@ -46,7 +46,7 @@ static size_t write_callback(void *p_contents,
 {
   ((std::string*)p_userp)->append((char*)p_contents, p_size * p_nmemb);
     
-  return p_size * p_nmemb;
+  return (p_size * p_nmemb);
 }
 
 
@@ -230,7 +230,6 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
   if (qre_vb(p_base_verbosity))
     {
       qre_show_string("Data as is just before making the request:");
-
       qre_show_var("Method: ", p_base_method);
       qre_show_var("Data: ", cdata);
       qre_show_var("Uri: ", curi);
@@ -288,7 +287,8 @@ std::string ibmqx_qpost(std::string p_base_verbosity,
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
 
       /* If verbosity value is yes, some more of info concerning the connection 
-	 will be shown.*/
+	 will be shown.
+      */
       if (qre_vb(p_base_verbosity))
 	{
 	  curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
@@ -677,7 +677,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
   shots = qre_enable_shots(false, p_base_shots);
 
   /* We need to define qreg q and creg c before parsing anything else in the 
-     QASM file. */
+     QASM file. 
+  */
   for (i = 0; i < vector_size; i++)
     {
       if (qre_recog("qreg", qasm_instructions[i]) == true)
@@ -869,7 +870,9 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 		    }		  
 		}
 
-	      /* Instructions that have parenthesis are composites and require secial treatment. */
+	      /* Instructions that have parenthesis are composites and require 
+		 special treatment. 
+	      */
 	      if (qre_recog("(", qasm_instructions[i]) == true)
 		{
 		  if ((qre_recog("u1", qasm_instructions[i]) == true)&&(qre_recog("cu1", qasm_instructions[i]) == false))
@@ -957,7 +960,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	}
 
       /* On each iteration, after res_parc has been created, parse res2 and 
-	 distribute the parser data within the struct of each row.*/
+	 distribute the parser data within the struct of each row.
+      */
       j = 0;
       pos = 0;
       res2 = q.toString();      
@@ -982,7 +986,8 @@ std::string qlib_post_experiment(std::string p_base_verbosity,
 	  svecy = atof(str5.c_str());
 
 	  /* Square both and sum to get p = x^2 + y^2, increment value of 
-	     res_sum and show info. */
+	     res_sum and show info. 
+	  */
 	  res_sum[j] = (double)(pow(svecx,2) + pow(svecy,2));
 	  res_shots[j] = res_shots[j] + res_sum[j];
 	  show_res_parc(p_base_verbosity,
@@ -1138,7 +1143,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   res1 = res1 + 0; // So that the compiler doesn't complain.
   
   /* We need to define qreg q and creg c before parsing anything else in the 
-     QASM file. */
+     QASM file. 
+  */
   for (i = 0; i < vector_size; i++)
     {
       if (qre_recog("qreg", qasm_instructions[i]) == true)
@@ -1325,7 +1331,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		}
 
 	      /* Instructions that have parenthesis are composites and require 
-		 special treatment. */
+		 special treatment. 
+	      */
 	      if (qre_recog("(", qasm_instructions[i]) == true)
 		{		  
 		  if ((qre_recog("u1", qasm_instructions[i]) == true)&&(qre_recog("cu1", qasm_instructions[i]) == false))
@@ -1389,7 +1396,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
   
   /* Shots iteration. Here we call the simulator, generate on each iteration a
      file with results, parse it to get the kets, extract the values of each ket
-     as a complex number and then process those values using vectors.*/
+     as a complex number and then process those values using vectors.
+  */
   qre_show_v(p_base_verbosity, "\n");
   sys_command = sys_command + " " + patha + qre_txt(24) + " > " + patha + qre_txt(25);  
   for (k = 0; k < shots; k++)
@@ -1398,7 +1406,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
       res1 = (system(sys_command.c_str()));
       
       /* Read qx_temp.txt on each shot iteration, parse kets and accummulate the
-	 extracted values. */
+	 extracted values. 
+      */
       j = 0;     
       std::ifstream qx_temp(patha + qre_txt(25));
       qre_show_v(p_base_verbosity, "\n");
@@ -1428,7 +1437,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 		}
 	      
 	      /* On each iteration, after res_parc has been created, parse res2 
-		 and distribute the parsed data within the struct of each row.*/
+		 and distribute the parsed data within the struct of each row.
+	      */
 
 	      /* Trim string and extract real, imaginary parts and ket qubyte. */
 	      p0 = res2.find("(");
@@ -1451,7 +1461,8 @@ std::string qx_post_experiment(std::string p_base_verbosity,
 	      svecy = atof(str5.c_str());
 
 	      /* Square both and sum to get p = x^2 + y^2, increment res_su and 
-		 show some info .*/
+		 show some info .
+	      */
 	      res_sum[j] = (double)(pow(svecx,2) + pow(svecy,2));
 	      res_shots[j] = res_shots[j] + res_sum[j];
 	      show_res_parc(p_base_verbosity, j, res_parc[j].sterm, res_parc[j].sket, res_parc[j].svec);

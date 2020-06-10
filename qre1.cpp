@@ -33,7 +33,7 @@ using namespace std;
 Arguments:
 - p_base_verbosity: base verbosity.
 
- */
+*/
 bool qre_vb(std::string p_base_verbosity)
 {
   if (p_base_verbosity == "yes")
@@ -254,7 +254,7 @@ Arguments:
 Output:
 - A result >= 1 if p_shots true, 1 otherwise.
 
- */
+*/
 int qre_enable_shots(bool p_enable,
 		     std::string p_base_shots)
 { 
@@ -277,7 +277,7 @@ Arguments:
 Output:
 - A string like "gate p_s1 at qubit."
 
- */
+*/
 std::string qre_gaq(std::string p_s1)
 {
   return (" gate " + p_s1 + " at qubit ");
@@ -292,7 +292,7 @@ Arguments:
 Output:
 - A string stating "gate p_s1 not available."
 
- */
+*/
 std::string qre_ina(std::string p_s1)
 {
   return (" " + p_s1 + " not available.");
@@ -307,7 +307,7 @@ Arguments:
 Output:
 - String.
 
- */
+*/
 std::string qre_d2s(double p_double)
 {
   std::ostringstream stro;
@@ -324,7 +324,7 @@ Arguments:
 Output:
 - Double.
 
- */
+*/
 double qre_s2d(std::string p_s)
 {
   double res = 0.00;
@@ -344,7 +344,7 @@ Arguments:
 Output:
 - String.
 
- */
+*/
 std::string qre_i2s(int p_i)
 {
   return (qre_d2s((double)p_i));
@@ -359,7 +359,7 @@ Arguments:
 Output:
 - String.
 
- */
+*/
 std::string qre_l2s(long unsigned int p_l)
 {
   return (qre_d2s((double)p_l));
@@ -433,7 +433,7 @@ Sources:
   Character In String?.  [online] Stack Overflow. Available at: 
   https://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string [Accessed 3 May 2020].
 
- */
+*/
 std::string qre_find_and_replace_all(std::string p_s1,
 				     std::string p_s2,
 				     std::string p_s3)
@@ -457,7 +457,7 @@ Arguments:
 - p_base_verbosity: base_verbosity.
 - p_s: string to show.
 
- */
+*/
 void qre_show_v(std::string p_base_verbosity,
 		std::string p_s)
 {
@@ -474,7 +474,7 @@ Arguments:
 - p_base_verbosity: base verbosity.
 - p_sprob: sum of partia probabilities.
 
- */
+*/
 void qre_show_sum_partial_probs(std::string p_base_verbosity,
 				double p_sprob)
 {
@@ -524,7 +524,7 @@ Arguments:
 Output:
 - The value associated to p_v, as a string; returns "na" if not found.
 
- */
+*/
 std::string qre_seek_in_json(std::string p_j,
 			     std::string p_v)
 {
@@ -543,7 +543,8 @@ std::string qre_seek_in_json(std::string p_j,
       res1 = j.substr(j.find(v));
 
       /* Now find the limit of the substring that corresponds to the value of 
-	 p_v. */
+	 p_v. 
+      */
       if (qre_recog(e, res1) == true)
 	{
 	  if (qre_recog("\",", res1) == true)
@@ -571,7 +572,7 @@ Aruments:
 - p_t: text to show (name of the variable).
 - p_v: variable value.
 
- */
+*/
 void qre_show_var(std::string p_t,
 		  std::string p_v)
 {
@@ -584,7 +585,7 @@ void qre_show_var(std::string p_t,
 Aruments:
 - p_t: string to show.
 
- */
+*/
 void qre_show_string(std::string p_t)
 {
   std::cout << p_t << "\n" << std::endl;
@@ -598,7 +599,7 @@ Arguments:
 - p_t1: first string.
 - p_t2: second string.
 
- */
+*/
 void qre_show_conclusion(std::string p_base_verbosity,
 			 std::string p_t1,
 			 std::string p_t2)
@@ -615,7 +616,7 @@ void qre_show_conclusion(std::string p_base_verbosity,
 Arguments:
 - p_s: string to url encode.
 
- */
+*/
 std::string qre_url_encode(std::string p_s)
 {
   CURL *curl;
@@ -641,7 +642,7 @@ Arguments:
 Output:
 - Header cast as a pure c string.
 
- */
+*/
 char *qre_create_header(std::string p_s)
 {
   const char *s = p_s.c_str();
@@ -656,7 +657,7 @@ char *qre_create_header(std::string p_s)
 Arguments:
 - p_f: qasm file to read.
 
- */
+*/
 std::string qre_read_qasm_file(std::string p_f)
 {
   std::string res = "";
@@ -722,7 +723,8 @@ void qre_store_results(std::string p_base_verbosity,
   
   /* Create a json file bsed on the results received from the qpu. A json file will 
      be created in all cases since this is the standard way in which the data is 
-     received by qre from online or offline quantum processors. */
+     received by qre from online or offline quantum processors. 
+  */
   file = file + ".json";
   pathj = pathj + file;     
   ofstream json_file;
@@ -749,7 +751,7 @@ void qre_store_results(std::string p_base_verbosity,
   */
   contents_to_store = qre_find_and_replace_all("\'", " ", p_contents_to_store);
   
-  /* Save as Sqlite3 data. */
+  /* Save Json stuff as Sqlite3 data. */
   if (use_sqlite3 == true)
     {
       paths = paths + "qre.db";
@@ -766,7 +768,7 @@ void qre_store_results(std::string p_base_verbosity,
 	}
     }
 
-  /* Save as HDF5 data. */
+  /* Save Json stuff as HDF5 data. */
   if (use_hdf5 == true)
     {      
       pathh = pathh + "qre.h5";
@@ -836,7 +838,7 @@ Arguments:
 Output:
 - qubit or bit number.
 
- */
+*/
 int qre_parse_bitnum(std::string p_s)
 {
   int res = 0;
@@ -862,7 +864,7 @@ Arguments:
 Output:
 - A substring like "q[n]" or "c[n]" being n a qubit or bit number.
 
- */
+*/
 std::string qre_parse_reg(std::string p_s,
 			  std::string p_t)
 {
@@ -898,7 +900,7 @@ Sources:
   https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-
   string-delimiter-standard-c [Accessed 9 Oct. 2019].
 
- */
+*/
 std::vector<std::string> qre_parse_data_string(std::string p_base_verbosity,
 					       std::string p_base_data)
 {
@@ -930,7 +932,7 @@ Output:
 - Returns p_s2 - p_s1. If p_s1 is non-existent or is shorter than p_s1, 
 returns complete p_s2.
 
- */
+*/
 std::string qre_what_comes_after_s1(std::string p_s1,
 				    std::string p_s2)
 {
@@ -1025,13 +1027,12 @@ std::string qre_namestamp(std::string p_s1)
   std::string res = p_s1;
 
   srand(time(NULL));
-  res = res + "-" + qre_d2s( abs( rand() * 0.9 ) );
-  
-  return res;
+
+  return (res + "-" + qre_d2s(abs(rand() * 0.9)));
 }
 
 
-/* qre_namestamp - Creates a namestamp string based on the time() C++ functions. 
+/* qre_namestamp - Creates a namestamp string based on the time() C++ function. 
 A string containing the resulting number is returned as result.
 
  */
