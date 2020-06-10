@@ -124,7 +124,8 @@ int main(int argc, char** argv)
 
       /* Backend to use. Write test if you want to just see the contents of the 
 	 qreg file, simulator for a simulator backend, or the name of the 
-	 quantum processor to use in case of a real run. */
+	 quantum processor to use in case of a real run. 
+      */
       base_device = argv[4];
 
       /* Random seed number to use, int >= 1. */
